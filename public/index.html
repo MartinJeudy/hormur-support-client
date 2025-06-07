@@ -111,6 +111,14 @@
         .response-diff {
             background: linear-gradient(90deg, #fef3c7 0%, #d1fae5 100%);
         }
+
+        .hormur-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .hormur-accent {
+            color: #667eea;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gray-50">
@@ -167,8 +175,8 @@
             <div class="mt-8 text-center text-sm text-indigo-200">
                 <p class="mb-2">Équipe Hormur autorisée :</p>
                 <div class="space-y-1">
-                    <p>👩‍🎨 Eléonore - Relations Artistes</p>
-                    <p>🏛️ Martin - Partenariats Lieux</p>
+                    <p>🎨 Eléonore - Relations Artistes</p>
+                    <p>🏡 Martin - Partenariats Lieux</p>
                 </div>
             </div>
         </div>
@@ -182,15 +190,15 @@
                 <div class="flex justify-between items-center h-16">
                     <div class="flex items-center space-x-4">
                         <div class="flex items-center space-x-2">
-                            <i data-lucide="bot" class="w-8 h-8 text-indigo-600"></i>
+                            <i data-lucide="bot" class="w-8 h-8 hormur-accent"></i>
                             <h1 class="text-xl font-bold text-gray-900">Hormur IA Assistant</h1>
                         </div>
                         <div class="hidden sm:block text-sm text-gray-500">
-                            Support Client Automatisé • Brevo Integration
+                            Support Client Automatisé • Brevo + Make.com + OpenAI
                         </div>
                         <div id="ai-status" class="flex items-center space-x-2 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs">
                             <div class="w-2 h-2 bg-green-500 rounded-full ai-learning-indicator"></div>
-                            <span>IA Active</span>
+                            <span>IA Hormur Active</span>
                         </div>
                     </div>
                     <div class="flex items-center space-x-4">
@@ -216,7 +224,7 @@
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <!-- User Info Banner -->
-            <div id="user-banner" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-4 rounded-lg mb-6">
+            <div id="user-banner" class="hormur-gradient text-white p-4 rounded-lg mb-6">
                 <div class="flex items-center space-x-3">
                     <div id="banner-avatar" class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
                         <span id="banner-initials" class="text-white font-bold"></span>
@@ -330,13 +338,14 @@
                             class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                         >
                             <option value="all">Toutes catégories</option>
-                            <option value="artiste">Questions artistes</option>
-                            <option value="hote">Questions hôtes</option>
-                            <option value="spectateur">Questions spectateurs</option>
-                            <option value="paiement">Paiements</option>
-                            <option value="technique">Support technique</option>
-                            <option value="partenariat">Partenariats</option>
-                            <option value="juridique">Questions juridiques</option>
+                            <option value="artiste">Questions artistes 🎨</option>
+                            <option value="hote">Questions hôtes 🏡</option>
+                            <option value="spectateur">Questions spectateurs 🎭</option>
+                            <option value="paiement">Paiements & SACEM 💳</option>
+                            <option value="technique">Support technique 🔧</option>
+                            <option value="partenariat">Partenariats B2B 🤝</option>
+                            <option value="assurance">Assurance Beloy 🛡️</option>
+                            <option value="juridique">Questions juridiques ⚖️</option>
                         </select>
                     </div>
                 </div>
@@ -367,7 +376,7 @@
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold text-gray-900 flex items-center">
                         <i data-lucide="brain" class="w-6 h-6 mr-2 text-purple-600"></i>
-                        Formation et Apprentissage IA
+                        Formation et Apprentissage IA Hormur
                     </h2>
                     <button onclick="closeAITraining()" class="text-gray-400 hover:text-gray-600">
                         <i data-lucide="x" class="w-6 h-6"></i>
@@ -385,7 +394,7 @@
         <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
             <div class="p-6">
                 <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-gray-900">Paramètres</h2>
+                    <h2 class="text-xl font-bold text-gray-900">Paramètres Hormur</h2>
                     <button onclick="closeSettings()" class="text-gray-400 hover:text-gray-600">
                         <i data-lucide="x" class="w-6 h-6"></i>
                     </button>
@@ -401,7 +410,7 @@
     <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
 
     <script>
-        // Configuration utilisateurs avec emails corrects
+        // Configuration utilisateurs Hormur avec emails corrects
         const AUTHORIZED_USERS = {
             'eleonore@hormur.com': {
                 password: 'Hormur2025!',
@@ -442,18 +451,18 @@ Hormur - Transformons vos espaces en scènes
             }
         };
 
-        // Messages de démonstration enrichis
+        // Messages de démonstration enrichis avec contexte Hormur
         let messages = [
             {
                 id: 1,
-                from: 'marie.dubois@gmail.com',
-                subject: 'Question sur l\'événement jazz prévu',
-                content: 'Bonjour, je voudrais savoir si l\'événement de concert jazz prévu chez M. Martin est toujours d\'actualité ? J\'ai acheté mes places il y a une semaine.',
+                from: 'marie.spectateur@gmail.com',
+                subject: 'Question sur l\'événement jazz prévu chez M. Martin',
+                content: 'Bonjour, je voudrais savoir si l\'événement de concert jazz prévu chez M. Martin est toujours d\'actualité ? J\'ai acheté mes places il y a une semaine et je n\'ai pas eu de nouvelles.',
                 receivedAt: '2025-06-07 14:30',
                 status: 'auto-sent',
                 category: 'spectateur',
                 priority: 'medium',
-                aiResponse: 'Bonjour Marie,\n\nMerci pour votre message. Le concert jazz est bien maintenu comme prévu. Vous pouvez suivre les dernières informations directement sur la page événement : https://hormur.com/event/jazz-martin\n\nL\'événement aura lieu le 15 juin à 20h. N\'hésitez pas si vous avez d\'autres questions !\n\nCordialement,\nL\'équipe Hormur',
+                aiResponse: 'Bonjour Marie,\n\nMerci pour votre message ! Le concert jazz est bien maintenu comme prévu. Vous pouvez suivre les dernières informations directement sur la page événement.\n\nL\'événement aura lieu le 15 juin à 20h chez notre hôte Martin. Vous recevrez un email de rappel avec l\'adresse exacte 24h avant.\n\nN\'hésitez pas si vous avez d\'autres questions !\n\nCordialement,\nL\'équipe Hormur',
                 confidence: 95,
                 spamScore: 5,
                 conversationHistory: [
@@ -461,26 +470,26 @@ Hormur - Transformons vos espaces en scènes
                     { date: '2025-05-20', content: 'Envoi de la liste des événements disponibles', type: 'outgoing' }
                 ],
                 aiClassification: 'Demande d\'information simple sur événement existant',
-                suggestedActions: ['Confirmer l\'événement', 'Fournir lien de suivi'],
-                urls: ['https://hormur.com/event/jazz-martin']
+                suggestedActions: ['Confirmer l\'événement', 'Fournir lien de suivi']
             },
             {
                 id: 2,
-                from: 'artiste.local@hotmail.com',
+                from: 'artiste.piano@hotmail.com',
                 subject: 'Problème de paiement - événement du mois dernier',
-                content: 'Bonjour, je n\'ai pas reçu mon paiement pour l\'événement du mois dernier (Concert piano chez Sophie, 15 mai). Mon événement s\'est bien passé, il y avait 12 spectateurs. Pouvez-vous vérifier ?',
+                content: 'Bonjour, je n\'ai pas reçu mon paiement pour l\'événement du mois dernier (Concert piano chez Sophie, 15 mai). Mon événement s\'est bien passé, il y avait 12 spectateurs. Pouvez-vous vérifier mon compte Stripe Connect ?',
                 receivedAt: '2025-06-07 13:15',
                 status: 'manual-review',
                 category: 'paiement',
                 priority: 'high',
-                aiResponse: 'Bonjour,\n\nJe comprends votre préoccupation concernant le paiement de votre événement du 15 mai.\n\nSelon nos informations, les virements sont automatiquement déclenchés par Stripe dans les 7 à 14 jours ouvrés après l\'événement. Je vais vérifier immédiatement votre dossier dans notre système de paiement.\n\nPourriez-vous vérifier que vos coordonnées bancaires sont bien à jour dans votre espace artiste ?\n\nJe reviens vers vous dans les plus brefs délais avec une réponse précise.\n\nCordialement,\nL\'équipe Hormur',
+                aiResponse: 'Bonjour,\n\nJe comprends votre préoccupation concernant le paiement de votre événement du 15 mai.\n\nSelon nos informations, les virements Stripe Connect sont automatiquement déclenchés dans les 7 à 14 jours ouvrés après l\'événement. Je vais vérifier immédiatement votre dossier dans notre système.\n\nPourriez-vous vérifier que vos coordonnées bancaires sont bien à jour dans votre espace artiste ?\n\nJe reviens vers vous dans les plus brefs délais avec une réponse précise.\n\nÉléonore\nResponsable Relations Artistes\nHormur',
                 confidence: 88,
                 spamScore: 8,
                 conversationHistory: [],
-                aiClassification: 'Question paiement - nécessite vérification manuelle',
+                aiClassification: 'Question paiement - nécessite vérification manuelle Stripe',
                 suggestedActions: ['Vérifier Stripe Connect', 'Contacter finance', 'Demander RIB'],
                 needsHumanReview: true,
-                escalationReason: 'Problème financier nécessitant vérification comptable'
+                escalationReason: 'Problème financier nécessitant vérification comptable',
+                assignedTo: 'eleonore'
             },
             {
                 id: 3,
@@ -500,121 +509,125 @@ Hormur - Transformons vos espaces en scènes
             },
             {
                 id: 4,
-                from: 'sophie.martin@gmail.com',
-                subject: 'Renseignements pour événement théâtre intimiste',
-                content: 'Bonjour, je suis comédienne et je cherche un lieu pour organiser une représentation théâtrale intimiste pour 20 personnes maximum. J\'aimerais quelque chose d\'atypique, peut-être un salon ou un jardin ?',
+                from: 'sophie.comedienne@gmail.com',
+                subject: 'Création projet théâtre intimiste - besoin de conseils',
+                content: 'Bonjour, je suis comédienne et je cherche un lieu pour organiser une représentation théâtrale intimiste pour 20 personnes maximum. J\'aimerais quelque chose d\'atypique, peut-être un salon ou un jardin ? Comment bien remplir mon profil ?',
                 receivedAt: '2025-06-07 09:20',
                 status: 'auto-sent',
                 category: 'artiste',
                 priority: 'medium',
-                aiResponse: 'Bonjour Sophie,\n\nVotre projet de théâtre intimiste sonne passionnant ! Nous avons effectivement plusieurs lieux parfaits pour une représentation théâtrale intimiste.\n\nJe vous invite à :\n1. Créer votre projet artistique sur : https://hormur.com/projet/new\n2. Consulter nos lieux disponibles : https://hormur.com/place?page=1&maxPublic=25\n\nNos hôtes proposent des salons, jardins, cours intérieures et même des bibliothèques privées parfaites pour le théâtre intimiste.\n\nUne fois votre projet créé, vous recevrez automatiquement des propositions de lieux compatibles !\n\nCordialement,\nL\'équipe Hormur',
+                aiResponse: 'Bonjour Sophie !\n\nTon projet de théâtre intimiste sonne passionnant ! Nous avons effectivement plusieurs lieux parfaits pour ce type d\'expérience.\n\nPour créer ton projet :\n1. Va sur https://hormur.com/projet/new\n2. Décris ton univers artistique et tes besoins techniques\n3. Précise ta jauge idéale (20 personnes c\'est parfait !)\n4. Ajoute tes préférences géographiques\n\nNos hôtes proposent des salons, jardins, cours intérieures et même des bibliothèques privées ! Une fois ton projet créé, tu recevras automatiquement des propositions de lieux compatibles.\n\nConsulte aussi notre FAQ artistes : https://vivacious-phosphorus-9a9.notion.site/FAQ-pour-les-artistes-sur-Hormur-18f3052419ea80ce8d1ac4618dc25699\n\nÀ bientôt sur scène !\n\nÉléonore\nResponsable Relations Artistes\nHormur',
                 confidence: 94,
                 spamScore: 3,
                 conversationHistory: [],
-                aiClassification: 'Demande création projet artiste - standard',
+                aiClassification: 'Demande création projet artiste - onboarding standard',
                 suggestedActions: ['Rediriger vers création projet', 'Proposer lieux adaptés'],
-                urls: ['https://hormur.com/projet/new', 'https://hormur.com/place?page=1&maxPublic=25']
+                urls: ['https://hormur.com/projet/new', 'https://vivacious-phosphorus-9a9.notion.site/FAQ-pour-les-artistes-sur-Hormur-18f3052419ea80ce8d1ac4618dc25699'],
+                assignedTo: 'eleonore'
             },
             {
                 id: 5,
                 from: 'lucas.photographe@outlook.fr',
-                subject: 'Exposition photo dans un jardin - faisabilité',
-                content: 'Bonsoir, je suis photographe professionnel et j\'aimerais organiser une exposition de mes œuvres dans un jardin ou une cour. Est-ce possible ? Quelles sont les contraintes d\'assurance pour ce type d\'événement ?',
+                subject: 'Exposition photo dans un jardin - questions assurance',
+                content: 'Bonsoir, je suis photographe professionnel et j\'aimerais organiser une exposition de mes œuvres dans un jardin ou une cour. Est-ce possible ? Quelles sont les contraintes d\'assurance pour ce type d\'événement ? Mes tirages ont de la valeur.',
                 receivedAt: '2025-06-06 18:45',
-                status: 'manual-review',
+                status: 'auto-sent',
                 category: 'artiste',
                 priority: 'medium',
-                aiResponse: 'Bonsoir Lucas,\n\nOrganiser une exposition photo dans un jardin est tout à fait possible et même très apprécié sur Hormur !\n\nConcernant l\'assurance, bonne nouvelle : tous les événements Hormur sont automatiquement couverts par notre partenariat avec Beloy x Hiscox :\n- Jusqu\'à 1 000 000 € pour les dommages corporels, matériels et immatériels\n- Jusqu\'à 5 000 € pour vos équipements/œuvres endommagés (franchise 500€)\n\nPlus d\'infos sur l\'assurance : https://webviews.beloy.com/hormur/hormur.html\n\nPour commencer :\n1. Créez votre projet : https://hormur.com/projet/new\n2. Précisez vos besoins techniques (accrochage, protection pluie, éclairage)\n\nNos hôtes avec jardins seront ravis de vous accueillir !\n\nCordialement,\nL\'équipe Hormur',
-                confidence: 91,
-                spamScore: 7,
+                aiResponse: 'Bonsoir Lucas !\n\nOrganiser une exposition photo dans un jardin est tout à fait possible et même très apprécié sur Hormur !\n\nConcernant l\'assurance, excellente nouvelle : tous les événements Hormur sont automatiquement couverts par notre partenariat Beloy x Hiscox :\n- Jusqu\'à 1 000 000 € pour les dommages corporels, matériels et immatériels\n- Jusqu\'à 5 000 € pour tes équipements/œuvres endommagés (franchise 500€)\n- Aucune démarche de ta part, tout est automatique\n\nPlus d\'infos détaillées : https://webviews.beloy.com/hormur/hormur.html\n\nPour commencer :\n1. Crée ton projet : https://hormur.com/projet/new\n2. Précise tes besoins (accrochage, protection météo, éclairage)\n3. Nos hôtes avec jardins seront ravis de t\'accueillir !\n\nÀ bientôt !\n\nÉléonore\nResponsable Relations Artistes\nHormur',
+                confidence: 96,
+                spamScore: 4,
                 conversationHistory: [],
-                aiClassification: 'Question technique assurance - peut être automatisé',
-                needsHumanReview: true,
-                escalationReason: 'Question assurance spécifique à valider',
-                urls: ['https://webviews.beloy.com/hormur/hormur.html', 'https://hormur.com/projet/new']
+                aiClassification: 'Question assurance exposition - informations standard',
+                urls: ['https://webviews.beloy.com/hormur/hormur.html', 'https://hormur.com/projet/new'],
+                assignedTo: 'eleonore'
             },
             {
                 id: 6,
                 from: 'contact@maisonderetraite-soleil.fr',
                 subject: 'Partenariat EHPAD - événements culturels résidents',
-                content: 'Bonjour, nous sommes l\'EHPAD Les Jardins du Soleil à Lyon. Nous aimerions proposer des événements culturels réguliers à nos résidents (concerts, lectures, ateliers). Comment pouvons-nous établir un partenariat ?',
+                content: 'Bonjour, nous sommes l\'EHPAD Les Jardins du Soleil à Lyon (120 résidents). Nous aimerions proposer des événements culturels réguliers à nos résidents (concerts, lectures, ateliers). Comment établir un partenariat avec Hormur ? Tarification spéciale ?',
                 receivedAt: '2025-06-06 16:30',
-                status: 'pending',
+                status: 'manual-review',
                 category: 'partenariat',
                 priority: 'high',
-                aiResponse: 'Bonjour,\n\nNous serions ravis de développer un partenariat avec votre EHPAD ! Les événements culturels apportent beaucoup de joie et de bien-être aux résidents.\n\nHormur propose effectivement :\n- Des concerts adaptés au public senior\n- Des ateliers créatifs et participatifs\n- Des lectures et spectacles intimistes\n\nPour établir un partenariat :\n1. Inscrivez votre EHPAD comme lieu d\'accueil : https://hormur.com/place/new\n2. Précisez vos contraintes (horaires, accessibilité, nombre de résidents)\n3. Choisissez entre événements publics ou privés pour vos résidents\n\nNotre équipe peut vous accompagner spécifiquement pour ce type de projet. Souhaitez-vous un rendez-vous téléphonique ?\n\nCordialement,\nL\'équipe Hormur',
-                confidence: 96,
+                aiResponse: 'Bonjour,\n\nNous serions ravis de développer un partenariat avec votre EHPAD ! Les événements culturels apportent beaucoup de joie et de bien-être aux résidents.\n\nHormur propose effectivement :\n- Des concerts adaptés au public senior\n- Des ateliers créatifs et participatifs\n- Des lectures et spectacles intimistes\n- Une tarification préférentielle pour les établissements\n\nPour établir un partenariat :\n1. Inscrivez votre EHPAD : https://hormur.com/place/new\n2. Précisez vos contraintes (horaires, accessibilité, nombre de résidents)\n3. Choisissez entre événements publics ou privés\n\nNotre équipe peut vous accompagner spécifiquement. Souhaitez-vous un rendez-vous téléphonique ?\n\nCordialement,\n\nMartin\nResponsable Partenariats Lieux\nHormur',
+                confidence: 92,
                 spamScore: 2,
                 conversationHistory: [],
-                aiClassification: 'Demande partenariat institutionnel',
+                aiClassification: 'Demande partenariat institutionnel B2B',
                 suggestedActions: ['Proposer RDV', 'Envoyer documentation partenaire'],
-                needsHumanReview: false,
-                urls: ['https://hormur.com/place/new']
+                needsHumanReview: true,
+                escalationReason: 'Opportunité commerciale B2B importante à qualifier',
+                urls: ['https://hormur.com/place/new'],
+                assignedTo: 'martin'
             },
             {
                 id: 7,
-                from: 'promotion.casino@guerrillamail.com',
-                subject: 'Casino en ligne - Bonus exclusif 500€',
-                content: 'Nouveau casino en ligne! Bonus de 500€ offerts sans dépôt. Jouez maintenant et gagnez gros! Inscription gratuite sur: http://casino-fake.com',
-                receivedAt: '2025-06-07 10:15',
-                status: 'spam',
-                category: 'spam',
-                priority: 'low',
-                aiResponse: null,
-                confidence: 0,
-                spamScore: 88,
-                conversationHistory: [],
-                aiClassification: 'SPAM - Jeux d\'argent',
-                spamIndicators: ['Domaine temporaire', 'Jeux d\'argent', 'Bonus fictifs', 'Urgence commerciale']
-            },
-            {
-                id: 8,
-                from: 'nouveau.lieu@yahoo.fr',
-                subject: 'Inscription nouveau lieu - appartement créatif',
-                content: 'Bonjour, je souhaite inscrire mon appartement pour accueillir des événements artistiques. J\'ai un grand salon (40m²) et une terrasse. Comment ça marche ?',
+                from: 'nouveau.lieu@gmail.com',
+                subject: 'Inscription nouveau lieu - appartement avec terrasse',
+                content: 'Bonjour, je souhaite inscrire mon appartement pour accueillir des événements artistiques. J\'ai un grand salon (40m²) et une terrasse de 25m². Comment ça marche exactement ? Fréquence des événements ? Rémunération ?',
                 receivedAt: '2025-06-07 12:45',
                 status: 'auto-sent',
                 category: 'hote',
                 priority: 'medium',
-                aiResponse: 'Bonjour !\n\nC\'est formidable que vous souhaitiez rejoindre notre communauté d\'hôtes ! Votre appartement avec salon et terrasse semble parfait pour accueillir des événements artistiques intimistes.\n\nPour vous inscrire :\n1. Créez votre profil lieu : https://hormur.com/place/new\n2. Décrivez votre espace (photos, capacité, équipements)\n3. Choisissez vos préférences (types d\'événements, fréquence)\n\nConsultez notre FAQ hôtes pour tous les détails : https://vivacious-phosphorus-9a9.notion.site/FAQ-pour-les-h-tes-sur-Hormur-17c3052419ea80be8829da9e29dbe137\n\nVous recevrez ensuite des propositions d\'artistes compatibles avec votre lieu !\n\nCordialement,\nL\'équipe Hormur',
-                confidence: 92,
-                spamScore: 12,
+                aiResponse: 'Bonjour !\n\nC\'est formidable que vous souhaitiez rejoindre notre communauté d\'hôtes ! Votre appartement avec salon et terrasse semble parfait pour des événements artistiques intimistes.\n\nComment ça marche :\n1. Créez votre profil lieu : https://hormur.com/place/new\n2. Décrivez votre espace (photos, capacité, équipements)\n3. Choisissez vos préférences (types d\'événements, fréquence)\n4. Recevez des propositions d\'artistes compatibles\n\n**Rémunération :** Vous fixez votre tarif de location\n**Fréquence :** Entièrement libre, selon vos disponibilités\n\nConsultez notre FAQ hôtes : https://vivacious-phosphorus-9a9.notion.site/FAQ-pour-les-h-tes-sur-Hormur-17c3052419ea80be8829da9e29dbe137\n\nBienvenue dans l\'aventure Hormur !\n\nMartin\nResponsable Partenariats Lieux\nHormur',
+                confidence: 95,
+                spamScore: 7,
                 conversationHistory: [],
-                aiClassification: 'Inscription hôte standard',
-                urls: ['https://hormur.com/place/new', 'https://vivacious-phosphorus-9a9.notion.site/FAQ-pour-les-h-tes-sur-Hormur-17c3052419ea80be8829da9e29dbe137']
+                aiClassification: 'Inscription hôte standard - onboarding',
+                urls: ['https://hormur.com/place/new', 'https://vivacious-phosphorus-9a9.notion.site/FAQ-pour-les-h-tes-sur-Hormur-17c3052419ea80be8829da9e29dbe137'],
+                assignedTo: 'martin'
+            },
+            {
+                id: 8,
+                from: 'artiste.violin@gmail.com',
+                subject: 'Comment calculer mes droits SACEM pour concert privé ?',
+                content: 'Salut ! Je donne un concert de violon classique chez un particulier pour 18 personnes. Comment Hormur gère-t-il la déclaration SACEM ? Le montant est-il automatiquement déduit de mes recettes ? Merci !',
+                receivedAt: '2025-06-07 10:15',
+                status: 'auto-sent',
+                category: 'artiste',
+                priority: 'medium',
+                aiResponse: 'Salut !\n\nExcellente question ! Hormur automatise complètement la gestion SACEM pour toi :\n\n✅ **Déclaration automatique** si ton répertoire nécessite la SACEM\n✅ **Calcul automatique** : 34€ minimum OU 10% des recettes (le plus élevé)\n✅ **Déduction directe** de tes recettes avant virement\n\nPour ton concert violon 18 personnes :\n- Si recettes < 340€ → 34€ déduits\n- Si recettes > 340€ → 10% déduits\n\nTu n\'as rien à faire, tout est géré automatiquement !\n\nPS : N\'oublie pas de compléter ton profil pour maximiser tes chances de matching ! Les concerts de violon classique en appartement marchent super bien sur Hormur.\n\nÀ bientôt sur scène !\n\nÉléonore\nResponsable Relations Artistes\nHormur',
+                confidence: 98,
+                spamScore: 3,
+                conversationHistory: [],
+                aiClassification: 'Question SACEM standard - processus automatisé',
+                assignedTo: 'eleonore'
             },
             {
                 id: 9,
-                from: 'claire.musicienne@gmail.com',
-                subject: 'Question remboursement spectateur',
-                content: 'Bonjour, j\'ai acheté des places pour un concert mais je ne peux finalement pas venir. Puis-je être remboursée ?',
+                from: 'claire.spectateur@gmail.com',
+                subject: 'Demande de remboursement - ne peux plus venir',
+                content: 'Bonjour, j\'ai acheté des places pour un concert de piano le 20 juin mais je ne peux finalement pas venir (problème familial). Puis-je être remboursée ? L\'événement a lieu chez Madame Dupont.',
                 receivedAt: '2025-06-07 08:30',
                 status: 'auto-sent',
                 category: 'spectateur',
                 priority: 'low',
-                aiResponse: 'Bonjour Claire,\n\nJe comprends votre situation. Selon nos conditions générales d\'utilisation, les billets ne sont pas remboursables sauf en cas d\'annulation de l\'événement par l\'organisateur.\n\nCependant, vous pouvez :\n✅ Revendre ou céder vos billets à un proche\n✅ Les offrir à quelqu\'un d\'autre\n\nSi vous souhaitez que nous transmettions cette information à l\'artiste organisateur, n\'hésitez pas à nous le dire.\n\nEn cas d\'annulation de l\'événement, vous seriez automatiquement remboursée sous 5 à 10 jours ouvrés via Stripe.\n\nPlus d\'infos sur notre politique de remboursement : https://hormur.com/rbs\n\nCordialement,\nL\'équipe Hormur',
+                aiResponse: 'Bonjour Claire,\n\nJe comprends votre situation et je suis désolée pour vos soucis familiaux.\n\nSelon nos conditions générales, les billets ne sont pas remboursables sauf en cas d\'annulation de l\'événement par l\'organisateur.\n\nCependant, vous pouvez :\n✅ Revendre ou céder vos billets à un proche\n✅ Les offrir à quelqu\'un d\'autre de votre entourage\n\nSi vous souhaitez que nous transmettions cette information à l\'artiste organisateur, n\'hésitez pas à nous le dire.\n\nEn cas d\'annulation de l\'événement, vous seriez automatiquement remboursée sous 5 à 10 jours ouvrés via Stripe.\n\nPlus d\'infos : https://hormur.com/rbs\n\nCordialement,\nL\'équipe Hormur',
                 confidence: 97,
                 spamScore: 4,
                 conversationHistory: [],
-                aiClassification: 'Demande remboursement standard',
-                urls: ['https://hormur.com/rbs', 'https://hormur.com/conditions']
+                aiClassification: 'Demande remboursement standard - politique CGU',
+                urls: ['https://hormur.com/rbs']
             },
             {
                 id: 10,
-                from: 'producteur.events@wanadoo.fr',
-                subject: 'Collaboration pour événements d\'entreprise',
-                content: 'Bonjour, nous sommes une agence événementielle et nous aimerions savoir si Hormur peut gérer des événements privés d\'entreprise (séminaires avec animation culturelle, soirées clients). Quelles sont vos possibilités ?',
+                from: 'agence.events@wanadoo.fr',
+                subject: 'Collaboration pour événements d\'entreprise B2B',
+                content: 'Bonjour, nous sommes une agence événementielle (50 collaborateurs) et aimerions savoir si Hormur peut gérer des événements privés d\'entreprise (séminaires avec animation culturelle, soirées clients). Tarification ? Process ? Facturation B2B ?',
                 receivedAt: '2025-06-06 15:20',
                 status: 'manual-review',
                 category: 'partenariat',
                 priority: 'high',
-                aiResponse: 'Bonjour,\n\nMerci pour votre intérêt ! Hormur peut effectivement faciliter l\'organisation d\'événements privés d\'entreprise avec nos artistes et lieux partenaires.\n\nNos possibilités :\n- Événements privés (billetterie confidentielle)\n- Large choix de lieux atypiques (lofts, jardins, espaces culturels)\n- Artistes professionnels (musiciens, comédiens, conteurs...)\n- Gestion complète : billetterie, assurance, communication\n\nPour les entreprises, nous proposons :\n- Tarification sur devis\n- Accompagnement personnalisé\n- Facturation B2B\n\nSouhaitez-vous un rendez-vous pour discuter de vos projets spécifiques ?\n\nCordialement,\nL\'équipe Hormur',
+                aiResponse: 'Bonjour,\n\nMerci pour votre intérêt ! Hormur peut effectivement faciliter l\'organisation d\'événements privés d\'entreprise avec nos artistes et lieux partenaires.\n\nNos possibilités :\n- Événements privés (billetterie confidentielle)\n- Large choix de lieux atypiques (lofts, jardins, espaces culturels)\n- Artistes professionnels (musiciens, comédiens, conteurs...)\n- Gestion complète : billetterie, assurance, communication\n\nPour les entreprises :\n- Tarification sur devis personnalisé\n- Accompagnement dédié de notre équipe\n- Facturation B2B adaptée\n- Process streamliné pour vos équipes\n\nSouhaitez-vous un rendez-vous pour discuter de vos projets spécifiques ?\n\nCordialement,\n\nMartin\nResponsable Partenariats Lieux\nHormur',
                 confidence: 89,
                 spamScore: 6,
                 conversationHistory: [],
-                aiClassification: 'Demande partenariat B2B - nécessite validation commerciale',
+                aiClassification: 'Demande partenariat B2B - nécessite qualification commerciale',
                 needsHumanReview: true,
-                escalationReason: 'Opportunité commerciale B2B à qualifier'
+                escalationReason: 'Opportunité commerciale B2B importante à qualifier',
+                assignedTo: 'martin'
             }
         ];
 
@@ -670,7 +683,7 @@ Hormur - Transformons vos espaces en scènes
             getAccuracyRate() {
                 const total = Object.values(this.learningStats).reduce((a, b) => a + b, 0);
                 const successful = (this.learningStats.approved || 0) + (this.learningStats.modified || 0);
-                return total > 0 ? Math.round((successful / total) * 100) : 0;
+                return total > 0 ? Math.round((successful / total) * 100) : 94; // Default 94% for demo
             }
 
             getRecentFeedback() {
@@ -680,37 +693,36 @@ Hormur - Transformons vos espaces en scènes
 
         const aiLearning = new AILearningManager();
 
-        // Enhanced Signature Manager
-        class SignatureManager {
+        // Enhanced Signature Manager for Hormur
+        class HormurSignatureManager {
             personalizeResponse(baseResponse, userProfile, messageCategory, messageContent = '') {
                 if (!userProfile) return baseResponse;
 
-                let personalizedResponse = this.adaptTone(baseResponse, userProfile.style);
-                personalizedResponse = this.addSpecialtyContent(personalizedResponse, userProfile.specialties, messageCategory);
-                personalizedResponse = this.addRelevantUrls(personalizedResponse, messageCategory);
+                let personalizedResponse = this.adaptToneForHormur(baseResponse, userProfile.style, messageCategory);
+                personalizedResponse = this.addHormurSpecialtyContent(personalizedResponse, userProfile.specialties, messageCategory);
+                personalizedResponse = this.addContextualUrls(personalizedResponse, messageCategory, messageContent);
                 personalizedResponse += '\n\n' + userProfile.signature;
                 
                 return personalizedResponse;
             }
 
-            adaptTone(response, style) {
-                const toneAdjustments = {
+            adaptToneForHormur(response, style, category) {
+                const hormurAdjustments = {
                     warm: {
-                        'Bonjour,': 'Bonjour ! 😊',
-                        'Cordialement': 'Avec plaisir',
-                        'Nous': 'Notre équipe et moi',
-                        'L\'équipe': 'Toute l\'équipe'
+                        'Bonjour,': category === 'artiste' ? 'Bonjour ! 🎨' : 'Bonjour !',
+                        'problème': 'petite question',
+                        'Nous restons': 'On reste',
+                        'l\'équipe': 'toute l\'équipe'
                     },
                     professional: {
-                        '😊': '',
-                        '!': '.',
-                        'Super': 'Parfait',
-                        'Avec plaisir': 'Cordialement'
+                        'Super !': 'Parfait.',
+                        '🎨': '',
+                        'C\'est parti': 'Nous procédons'
                     }
                 };
 
                 let adjustedResponse = response;
-                const adjustments = toneAdjustments[style] || {};
+                const adjustments = hormurAdjustments[style] || {};
                 
                 Object.entries(adjustments).forEach(([from, to]) => {
                     adjustedResponse = adjustedResponse.replace(new RegExp(from, 'g'), to);
@@ -719,20 +731,22 @@ Hormur - Transformons vos espaces en scènes
                 return adjustedResponse;
             }
 
-            addSpecialtyContent(response, specialties, category) {
-                const specialtyContent = {
+            addHormurSpecialtyContent(response, specialties, category) {
+                const hormurSpecialtyContent = {
                     'artistes': {
-                        'artiste': '\n\nPS: N\'hésitez pas à consulter notre FAQ artistes pour optimiser votre profil!',
-                        'onboarding': '\n\nNotre équipe artistique reste à votre disposition pour vous accompagner.'
+                        'artiste': '\n\nPS : N\'oublie pas de compléter ton profil pour maximiser tes chances de matching ! Notre communauté adore découvrir de nouveaux talents.',
+                        'paiement': '\n\nTous nos virements passent par Stripe Connect - système ultra-sécurisé utilisé par les plus grandes plateformes.',
+                        'événements': '\n\nPetit tip : les événements intimistes (15-30 personnes) ont souvent le plus de succès sur Hormur !'
                     },
                     'lieux': {
-                        'hote': '\n\nPS: Nous avons préparé un kit d\'accueil spécial pour les nouveaux hôtes!',
-                        'partenariat': '\n\nPour toute question sur l\'aménagement de votre espace, n\'hésitez pas.'
+                        'hote': '\n\nNos hôtes créent des expériences uniques ! Chaque lieu raconte une histoire artistique différente.',
+                        'assurance': '\n\nNotre partenariat Beloy x Hiscox est spécialement négocié pour les événements culturels intimistes.',
+                        'partenariat': '\n\nHormur grandit grâce à des lieux comme le vôtre qui croient en l\'art partout !'
                     }
                 };
 
                 specialties.forEach(specialty => {
-                    const content = specialtyContent[specialty];
+                    const content = hormurSpecialtyContent[specialty];
                     if (content && content[category]) {
                         response += content[category];
                     }
@@ -741,21 +755,40 @@ Hormur - Transformons vos espaces en scènes
                 return response;
             }
 
-            addRelevantUrls(response, category) {
-                // URLs are already integrated in the AI responses
+            addContextualUrls(response, category, messageContent) {
+                // URLs spécifiques selon le contexte détecté
+                const contextualUrls = {
+                    'sacem': 'https://hormur.com/sacem-info',
+                    'assurance': 'https://webviews.beloy.com/hormur/hormur.html',
+                    'remboursement': 'https://hormur.com/rbs',
+                    'création projet': 'https://hormur.com/projet/new',
+                    'ajout lieu': 'https://hormur.com/place/new'
+                };
+
+                // Détecter le contexte dans le message
+                const content = messageContent.toLowerCase();
+                Object.entries(contextualUrls).forEach(([keyword, url]) => {
+                    if (content.includes(keyword) && !response.includes(url)) {
+                        response += `\n\nPlus d'infos : ${url}`;
+                    }
+                });
+
                 return response;
             }
         }
+
+        const signatureManager = new HormurSignatureManager();
 
         // Enhanced utilities
         function getCategoryColor(category) {
             const colors = {
                 artiste: 'bg-purple-100 text-purple-800',
-                hote: 'bg-green-100 text-green-800',
+                hote: 'bg-green-100 text-green-800', 
                 spectateur: 'bg-blue-100 text-blue-800',
                 paiement: 'bg-red-100 text-red-800',
                 technique: 'bg-gray-100 text-gray-800',
                 partenariat: 'bg-teal-100 text-teal-800',
+                assurance: 'bg-indigo-100 text-indigo-800',
                 juridique: 'bg-orange-100 text-orange-800',
                 spam: 'bg-red-200 text-red-900'
             };
@@ -854,7 +887,7 @@ Hormur - Transformons vos espaces en scènes
             
             hideLoginOverlay();
             init();
-            showToast(`Bienvenue ${user.name} ! IA Assistant activé.`);
+            showToast(`Bienvenue ${user.name} ! IA Assistant Hormur activé.`);
         }
 
         function showLoginOverlay() {
@@ -905,6 +938,24 @@ Hormur - Transformons vos espaces en scènes
             document.getElementById('spam-blocked').textContent = stats.spamBlocked;
             document.getElementById('ai-efficiency').textContent = stats.efficiency + '%';
             document.getElementById('daily-processed').textContent = stats.autoSent + stats.pendingReview;
+
+            // Update AI status indicator
+            updateHormurAIStatus();
+        }
+
+        function updateHormurAIStatus() {
+            const aiStatus = document.getElementById('ai-status');
+            if (aiStatus) {
+                const efficiency = aiLearning.getAccuracyRate();
+                const statusColor = efficiency >= 90 ? 'green' : efficiency >= 80 ? 'yellow' : 'red';
+                const totalFeedbacks = Object.values(aiLearning.learningStats).reduce((a, b) => a + b, 0);
+                
+                aiStatus.innerHTML = `
+                    <div class="w-2 h-2 bg-${statusColor}-500 rounded-full ai-learning-indicator"></div>
+                    <span>IA Hormur - ${efficiency}% précision</span>
+                    <span class="text-xs">(${totalFeedbacks} apprentissages)</span>
+                `;
+            }
         }
 
         // Enhanced message rendering
@@ -954,7 +1005,7 @@ Hormur - Transformons vos espaces en scènes
                                         Priorité haute
                                     </span>
                                 ` : ''}
-                                ${message.conversationHistory.length > 0 ? `
+                                ${message.conversationHistory && message.conversationHistory.length > 0 ? `
                                     <span class="px-2 py-1 text-xs bg-purple-100 text-purple-600 rounded-full">
                                         <i data-lucide="message-square" class="w-3 h-3 inline mr-1"></i>
                                         ${message.conversationHistory.length}
@@ -966,6 +1017,11 @@ Hormur - Transformons vos espaces en scènes
                                         Validation requise
                                     </span>
                                 ` : ''}
+                                ${message.assignedTo && message.assignedTo !== 'auto' ? `
+                                    <span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">
+                                        ${message.assignedTo === 'martin' ? '🏡' : '🎨'} ${message.assignedTo}
+                                    </span>
+                                ` : ''}
                             </div>
                             <p class="text-sm font-medium text-gray-700">${message.subject}</p>
                             <p class="text-sm text-gray-500 mt-1">${message.receivedAt}</p>
@@ -974,7 +1030,7 @@ Hormur - Transformons vos espaces en scènes
                             <div class="flex items-center space-x-1">
                                 <i data-lucide="${getStatusIcon(message.status)}" class="w-4 h-4 ${getStatusColor(message.status)}"></i>
                                 ${message.status !== 'spam' ? `<span class="text-xs text-gray-600">${message.confidence}%</span>` : ''}
-                                ${message.spamScore > 30 ? `
+                                ${message.spamScore && message.spamScore > 30 ? `
                                     <span class="text-xs text-red-600">(🛡️${message.spamScore}%)</span>
                                 ` : ''}
                             </div>
@@ -1015,7 +1071,7 @@ Hormur - Transformons vos espaces en scènes
                     </div>
                     ${message.aiClassification ? `
                         <div class="mt-2 text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                            <strong>IA:</strong> ${message.aiClassification}
+                            <strong>IA Hormur:</strong> ${message.aiClassification}
                         </div>
                     ` : ''}
                 </div>
@@ -1051,7 +1107,7 @@ Hormur - Transformons vos espaces en scènes
                         </button>
                     </div>
 
-                    ${selectedMessage.conversationHistory.length > 0 ? `
+                    ${selectedMessage.conversationHistory && selectedMessage.conversationHistory.length > 0 ? `
                         <div class="conversation-thread p-3 rounded-lg mb-4">
                             <h4 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
                                 <i data-lucide="message-square" class="w-4 h-4 mr-1"></i>
@@ -1072,15 +1128,20 @@ Hormur - Transformons vos espaces en scènes
                         <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 mb-4">
                             <h4 class="text-sm font-medium text-purple-800 mb-1 flex items-center">
                                 <i data-lucide="brain" class="w-4 h-4 mr-1"></i>
-                                Classification IA
+                                Classification IA Hormur
                             </h4>
                             <p class="text-sm text-purple-700">${selectedMessage.aiClassification}</p>
-                            ${selectedMessage.suggestedActions ? `
+                            ${selectedMessage.suggestedActions && selectedMessage.suggestedActions.length > 0 ? `
                                 <div class="mt-2">
                                     <p class="text-xs text-purple-600 font-medium">Actions suggérées :</p>
                                     <ul class="text-xs text-purple-600 ml-3">
                                         ${selectedMessage.suggestedActions.map(action => `<li>• ${action}</li>`).join('')}
                                     </ul>
+                                </div>
+                            ` : ''}
+                            ${selectedMessage.assignedTo && selectedMessage.assignedTo !== 'auto' ? `
+                                <div class="mt-2">
+                                    <p class="text-xs text-purple-600 font-medium">Assigné à : ${selectedMessage.assignedTo === 'martin' ? '🏡 Martin (Lieux)' : '🎨 Eléonore (Artistes)'}</p>
                                 </div>
                             ` : ''}
                         </div>
@@ -1117,13 +1178,13 @@ Hormur - Transformons vos espaces en scènes
                             <p class="text-sm text-gray-600 bg-gray-50 p-3 rounded mt-1">${selectedMessage.content}</p>
                         </div>
                         
-                        ${selectedMessage.spamScore > 20 ? `
+                        ${selectedMessage.spamScore && selectedMessage.spamScore > 20 ? `
                             <div class="bg-red-50 border border-red-200 rounded-lg p-3">
                                 <div class="flex items-center">
                                     <i data-lucide="shield" class="w-4 h-4 text-red-500 mr-2"></i>
                                     <span class="text-sm font-medium text-red-800">Score de spam: ${selectedMessage.spamScore}%</span>
                                 </div>
-                                ${selectedMessage.spamIndicators ? `
+                                ${selectedMessage.spamIndicators && selectedMessage.spamIndicators.length > 0 ? `
                                     <div class="mt-2">
                                         <p class="text-xs text-red-600 font-medium">Indicateurs détectés :</p>
                                         <ul class="text-xs text-red-600 ml-3">
@@ -1147,13 +1208,13 @@ Hormur - Transformons vos espaces en scènes
 
                         ${selectedMessage.status !== 'spam' ? `
                             <div>
-                                <label class="text-sm font-medium text-gray-700">Réponse IA :</label>
+                                <label class="text-sm font-medium text-gray-700">Réponse IA Hormur :</label>
                                 <div class="mt-2">
                                     <textarea
                                         id="edit-response"
                                         class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm custom-scrollbar"
                                         rows="12"
-                                        placeholder="Réponse générée par l'IA..."
+                                        placeholder="Réponse générée par l'IA Hormur..."
                                     >${selectedMessage.aiResponse || ''}</textarea>
                                 </div>
                             </div>
@@ -1161,7 +1222,7 @@ Hormur - Transformons vos espaces en scènes
                                 <div class="flex space-x-2">
                                     <button
                                         onclick="sendResponse()"
-                                        class="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center space-x-2"
+                                        class="flex-1 hormur-gradient text-white px-4 py-2 rounded-lg hover:opacity-90 transition-colors flex items-center justify-center space-x-2"
                                     >
                                         <i data-lucide="send" class="w-4 h-4"></i>
                                         <span>Envoyer</span>
@@ -1171,7 +1232,7 @@ Hormur - Transformons vos espaces en scènes
                                     <button
                                         onclick="personalizeResponse()"
                                         class="flex-1 px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors flex items-center justify-center space-x-2"
-                                        title="Personnaliser avec ma signature"
+                                        title="Personnaliser avec ma signature Hormur"
                                     >
                                         <i data-lucide="user" class="w-4 h-4"></i>
                                         <span class="hidden sm:inline">Personnaliser</span>
@@ -1215,7 +1276,6 @@ Hormur - Transformons vos espaces en scènes
         function approveMessage(messageId) {
             const message = messages.find(m => m.id === messageId);
             if (message && currentUser) {
-                const signatureManager = new SignatureManager();
                 const originalResponse = message.aiResponse;
                 const personalizedResponse = signatureManager.personalizeResponse(
                     message.aiResponse, 
@@ -1232,7 +1292,7 @@ Hormur - Transformons vos espaces en scènes
                 
                 updateStats();
                 renderMessages();
-                showToast('Message approuvé et envoyé avec votre signature !');
+                showToast('Message approuvé et envoyé avec votre signature Hormur !');
                 
                 if (selectedMessage?.id === messageId) {
                     selectedMessage = message;
@@ -1281,14 +1341,13 @@ Hormur - Transformons vos espaces en scènes
             
             updateStats();
             renderMessages();
-            showToast('Réponse envoyée avec succès !');
+            showToast('Réponse envoyée avec succès via Brevo !');
             closeDetail();
         }
 
         function personalizeResponse() {
             if (!selectedMessage || !currentUser) return;
             
-            const signatureManager = new SignatureManager();
             const personalizedResponse = signatureManager.personalizeResponse(
                 selectedMessage.aiResponse, 
                 currentUser, 
@@ -1297,7 +1356,7 @@ Hormur - Transformons vos espaces en scènes
             );
             
             document.getElementById('edit-response').value = personalizedResponse;
-            showToast('Réponse personnalisée avec votre signature !');
+            showToast('Réponse personnalisée avec votre signature Hormur !');
         }
 
         function resetResponse() {
@@ -1374,7 +1433,7 @@ Hormur - Transformons vos espaces en scènes
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Taux de précision IA</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Taux de précision IA Hormur</h3>
                         <div class="bg-gray-50 p-4 rounded-lg">
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-sm text-gray-600">Précision globale</span>
@@ -1418,13 +1477,14 @@ Hormur - Transformons vos espaces en scènes
                     <div class="bg-blue-50 p-4 rounded-lg">
                         <h4 class="font-medium text-blue-800 mb-2 flex items-center">
                             <i data-lucide="lightbulb" class="w-4 h-4 mr-2"></i>
-                            Conseils pour améliorer l'IA
+                            Conseils pour améliorer l'IA Hormur
                         </h4>
                         <ul class="text-sm text-blue-700 space-y-1">
-                            <li>• Donnez des feedbacks détaillés sur les réponses modifiées</li>
+                            <li>• Donnez des feedbacks détaillés sur les réponses spécifiques à Hormur</li>
                             <li>• Marquez clairement les spams pour améliorer la détection</li>
-                            <li>• Utilisez la personnalisation pour enseigner votre style</li>
-                            <li>• Signalez les erreurs de classification pour affiner l'algorithme</li>
+                            <li>• Utilisez la personnalisation pour enseigner le style Hormur</li>
+                            <li>• Signalez les erreurs sur les processus Hormur (SACEM, Stripe, etc.)</li>
+                            <li>• Corrigez les assignments artiste/hôte pour affiner l'algorithme</li>
                         </ul>
                     </div>
                 </div>
@@ -1440,7 +1500,7 @@ Hormur - Transformons vos espaces en scènes
         function showFeedbackForm() {
             if (!selectedMessage) return;
             
-            const feedback = prompt('Donnez votre feedback sur cette réponse IA (optionnel) :');
+            const feedback = prompt('Donnez votre feedback sur cette réponse IA Hormur (optionnel) :');
             if (feedback !== null) {
                 aiLearning.recordFeedback(
                     selectedMessage.id,
@@ -1449,7 +1509,7 @@ Hormur - Transformons vos espaces en scènes
                     'feedback',
                     feedback
                 );
-                showToast('Feedback enregistré ! Merci d\'aider l\'IA à s\'améliorer.');
+                showToast('Feedback enregistré ! Merci d\'aider l\'IA Hormur à s\'améliorer.');
             }
         }
 
@@ -1460,7 +1520,7 @@ Hormur - Transformons vos espaces en scènes
             document.getElementById('settings-content').innerHTML = `
                 <div class="space-y-6">
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Profil utilisateur</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Profil utilisateur Hormur</h3>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
@@ -1474,7 +1534,7 @@ Hormur - Transformons vos espaces en scènes
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Rôle et spécialités</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Rôle et spécialités Hormur</h3>
                         <p class="text-gray-600 bg-gray-50 p-3 rounded-lg mb-3">${currentUser.role}</p>
                         <div class="flex flex-wrap gap-2">
                             ${currentUser.specialties.map(specialty => `
@@ -1484,7 +1544,7 @@ Hormur - Transformons vos espaces en scènes
                     </div>
 
                     <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Signature personnelle</h3>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Signature personnelle Hormur</h3>
                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                             <pre class="whitespace-pre-wrap text-sm text-gray-700">${currentUser.signature}</pre>
                         </div>
@@ -1506,10 +1566,20 @@ Hormur - Transformons vos espaces en scènes
                                 <p class="text-xl font-bold text-green-700">${messages.filter(m => m.status === 'auto-sent' || m.status === 'sent').length}</p>
                             </div>
                             <div class="bg-purple-50 p-3 rounded-lg">
-                                <p class="text-sm text-purple-600">Efficacité IA</p>
+                                <p class="text-sm text-purple-600">Efficacité IA Hormur</p>
                                 <p class="text-xl font-bold text-purple-700">${aiLearning.getAccuracyRate()}%</p>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="hormur-gradient p-4 rounded-lg text-white">
+                        <h4 class="font-medium mb-2">🎭 Configuration Hormur</h4>
+                        <ul class="text-sm space-y-1">
+                            <li>• Intégration Brevo + Make.com + OpenAI</li>
+                            <li>• Classification automatique artistes/hôtes/spectateurs</li>
+                            <li>• Gestion SACEM, Stripe Connect, assurance Beloy</li>
+                            <li>• Apprentissage continu des spécificités Hormur</li>
+                        </ul>
                     </div>
                 </div>
             `;
@@ -1561,53 +1631,70 @@ Hormur - Transformons vos espaces en scènes
             renderMessages();
         });
 
-        // Enhanced message simulation
-        function simulateNewMessage() {
+        // Enhanced message simulation with Hormur context
+        function simulateHormurMessage() {
             if (!currentUser) return;
             
-            const sampleMessages = [
+            const hormurMessageTemplates = [
                 {
-                    from: 'nouveaucontact@gmail.com',
-                    subject: 'Demande d\'information événement',
-                    content: 'Bonjour, j\'aimerais organiser un petit concert dans mon jardin. Comment faire ?',
-                    category: 'hote',
-                    priority: 'medium'
-                },
-                {
-                    from: 'artiste.emergent@outlook.fr',
-                    subject: 'Question sur les commissions',
-                    content: 'Salut ! Je voulais savoir quel pourcentage vous prenez sur les ventes de billets ?',
+                    from: 'nouveau.artiste@gmail.com',
+                    subject: 'Question sur les tarifs conseillés pour concerts intimistes',
+                    content: 'Salut ! Je débute sur Hormur avec des concerts de guitare folk. Quel tarif conseillez-vous pour des concerts chez l\'habitant ? Entre 15-25€ selon mes calculs mais je ne sais pas...',
                     category: 'artiste',
                     priority: 'low'
                 },
                 {
-                    from: 'spectateur.curieux@yahoo.fr',
-                    subject: 'Aucun événement dans ma région',
-                    content: 'Bonjour, je ne vois aucun événement proche de chez moi (Toulouse). Est-ce normal ?',
+                    from: 'hote.curieux@orange.fr',
+                    subject: 'Fréquence des événements - combien par mois ?',
+                    content: 'Bonjour, j\'ai un bel appartement avec salon de 35m². Combien d\'événements puis-je accueillir par mois sur Hormur ? Y a-t-il des restrictions de fréquence ?',
+                    category: 'hote',
+                    priority: 'medium'
+                },
+                {
+                    from: 'spectateur.nantes@yahoo.fr',
+                    subject: 'Pas d\'événements à Nantes - quand ça arrive ?',
+                    content: 'Bonjour, je suis à Nantes et j\'aimerais vraiment découvrir des événements Hormur mais je ne vois rien dans ma région. Hormur se développe-t-il en Loire-Atlantique ?',
                     category: 'spectateur',
+                    priority: 'medium'
+                },
+                {
+                    from: 'artiste.theatre@outlook.fr',
+                    subject: 'Spectacle de théâtre - contraintes techniques',
+                    content: 'Bonjour, je fais du théâtre contemporain et cherche des lieux adaptés. Quelles sont les contraintes techniques que je peux demander aux hôtes ? Éclairage, sono, espace scénique...',
+                    category: 'artiste',
                     priority: 'medium'
                 }
             ];
 
             if (Math.random() > 0.7) {
-                const template = sampleMessages[Math.floor(Math.random() * sampleMessages.length)];
+                const template = hormurMessageTemplates[Math.floor(Math.random() * hormurMessageTemplates.length)];
                 const newMessage = {
                     id: Date.now(),
                     ...template,
                     receivedAt: new Date().toISOString().slice(0, 16).replace('T', ' '),
                     status: Math.random() > 0.3 ? 'pending' : 'auto-sent',
-                    aiResponse: 'Bonjour ! Merci pour votre message. Notre équipe va traiter votre demande et vous répondre rapidement.',
+                    aiResponse: generateHormurResponse(template.category, template.content),
                     confidence: Math.floor(Math.random() * 20) + 80,
                     spamScore: Math.floor(Math.random() * 15) + 5,
                     conversationHistory: [],
-                    aiClassification: 'Nouvelle demande à traiter'
+                    aiClassification: 'Nouvelle demande Hormur à traiter',
+                    assignedTo: template.category === 'artiste' ? 'eleonore' : template.category === 'hote' ? 'martin' : 'auto'
                 };
 
                 messages.unshift(newMessage);
                 updateStats();
                 renderMessages();
-                showToast('Nouveau message reçu !');
+                showToast('Nouveau message Hormur reçu !');
             }
+        }
+
+        function generateHormurResponse(category, content) {
+            const responses = {
+                artiste: 'Salut ! Excellente question ! Pour les tarifs, tout dépend de ton expérience et du type de concert. Entre 15-25€ c\'est un bon début ! Tu peux aussi proposer prix libre pour commencer. Crée ton projet sur https://hormur.com/projet/new et nos hôtes te feront des propositions.\n\nÉléonore\nResponsable Relations Artistes\nHormur',
+                hote: 'Bonjour ! Parfait, 35m² c\'est idéal pour des événements intimistes ! Il n\'y a aucune restriction de fréquence - c\'est entièrement selon vos envies et disponibilités. Certains hôtes accueillent chaque semaine, d\'autres une fois par mois. Inscrivez votre lieu : https://hormur.com/place/new\n\nMartin\nResponsable Partenariats Lieux\nHormur',
+                spectateur: 'Bonjour ! Hormur se développe progressivement partout en France, Nantes inclus ! Pour être informé dès qu\'un événement se crée près de chez vous, remplissez vos préférences : https://hormur-preferences-public.netlify.app/\n\nCordialement,\nL\'équipe Hormur'
+            };
+            return responses[category] || 'Bonjour ! Merci pour votre message. Notre équipe va traiter votre demande rapidement.\n\nCordialement,\nL\'équipe Hormur';
         }
 
         // Initialization
@@ -1619,8 +1706,8 @@ Hormur - Transformons vos espaces en scènes
             renderDetailPanel();
             lucide.createIcons();
             
-            // Simulate new messages periodically
-            setInterval(simulateNewMessage, 60000); // Every minute
+            // Simulate new Hormur messages periodically
+            setInterval(simulateHormurMessage, 90000); // Every 1.5 minutes
         }
 
         // Start application
