@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hormur - Support Client IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #d1d5db #f3f4f6;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f3f4f6;
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+
+        .spam-message {
+            background: repeating-linear-gradient(
+                45deg,
+                #fef2f2,
+                #fef2f2 10px,
+                #fee2e2 10px,
+                #fee2e2 20px
+            );
+            border-left-color: #dc2626 !important;
+        }
+
+        .high-priority {
+            border-left-color: #dc2626 !important;
+            background: linear-gradient(90deg, #fef2f2 0%, #ffffff 50%);
+        }
+
+        .medium-priority {
+            border-left-color: #f59e0b !important;
+            background: linear-gradient(90deg, #fef3c7 0%, #ffffff 50%);
+        }
+
+        .low-priority {
+            border-left-color: #10b981 !important;
+        }
+
+        .conversation-thread {
+            border-left: 3px solid #e5e7eb;
+            background: #f9fafb;
+        }
+
+        .login-overlay {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(6px);
+        }
+
+        .user-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .login-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .confidence-bar {
+            background: linear-gradient(90deg, #dc2626 0%, #f59e0b 50%, #10b981 100%);
+        }
+
+        .ai-learning-indicator {
+            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
+            animation: pulse 2s infinite;
+        }
+
+        .priority-indicator {
+            animation: bounce 1s infinite;
+        }
+
+        .response-diff {
+            background: linear-gradient(90deg, #fef3c7 0%, #d1fae5 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Login Overlay -->
+    <div id="login-overlay" class="fixed inset-0 login-overlay z-50 flex items-center justify-center">
+        <div class="login-card p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 text-white">
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 mx-auto mb-4 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <i data-lucide="bot" class="w-10 h-10 text-white"></i>
+                </div>
+                <h2 class="text-3xl font-bold">Hormur IA Assistant</h2>
+                <p class="text-indigo-100 mt-2">Support Client Automatisé</p>
+            </div>
+            
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-indigo-100 mb-2">
+                        Email professionnel
+                    </label>
+                    <input 
+                        type="email" 
+                        id="login-email"
+                        required
+                        class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg focus:ring-2 focus:ring-white focus:border-transparent text-white placeholder-indigo-200"
+                        placeholder="votre.email@hormur.com"
+                    />
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-indigo-100 mb-2">
+                        Mot de passe
+                    </label>
+                    <input 
+                        type="password" 
+                        id="login-password"
+                        required
+                        class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg focus:ring-2 focus:ring-white focus:border-transparent text-white placeholder-indigo-200"
+                        placeholder="••••••••"
+                    />
+                </div>
+                
+                <div id="login-error" class="hidden bg-red-500 bg-opacity-20 border border-red-300 text-red-100 px-4 py-3 rounded-lg text-sm">
+                    Email ou mot de passe incorrect
+                </div>
+                
+                <button 
+                    type="submit"
+                    class="w-full bg-white text-indigo-600 py-3 px-4 rounded-lg hover:bg-indigo-50 transition-colors font-semibold"
+                >
+                    Se connecter
+                </button>
+            </form>
+            
+            <div class="mt-8 text-center text-sm text-indigo-200">
+                <p class="mb-2">Équipe Hormur autorisée :</p>
+                <div class="space-y-1">
+                    <p>👩‍🎨 Eléonore - Relations Artistes</p>
+                    <p>🏛️ Martin - Partenariats Lieux</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="main-app" class="hidden">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="bot" class="w-8 h-8 text-indigo-600"></i>
+                            <h1 class="text-xl font-bold text-gray-900">Hormur IA Assistant</h1>
+                        </div>
+                        <div class="hidden sm:block text-sm text-gray-500">
+                            Support Client Automatisé • Brevo Integration
+                        </div>
+                        <div id="ai-status" class="flex items-center space-x-2 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs">
+                            <div class="w-2 h-2 bg-green-500 rounded-full ai-learning-indicator"></div>
+                            <span>IA Active</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <div id="user-avatar" class="w-8 h-8 user-avatar rounded-full flex items-center justify-center">
+                                <span id="user-initials" class="text-white text-sm font-medium"></span>
+                            </div>
+                            <span id="user-name" class="text-sm font-medium text-gray-700"></span>
+                        </div>
+                        <button onclick="showAITraining()" class="text-gray-400 hover:text-gray-600" title="Formation IA">
+                            <i data-lucide="brain" class="w-5 h-5"></i>
+                        </button>
+                        <button onclick="showSettings()" class="text-gray-400 hover:text-gray-600">
+                            <i data-lucide="settings" class="w-5 h-5"></i>
+                        </button>
+                        <button onclick="logout()" class="text-gray-400 hover:text-gray-600" title="Déconnexion">
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <!-- User Info Banner -->
+            <div id="user-banner" class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-4 rounded-lg mb-6">
+                <div class="flex items-center space-x-3">
+                    <div id="banner-avatar" class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                        <span id="banner-initials" class="text-white font-bold"></span>
+                    </div>
+                    <div class="flex-1">
+                        <h2 id="banner-name" class="text-lg font-semibold"></h2>
+                        <p id="banner-role" class="text-indigo-100 text-sm"></p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm text-indigo-100">Messages traités aujourd'hui</p>
+                        <p id="daily-processed" class="text-2xl font-bold">12</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Stats Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Total messages</p>
+                            <p id="total-messages" class="text-2xl font-bold text-gray-900">15</p>
+                        </div>
+                        <i data-lucide="message-circle" class="w-8 h-8 text-blue-500"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Auto-envoyés</p>
+                            <p id="auto-sent" class="text-2xl font-bold text-green-600">6</p>
+                        </div>
+                        <i data-lucide="zap" class="w-8 h-8 text-green-500"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">À valider</p>
+                            <p id="pending-review" class="text-2xl font-bold text-orange-600">4</p>
+                        </div>
+                        <i data-lucide="alert-triangle" class="w-8 h-8 text-orange-500"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Spams bloqués</p>
+                            <p id="spam-blocked" class="text-2xl font-bold text-red-600">3</p>
+                        </div>
+                        <i data-lucide="shield" class="w-8 h-8 text-red-500"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">En attente</p>
+                            <p id="pending" class="text-2xl font-bold text-gray-600">2</p>
+                        </div>
+                        <i data-lucide="clock" class="w-8 h-8 text-gray-500"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-600">Efficacité IA</p>
+                            <p id="ai-efficiency" class="text-2xl font-bold text-purple-600">94%</p>
+                        </div>
+                        <i data-lucide="brain" class="w-8 h-8 text-purple-500"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Filters and Search -->
+            <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
+                <div class="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
+                    <div class="flex-1">
+                        <div class="relative">
+                            <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                            <input
+                                type="text"
+                                id="search-input"
+                                placeholder="Rechercher dans les messages..."
+                                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                            />
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <select 
+                            id="filter-select"
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        >
+                            <option value="all">Tous les messages</option>
+                            <option value="pending">En attente de traitement</option>
+                            <option value="manual-review">À valider manuellement</option>
+                            <option value="auto-sent">Envoyés automatiquement</option>
+                            <option value="sent">Envoyés manuellement</option>
+                            <option value="spam">Spams détectés</option>
+                        </select>
+                        <select 
+                            id="priority-filter"
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        >
+                            <option value="all">Toutes priorités</option>
+                            <option value="high">Priorité haute</option>
+                            <option value="medium">Priorité moyenne</option>
+                            <option value="low">Priorité basse</option>
+                        </select>
+                        <select 
+                            id="category-filter"
+                            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        >
+                            <option value="all">Toutes catégories</option>
+                            <option value="artiste">Questions artistes</option>
+                            <option value="hote">Questions hôtes</option>
+                            <option value="spectateur">Questions spectateurs</option>
+                            <option value="paiement">Paiements</option>
+                            <option value="technique">Support technique</option>
+                            <option value="partenariat">Partenariats</option>
+                            <option value="juridique">Questions juridiques</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages List and Detail Panel -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Enhanced Messages List -->
+                <div class="lg:col-span-2 space-y-4" id="messages-list">
+                    <!-- Messages will be loaded here -->
+                </div>
+
+                <!-- Enhanced Message Detail Panel -->
+                <div class="lg:col-span-1">
+                    <div id="detail-panel" class="bg-white p-6 rounded-lg shadow-sm text-center text-gray-500 sticky top-24">
+                        <i data-lucide="message-circle" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
+                        <p>Sélectionnez un message pour voir les détails</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Training Modal -->
+    <div id="ai-training-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-screen overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-900 flex items-center">
+                        <i data-lucide="brain" class="w-6 h-6 mr-2 text-purple-600"></i>
+                        Formation et Apprentissage IA
+                    </h2>
+                    <button onclick="closeAITraining()" class="text-gray-400 hover:text-gray-600">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <div id="ai-training-content">
+                    <!-- AI Training content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-gray-900">Paramètres</h2>
+                    <button onclick="closeSettings()" class="text-gray-400 hover:text-gray-600">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <div id="settings-content">
+                    <!-- Settings content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+
+    <script>
+        // Configuration utilisateurs avec emails corrects
+        const AUTHORIZED_USERS = {
+            'eleonore@hormur.com': {
+                password: 'Hormur2025!',
+                name: 'Eléonore',
+                role: 'Responsable Relations Artistes',
+                signature: `Cordialement,
+
+Eléonore
+Responsable Relations Artistes
+Hormur - Créons ensemble des moments uniques
+
+📧 eleonore@hormur.com
+🌐 www.hormur.com
+🎭 "L'art se vit partout, créons l'inattendu"`,
+                style: 'warm',
+                specialties: ['artistes', 'événements', 'créativité', 'onboarding-artistes'],
+                color: '#e11d48',
+                aiPromptPersonality: 'Sois chaleureux et créatif, utilise des émojis avec parcimonie, tutoie les artistes et montre de l\'enthousiasme pour leurs projets.'
+            },
+            
+            'martin.jeudy@hormur.com': {
+                password: 'Hormur2025!',
+                name: 'Martin',
+                role: 'Responsable Partenariats Lieux',
+                signature: `Bien à vous,
+
+Martin
+Responsable Partenariats Lieux
+Hormur - Transformons vos espaces en scènes
+
+📧 martin.jeudy@hormur.com
+🌐 www.hormur.com
+🏡 "Votre lieu a une histoire, donnons-lui une scène"`,
+                style: 'professional',
+                specialties: ['lieux', 'hôtes', 'logistique', 'partenariats', 'onboarding-lieux'],
+                color: '#059669',
+                aiPromptPersonality: 'Sois professionnel et rassurant, valorise les espaces uniques et montre l\'expertise technique pour l\'organisation d\'événements.'
+            }
+        };
+
+        // Messages de démonstration enrichis
+        let messages = [
+            {
+                id: 1,
+                from: 'marie.dubois@gmail.com',
+                subject: 'Question sur l\'événement jazz prévu',
+                content: 'Bonjour, je voudrais savoir si l\'événement de concert jazz prévu chez M. Martin est toujours d\'actualité ? J\'ai acheté mes places il y a une semaine.',
+                receivedAt: '2025-06-07 14:30',
+                status: 'auto-sent',
+                category: 'spectateur',
+                priority: 'medium',
+                aiResponse: 'Bonjour Marie,\n\nMerci pour votre message. Le concert jazz est bien maintenu comme prévu. Vous pouvez suivre les dernières informations directement sur la page événement : https://hormur.com/event/jazz-martin\n\nL\'événement aura lieu le 15 juin à 20h. N\'hésitez pas si vous avez d\'autres questions !\n\nCordialement,\nL\'équipe Hormur',
+                confidence: 95,
+                spamScore: 5,
+                conversationHistory: [
+                    { date: '2025-05-20', content: 'Première demande d\'info sur les événements jazz', type: 'incoming' },
+                    { date: '2025-05-20', content: 'Envoi de la liste des événements disponibles', type: 'outgoing' }
+                ],
+                aiClassification: 'Demande d\'information simple sur événement existant',
+                suggestedActions: ['Confirmer l\'événement', 'Fournir lien de suivi'],
+                urls: ['https://hormur.com/event/jazz-martin']
+            },
+            {
+                id: 2,
+                from: 'artiste.local@hotmail.com',
+                subject: 'Problème de paiement - événement du mois dernier',
+                content: 'Bonjour, je n\'ai pas reçu mon paiement pour l\'événement du mois dernier (Concert piano chez Sophie, 15 mai). Mon événement s\'est bien passé, il y avait 12 spectateurs. Pouvez-vous vérifier ?',
+                receivedAt: '2025-06-07 13:15',
+                status: 'manual-review',
+                category: 'paiement',
+                priority: 'high',
+                aiResponse: 'Bonjour,\n\nJe comprends votre préoccupation concernant le paiement de votre événement du 15 mai.\n\nSelon nos informations, les virements sont automatiquement déclenchés par Stripe dans les 7 à 14 jours ouvrés après l\'événement. Je vais vérifier immédiatement votre dossier dans notre système de paiement.\n\nPourriez-vous vérifier que vos coordonnées bancaires sont bien à jour dans votre espace artiste ?\n\nJe reviens vers vous dans les plus brefs délais avec une réponse précise.\n\nCordialement,\nL\'équipe Hormur',
+                confidence: 88,
+                spamScore: 8,
+                conversationHistory: [],
+                aiClassification: 'Question paiement - nécessite vérification manuelle',
+                suggestedActions: ['Vérifier Stripe Connect', 'Contacter finance', 'Demander RIB'],
+                needsHumanReview: true,
+                escalationReason: 'Problème financier nécessitant vérification comptable'
+            },
+            {
+                id: 3,
+                from: 'crypto.winner@tempmail.com',
+                subject: 'URGENT: Gagnez des Bitcoin maintenant!',
+                content: 'Félicitations! Vous avez été sélectionné pour gagner 5 Bitcoin GRATUITEMENT! Cliquez ici immédiatement: http://suspicious-link.com',
+                receivedAt: '2025-06-07 11:30',
+                status: 'spam',
+                category: 'spam',
+                priority: 'low',
+                aiResponse: null,
+                confidence: 0,
+                spamScore: 95,
+                conversationHistory: [],
+                aiClassification: 'SPAM évident - cryptomonnaie',
+                spamIndicators: ['Mots-clés crypto', 'Urgence artificielle', 'Domaine temporaire', 'Lien suspect']
+            },
+            {
+                id: 4,
+                from: 'sophie.martin@gmail.com',
+                subject: 'Renseignements pour événement théâtre intimiste',
+                content: 'Bonjour, je suis comédienne et je cherche un lieu pour organiser une représentation théâtrale intimiste pour 20 personnes maximum. J\'aimerais quelque chose d\'atypique, peut-être un salon ou un jardin ?',
+                receivedAt: '2025-06-07 09:20',
+                status: 'auto-sent',
+                category: 'artiste',
+                priority: 'medium',
+                aiResponse: 'Bonjour Sophie,\n\nVotre projet de théâtre intimiste sonne passionnant ! Nous avons effectivement plusieurs lieux parfaits pour une représentation théâtrale intimiste.\n\nJe vous invite à :\n1. Créer votre projet artistique sur : https://hormur.com/projet/new\n2. Consulter nos lieux disponibles : https://hormur.com/place?page=1&maxPublic=25\n\nNos hôtes proposent des salons, jardins, cours intérieures et même des bibliothèques privées parfaites pour le théâtre intimiste.\n\nUne fois votre projet créé, vous recevrez automatiquement des propositions de lieux compatibles !\n\nCordialement,\nL\'équipe Hormur',
+                confidence: 94,
+                spamScore: 3,
+                conversationHistory: [],
+                aiClassification: 'Demande création projet artiste - standard',
+                suggestedActions: ['Rediriger vers création projet', 'Proposer lieux adaptés'],
+                urls: ['https://hormur.com/projet/new', 'https://hormur.com/place?page=1&maxPublic=25']
+            },
+            {
+                id: 5,
+                from: 'lucas.photographe@outlook.fr',
+                subject: 'Exposition photo dans un jardin - faisabilité',
+                content: 'Bonsoir, je suis photographe professionnel et j\'aimerais organiser une exposition de mes œuvres dans un jardin ou une cour. Est-ce possible ? Quelles sont les contraintes d\'assurance pour ce type d\'événement ?',
+                receivedAt: '2025-06-06 18:45',
+                status: 'manual-review',
+                category: 'artiste',
+                priority: 'medium',
+                aiResponse: 'Bonsoir Lucas,\n\nOrganiser une exposition photo dans un jardin est tout à fait possible et même très apprécié sur Hormur !\n\nConcernant l\'assurance, bonne nouvelle : tous les événements Hormur sont automatiquement couverts par notre partenariat avec Beloy x Hiscox :\n- Jusqu\'à 1 000 000 € pour les dommages corporels, matériels et immatériels\n- Jusqu\'à 5 000 € pour vos équipements/œuvres endommagés (franchise 500€)\n\nPlus d\'infos sur l\'assurance : https://webviews.beloy.com/hormur/hormur.html\n\nPour commencer :\n1. Créez votre projet : https://hormur.com/projet/new\n2. Précisez vos besoins techniques (accrochage, protection pluie, éclairage)\n\nNos hôtes avec jardins seront ravis de vous accueillir !\n\nCordialement,\nL\'équipe Hormur',
+                confidence: 91,
+                spamScore: 7,
+                conversationHistory: [],
+                aiClassification: 'Question technique assurance - peut être automatisé',
+                needsHumanReview: true,
+                escalationReason: 'Question assurance spécifique à valider',
+                urls: ['https://webviews.beloy.com/hormur/hormur.html', 'https://hormur.com/projet/new']
+            },
+            {
+                id: 6,
+                from: 'contact@maisonderetraite-soleil.fr',
+                subject: 'Partenariat EHPAD - événements culturels résidents',
+                content: 'Bonjour, nous sommes l\'EHPAD Les Jardins du Soleil à Lyon. Nous aimerions proposer des événements culturels réguliers à nos résidents (concerts, lectures, ateliers). Comment pouvons-nous établir un partenariat ?',
+                receivedAt: '2025-06-06 16:30',
+                status: 'pending',
+                category: 'partenariat',
+                priority: 'high',
+                aiResponse: 'Bonjour,\n\nNous serions ravis de développer un partenariat avec votre EHPAD ! Les événements culturels apportent beaucoup de joie et de bien-être aux résidents.\n\nHormur propose effectivement :\n- Des concerts adaptés au public senior\n- Des ateliers créatifs et participatifs\n- Des lectures et spectacles intimistes\n\nPour établir un partenariat :\n1. Inscrivez votre EHPAD comme lieu d\'accueil : https://hormur.com/place/new\n2. Précisez vos contraintes (horaires, accessibilité, nombre de résidents)\n3. Choisissez entre événements publics ou privés pour vos résidents\n\nNotre équipe peut vous accompagner spécifiquement pour ce type de projet. Souhaitez-vous un rendez-vous téléphonique ?\n\nCordialement,\nL\'équipe Hormur',
+                confidence: 96,
+                spamScore: 2,
+                conversationHistory: [],
+                aiClassification: 'Demande partenariat institutionnel',
+                suggestedActions: ['Proposer RDV', 'Envoyer documentation partenaire'],
+                needsHumanReview: false,
+                urls: ['https://hormur.com/place/new']
+            },
+            {
+                id: 7,
+                from: 'promotion.casino@guerrillamail.com',
+                subject: 'Casino en ligne - Bonus exclusif 500€',
+                content: 'Nouveau casino en ligne! Bonus de 500€ offerts sans dépôt. Jouez maintenant et gagnez gros! Inscription gratuite sur: http://casino-fake.com',
+                receivedAt: '2025-06-07 10:15',
+                status: 'spam',
+                category: 'spam',
+                priority: 'low',
+                aiResponse: null,
+                confidence: 0,
+                spamScore: 88,
+                conversationHistory: [],
+                aiClassification: 'SPAM - Jeux d\'argent',
+                spamIndicators: ['Domaine temporaire', 'Jeux d\'argent', 'Bonus fictifs', 'Urgence commerciale']
+            },
+            {
+                id: 8,
+                from: 'nouveau.lieu@yahoo.fr',
+                subject: 'Inscription nouveau lieu - appartement créatif',
+                content: 'Bonjour, je souhaite inscrire mon appartement pour accueillir des événements artistiques. J\'ai un grand salon (40m²) et une terrasse. Comment ça marche ?',
+                receivedAt: '2025-06-07 12:45',
+                status: 'auto-sent',
+                category: 'hote',
+                priority: 'medium',
+                aiResponse: 'Bonjour !\n\nC\'est formidable que vous souhaitiez rejoindre notre communauté d\'hôtes ! Votre appartement avec salon et terrasse semble parfait pour accueillir des événements artistiques intimistes.\n\nPour vous inscrire :\n1. Créez votre profil lieu : https://hormur.com/place/new\n2. Décrivez votre espace (photos, capacité, équipements)\n3. Choisissez vos préférences (types d\'événements, fréquence)\n\nConsultez notre FAQ hôtes pour tous les détails : https://vivacious-phosphorus-9a9.notion.site/FAQ-pour-les-h-tes-sur-Hormur-17c3052419ea80be8829da9e29dbe137\n\nVous recevrez ensuite des propositions d\'artistes compatibles avec votre lieu !\n\nCordialement,\nL\'équipe Hormur',
+                confidence: 92,
+                spamScore: 12,
+                conversationHistory: [],
+                aiClassification: 'Inscription hôte standard',
+                urls: ['https://hormur.com/place/new', 'https://vivacious-phosphorus-9a9.notion.site/FAQ-pour-les-h-tes-sur-Hormur-17c3052419ea80be8829da9e29dbe137']
+            },
+            {
+                id: 9,
+                from: 'claire.musicienne@gmail.com',
+                subject: 'Question remboursement spectateur',
+                content: 'Bonjour, j\'ai acheté des places pour un concert mais je ne peux finalement pas venir. Puis-je être remboursée ?',
+                receivedAt: '2025-06-07 08:30',
+                status: 'auto-sent',
+                category: 'spectateur',
+                priority: 'low',
+                aiResponse: 'Bonjour Claire,\n\nJe comprends votre situation. Selon nos conditions générales d\'utilisation, les billets ne sont pas remboursables sauf en cas d\'annulation de l\'événement par l\'organisateur.\n\nCependant, vous pouvez :\n✅ Revendre ou céder vos billets à un proche\n✅ Les offrir à quelqu\'un d\'autre\n\nSi vous souhaitez que nous transmettions cette information à l\'artiste organisateur, n\'hésitez pas à nous le dire.\n\nEn cas d\'annulation de l\'événement, vous seriez automatiquement remboursée sous 5 à 10 jours ouvrés via Stripe.\n\nPlus d\'infos sur notre politique de remboursement : https://hormur.com/rbs\n\nCordialement,\nL\'équipe Hormur',
+                confidence: 97,
+                spamScore: 4,
+                conversationHistory: [],
+                aiClassification: 'Demande remboursement standard',
+                urls: ['https://hormur.com/rbs', 'https://hormur.com/conditions']
+            },
+            {
+                id: 10,
+                from: 'producteur.events@wanadoo.fr',
+                subject: 'Collaboration pour événements d\'entreprise',
+                content: 'Bonjour, nous sommes une agence événementielle et nous aimerions savoir si Hormur peut gérer des événements privés d\'entreprise (séminaires avec animation culturelle, soirées clients). Quelles sont vos possibilités ?',
+                receivedAt: '2025-06-06 15:20',
+                status: 'manual-review',
+                category: 'partenariat',
+                priority: 'high',
+                aiResponse: 'Bonjour,\n\nMerci pour votre intérêt ! Hormur peut effectivement faciliter l\'organisation d\'événements privés d\'entreprise avec nos artistes et lieux partenaires.\n\nNos possibilités :\n- Événements privés (billetterie confidentielle)\n- Large choix de lieux atypiques (lofts, jardins, espaces culturels)\n- Artistes professionnels (musiciens, comédiens, conteurs...)\n- Gestion complète : billetterie, assurance, communication\n\nPour les entreprises, nous proposons :\n- Tarification sur devis\n- Accompagnement personnalisé\n- Facturation B2B\n\nSouhaitez-vous un rendez-vous pour discuter de vos projets spécifiques ?\n\nCordialement,\nL\'équipe Hormur',
+                confidence: 89,
+                spamScore: 6,
+                conversationHistory: [],
+                aiClassification: 'Demande partenariat B2B - nécessite validation commerciale',
+                needsHumanReview: true,
+                escalationReason: 'Opportunité commerciale B2B à qualifier'
+            }
+        ];
+
+        let selectedMessage = null;
+        let currentFilter = 'all';
+        let priorityFilter = 'all';
+        let categoryFilter = 'all';
+        let searchTerm = '';
+        let currentUser = null;
+
+        // Enhanced Message Manager with AI Learning
+        class AILearningManager {
+            constructor() {
+                this.feedbackHistory = JSON.parse(localStorage.getItem('ai_feedback_history') || '[]');
+                this.learningStats = JSON.parse(localStorage.getItem('ai_learning_stats') || '{}');
+            }
+
+            recordFeedback(messageId, originalResponse, finalResponse, userAction, userComment = '') {
+                const feedback = {
+                    id: Date.now(),
+                    messageId,
+                    originalResponse,
+                    finalResponse,
+                    userAction, // 'approved', 'modified', 'rejected'
+                    userComment,
+                    timestamp: new Date().toISOString(),
+                    user: currentUser?.email
+                };
+
+                this.feedbackHistory.push(feedback);
+                this.updateLearningStats(userAction);
+                this.saveFeedback();
+                
+                return feedback;
+            }
+
+            updateLearningStats(action) {
+                if (!this.learningStats[action]) {
+                    this.learningStats[action] = 0;
+                }
+                this.learningStats[action]++;
+                this.saveLearningStats();
+            }
+
+            saveFeedback() {
+                localStorage.setItem('ai_feedback_history', JSON.stringify(this.feedbackHistory.slice(-100))); // Keep last 100
+            }
+
+            saveLearningStats() {
+                localStorage.setItem('ai_learning_stats', JSON.stringify(this.learningStats));
+            }
+
+            getAccuracyRate() {
+                const total = Object.values(this.learningStats).reduce((a, b) => a + b, 0);
+                const successful = (this.learningStats.approved || 0) + (this.learningStats.modified || 0);
+                return total > 0 ? Math.round((successful / total) * 100) : 0;
+            }
+
+            getRecentFeedback() {
+                return this.feedbackHistory.slice(-10).reverse();
+            }
+        }
+
+        const aiLearning = new AILearningManager();
+
+        // Enhanced Signature Manager
+        class SignatureManager {
+            personalizeResponse(baseResponse, userProfile, messageCategory, messageContent = '') {
+                if (!userProfile) return baseResponse;
+
+                let personalizedResponse = this.adaptTone(baseResponse, userProfile.style);
+                personalizedResponse = this.addSpecialtyContent(personalizedResponse, userProfile.specialties, messageCategory);
+                personalizedResponse = this.addRelevantUrls(personalizedResponse, messageCategory);
+                personalizedResponse += '\n\n' + userProfile.signature;
+                
+                return personalizedResponse;
+            }
+
+            adaptTone(response, style) {
+                const toneAdjustments = {
+                    warm: {
+                        'Bonjour,': 'Bonjour ! 😊',
+                        'Cordialement': 'Avec plaisir',
+                        'Nous': 'Notre équipe et moi',
+                        'L\'équipe': 'Toute l\'équipe'
+                    },
+                    professional: {
+                        '😊': '',
+                        '!': '.',
+                        'Super': 'Parfait',
+                        'Avec plaisir': 'Cordialement'
+                    }
+                };
+
+                let adjustedResponse = response;
+                const adjustments = toneAdjustments[style] || {};
+                
+                Object.entries(adjustments).forEach(([from, to]) => {
+                    adjustedResponse = adjustedResponse.replace(new RegExp(from, 'g'), to);
+                });
+
+                return adjustedResponse;
+            }
+
+            addSpecialtyContent(response, specialties, category) {
+                const specialtyContent = {
+                    'artistes': {
+                        'artiste': '\n\nPS: N\'hésitez pas à consulter notre FAQ artistes pour optimiser votre profil!',
+                        'onboarding': '\n\nNotre équipe artistique reste à votre disposition pour vous accompagner.'
+                    },
+                    'lieux': {
+                        'hote': '\n\nPS: Nous avons préparé un kit d\'accueil spécial pour les nouveaux hôtes!',
+                        'partenariat': '\n\nPour toute question sur l\'aménagement de votre espace, n\'hésitez pas.'
+                    }
+                };
+
+                specialties.forEach(specialty => {
+                    const content = specialtyContent[specialty];
+                    if (content && content[category]) {
+                        response += content[category];
+                    }
+                });
+
+                return response;
+            }
+
+            addRelevantUrls(response, category) {
+                // URLs are already integrated in the AI responses
+                return response;
+            }
+        }
+
+        // Enhanced utilities
+        function getCategoryColor(category) {
+            const colors = {
+                artiste: 'bg-purple-100 text-purple-800',
+                hote: 'bg-green-100 text-green-800',
+                spectateur: 'bg-blue-100 text-blue-800',
+                paiement: 'bg-red-100 text-red-800',
+                technique: 'bg-gray-100 text-gray-800',
+                partenariat: 'bg-teal-100 text-teal-800',
+                juridique: 'bg-orange-100 text-orange-800',
+                spam: 'bg-red-200 text-red-900'
+            };
+            return colors[category] || 'bg-gray-100 text-gray-800';
+        }
+
+        function getPriorityColor(priority) {
+            const colors = {
+                high: 'text-red-600',
+                medium: 'text-orange-600',
+                low: 'text-green-600'
+            };
+            return colors[priority] || 'text-gray-600';
+        }
+
+        function getPriorityIcon(priority) {
+            const icons = {
+                high: 'alert-triangle',
+                medium: 'minus-circle',
+                low: 'check-circle'
+            };
+            return icons[priority] || 'circle';
+        }
+
+        function getStatusIcon(status) {
+            const icons = {
+                'auto-sent': 'zap',
+                'manual-review': 'eye',
+                'pending': 'clock',
+                'sent': 'send',
+                'spam': 'shield'
+            };
+            return icons[status] || 'clock';
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'auto-sent': 'text-green-600',
+                'manual-review': 'text-orange-600',
+                'pending': 'text-gray-600',
+                'sent': 'text-blue-600',
+                'spam': 'text-red-600'
+            };
+            return colors[status] || 'text-gray-600';
+        }
+
+        function getStatusText(status) {
+            const statusTexts = {
+                'auto-sent': 'Envoyé automatiquement',
+                'manual-review': 'À valider manuellement',
+                'pending': 'En attente de traitement',
+                'sent': 'Envoyé manuellement',
+                'spam': 'Spam détecté'
+            };
+            return statusTexts[status] || status;
+        }
+
+        // Authentication functions
+        function initAuth() {
+            const loggedUser = localStorage.getItem('hormur_logged_user');
+            if (loggedUser) {
+                currentUser = JSON.parse(loggedUser);
+                handleUserLogin(currentUser);
+            } else {
+                showLoginOverlay();
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('login-email').value.toLowerCase().trim();
+            const password = document.getElementById('login-password').value;
+            const errorDiv = document.getElementById('login-error');
+            const form = document.getElementById('login-form');
+            
+            if (AUTHORIZED_USERS[email] && AUTHORIZED_USERS[email].password === password) {
+                currentUser = { email, ...AUTHORIZED_USERS[email] };
+                localStorage.setItem('hormur_logged_user', JSON.stringify(currentUser));
+                handleUserLogin(currentUser);
+                errorDiv.classList.add('hidden');
+            } else {
+                errorDiv.classList.remove('hidden');
+                form.classList.add('shake');
+                setTimeout(() => form.classList.remove('shake'), 500);
+            }
+        }
+
+        function handleUserLogin(user) {
+            document.getElementById('user-name').textContent = user.name;
+            document.getElementById('user-initials').textContent = user.name.split(' ').map(n => n[0]).join('');
+            
+            document.getElementById('banner-name').textContent = user.name;
+            document.getElementById('banner-role').textContent = user.role;
+            document.getElementById('banner-initials').textContent = user.name.split(' ').map(n => n[0]).join('');
+            
+            hideLoginOverlay();
+            init();
+            showToast(`Bienvenue ${user.name} ! IA Assistant activé.`);
+        }
+
+        function showLoginOverlay() {
+            document.getElementById('login-overlay').classList.remove('hidden');
+            document.getElementById('main-app').classList.add('hidden');
+        }
+
+        function hideLoginOverlay() {
+            document.getElementById('login-overlay').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem('hormur_logged_user');
+            currentUser = null;
+            showLoginOverlay();
+            showToast('Déconnecté avec succès');
+        }
+
+        // Enhanced filtering
+        function getFilteredMessages() {
+            return messages.filter(message => {
+                const matchesStatus = currentFilter === 'all' || message.status === currentFilter;
+                const matchesPriority = priorityFilter === 'all' || message.priority === priorityFilter;
+                const matchesCategory = categoryFilter === 'all' || message.category === categoryFilter;
+                const matchesSearch = message.from.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                   message.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                   message.content.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchesStatus && matchesPriority && matchesCategory && matchesSearch;
+            });
+        }
+
+        // Enhanced stats
+        function updateStats() {
+            const stats = {
+                total: messages.length,
+                autoSent: messages.filter(m => m.status === 'auto-sent').length,
+                pendingReview: messages.filter(m => m.status === 'manual-review').length,
+                pending: messages.filter(m => m.status === 'pending').length,
+                spamBlocked: messages.filter(m => m.status === 'spam').length,
+                efficiency: aiLearning.getAccuracyRate()
+            };
+
+            document.getElementById('total-messages').textContent = stats.total;
+            document.getElementById('auto-sent').textContent = stats.autoSent;
+            document.getElementById('pending-review').textContent = stats.pendingReview;
+            document.getElementById('pending').textContent = stats.pending;
+            document.getElementById('spam-blocked').textContent = stats.spamBlocked;
+            document.getElementById('ai-efficiency').textContent = stats.efficiency + '%';
+            document.getElementById('daily-processed').textContent = stats.autoSent + stats.pendingReview;
+        }
+
+        // Enhanced message rendering
+        function renderMessages() {
+            const messagesList = document.getElementById('messages-list');
+            const filteredMessages = getFilteredMessages();
+
+            if (filteredMessages.length === 0) {
+                messagesList.innerHTML = `
+                    <div class="bg-white p-8 rounded-lg shadow-sm text-center text-gray-500">
+                        <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
+                        <p>Aucun message trouvé</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            // Sort by priority and date
+            const sortedMessages = filteredMessages.sort((a, b) => {
+                const priorityOrder = { high: 3, medium: 2, low: 1 };
+                if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+                    return priorityOrder[b.priority] - priorityOrder[a.priority];
+                }
+                return new Date(b.receivedAt) - new Date(a.receivedAt);
+            });
+
+            messagesList.innerHTML = sortedMessages.map(message => `
+                <div 
+                    class="bg-white p-4 rounded-lg shadow-sm border-l-4 cursor-pointer transition-all hover:shadow-md ${
+                        message.status === 'spam' ? 'spam-message' :
+                        message.priority === 'high' ? 'high-priority' :
+                        message.priority === 'medium' ? 'medium-priority' : 'low-priority'
+                    } ${selectedMessage?.id === message.id ? 'ring-2 ring-indigo-500' : ''} fade-in"
+                    onclick="selectMessage(${message.id})"
+                >
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <h3 class="font-medium text-gray-900">${message.from}</h3>
+                                <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(message.category)}">
+                                    ${message.category}
+                                </span>
+                                ${message.priority === 'high' ? `
+                                    <span class="px-2 py-1 text-xs bg-red-100 text-red-600 rounded-full priority-indicator">
+                                        <i data-lucide="${getPriorityIcon(message.priority)}" class="w-3 h-3 inline mr-1"></i>
+                                        Priorité haute
+                                    </span>
+                                ` : ''}
+                                ${message.conversationHistory.length > 0 ? `
+                                    <span class="px-2 py-1 text-xs bg-purple-100 text-purple-600 rounded-full">
+                                        <i data-lucide="message-square" class="w-3 h-3 inline mr-1"></i>
+                                        ${message.conversationHistory.length}
+                                    </span>
+                                ` : ''}
+                                ${message.needsHumanReview ? `
+                                    <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-full">
+                                        <i data-lucide="eye" class="w-3 h-3 inline mr-1"></i>
+                                        Validation requise
+                                    </span>
+                                ` : ''}
+                            </div>
+                            <p class="text-sm font-medium text-gray-700">${message.subject}</p>
+                            <p class="text-sm text-gray-500 mt-1">${message.receivedAt}</p>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="flex items-center space-x-1">
+                                <i data-lucide="${getStatusIcon(message.status)}" class="w-4 h-4 ${getStatusColor(message.status)}"></i>
+                                ${message.status !== 'spam' ? `<span class="text-xs text-gray-600">${message.confidence}%</span>` : ''}
+                                ${message.spamScore > 30 ? `
+                                    <span class="text-xs text-red-600">(🛡️${message.spamScore}%)</span>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-gray-600 line-clamp-2">${message.content}</p>
+                    <div class="mt-3 flex items-center justify-between">
+                        <span class="text-xs text-gray-500">${getStatusText(message.status)}</span>
+                        ${message.status === 'manual-review' ? `
+                            <div class="flex space-x-2">
+                                <button
+                                    onclick="event.stopPropagation(); approveMessage(${message.id})"
+                                    class="px-3 py-1 bg-green-100 text-green-700 rounded text-xs hover:bg-green-200 transition-colors"
+                                >
+                                    <i data-lucide="check" class="w-3 h-3 inline mr-1"></i>
+                                    Approuver
+                                </button>
+                                <button
+                                    onclick="event.stopPropagation(); rejectMessage(${message.id})"
+                                    class="px-3 py-1 bg-red-100 text-red-700 rounded text-xs hover:bg-red-200 transition-colors"
+                                >
+                                    <i data-lucide="x" class="w-3 h-3 inline mr-1"></i>
+                                    Rejeter
+                                </button>
+                            </div>
+                        ` : ''}
+                        ${message.status === 'spam' ? `
+                            <div class="flex space-x-2">
+                                <button
+                                    onclick="event.stopPropagation(); unmarkSpam(${message.id})"
+                                    class="px-3 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200 transition-colors"
+                                >
+                                    <i data-lucide="shield-off" class="w-3 h-3 inline mr-1"></i>
+                                    Pas spam
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                    ${message.aiClassification ? `
+                        <div class="mt-2 text-xs text-gray-500 bg-gray-50 p-2 rounded">
+                            <strong>IA:</strong> ${message.aiClassification}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // Enhanced detail panel
+        function renderDetailPanel() {
+            const detailPanel = document.getElementById('detail-panel');
+            
+            if (!selectedMessage) {
+                detailPanel.innerHTML = `
+                    <div class="text-center text-gray-500">
+                        <i data-lucide="message-circle" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
+                        <p>Sélectionnez un message pour voir les détails</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            detailPanel.innerHTML = `
+                <div class="text-left">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-medium text-gray-900 flex items-center">
+                            <i data-lucide="message-circle" class="w-5 h-5 mr-2"></i>
+                            Détails du message
+                        </h3>
+                        <button onclick="closeDetail()" class="text-gray-400 hover:text-gray-600">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    ${selectedMessage.conversationHistory.length > 0 ? `
+                        <div class="conversation-thread p-3 rounded-lg mb-4">
+                            <h4 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                <i data-lucide="message-square" class="w-4 h-4 mr-1"></i>
+                                Historique des échanges (${selectedMessage.conversationHistory.length})
+                            </h4>
+                            <div class="space-y-2 max-h-24 overflow-y-auto custom-scrollbar">
+                                ${selectedMessage.conversationHistory.map(h => `
+                                    <div class="text-xs p-2 rounded ${h.type === 'incoming' ? 'bg-blue-50' : 'bg-green-50'}">
+                                        <div class="font-medium">${h.date} - ${h.type === 'incoming' ? 'Client' : 'Hormur'}</div>
+                                        <div class="text-gray-600">${h.content}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${selectedMessage.aiClassification ? `
+                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 mb-4">
+                            <h4 class="text-sm font-medium text-purple-800 mb-1 flex items-center">
+                                <i data-lucide="brain" class="w-4 h-4 mr-1"></i>
+                                Classification IA
+                            </h4>
+                            <p class="text-sm text-purple-700">${selectedMessage.aiClassification}</p>
+                            ${selectedMessage.suggestedActions ? `
+                                <div class="mt-2">
+                                    <p class="text-xs text-purple-600 font-medium">Actions suggérées :</p>
+                                    <ul class="text-xs text-purple-600 ml-3">
+                                        ${selectedMessage.suggestedActions.map(action => `<li>• ${action}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">De :</label>
+                            <p class="text-sm text-gray-600">${selectedMessage.from}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Sujet :</label>
+                            <p class="text-sm text-gray-600">${selectedMessage.subject}</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Catégorie :</label>
+                            <span class="inline-block px-2 py-1 text-xs rounded-full ${getCategoryColor(selectedMessage.category)} ml-2">
+                                ${selectedMessage.category}
+                            </span>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Priorité :</label>
+                            <span class="inline-block px-2 py-1 text-xs rounded-full ml-2 ${
+                                selectedMessage.priority === 'high' ? 'bg-red-100 text-red-600' :
+                                selectedMessage.priority === 'medium' ? 'bg-orange-100 text-orange-600' :
+                                'bg-green-100 text-green-600'
+                            }">
+                                ${selectedMessage.priority === 'high' ? 'Haute' : 
+                                  selectedMessage.priority === 'medium' ? 'Moyenne' : 'Basse'}
+                            </span>
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Message :</label>
+                            <p class="text-sm text-gray-600 bg-gray-50 p-3 rounded mt-1">${selectedMessage.content}</p>
+                        </div>
+                        
+                        ${selectedMessage.spamScore > 20 ? `
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                                <div class="flex items-center">
+                                    <i data-lucide="shield" class="w-4 h-4 text-red-500 mr-2"></i>
+                                    <span class="text-sm font-medium text-red-800">Score de spam: ${selectedMessage.spamScore}%</span>
+                                </div>
+                                ${selectedMessage.spamIndicators ? `
+                                    <div class="mt-2">
+                                        <p class="text-xs text-red-600 font-medium">Indicateurs détectés :</p>
+                                        <ul class="text-xs text-red-600 ml-3">
+                                            ${selectedMessage.spamIndicators.map(indicator => `<li>• ${indicator}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+
+                        ${selectedMessage.confidence !== undefined && selectedMessage.status !== 'spam' ? `
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <label class="text-sm font-medium text-gray-700 block mb-2">
+                                    Confiance IA: ${selectedMessage.confidence}%
+                                </label>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="confidence-bar h-2 rounded-full" style="width: ${selectedMessage.confidence}%"></div>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        ${selectedMessage.status !== 'spam' ? `
+                            <div>
+                                <label class="text-sm font-medium text-gray-700">Réponse IA :</label>
+                                <div class="mt-2">
+                                    <textarea
+                                        id="edit-response"
+                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm custom-scrollbar"
+                                        rows="12"
+                                        placeholder="Réponse générée par l'IA..."
+                                    >${selectedMessage.aiResponse || ''}</textarea>
+                                </div>
+                            </div>
+                            <div class="flex flex-col space-y-2 pt-4">
+                                <div class="flex space-x-2">
+                                    <button
+                                        onclick="sendResponse()"
+                                        class="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center space-x-2"
+                                    >
+                                        <i data-lucide="send" class="w-4 h-4"></i>
+                                        <span>Envoyer</span>
+                                    </button>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button
+                                        onclick="personalizeResponse()"
+                                        class="flex-1 px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors flex items-center justify-center space-x-2"
+                                        title="Personnaliser avec ma signature"
+                                    >
+                                        <i data-lucide="user" class="w-4 h-4"></i>
+                                        <span class="hidden sm:inline">Personnaliser</span>
+                                    </button>
+                                    <button
+                                        onclick="resetResponse()"
+                                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                                        title="Réinitialiser"
+                                    >
+                                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                                    </button>
+                                    <button
+                                        onclick="showFeedbackForm()"
+                                        class="px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition-colors"
+                                        title="Donner un feedback à l'IA"
+                                    >
+                                        <i data-lucide="message-square-plus" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                                <i data-lucide="shield" class="w-8 h-8 text-red-500 mx-auto mb-2"></i>
+                                <p class="text-red-800 font-medium">Message marqué comme spam</p>
+                                <button
+                                    onclick="unmarkSpam(${selectedMessage.id})"
+                                    class="mt-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                                >
+                                    Marquer comme légitime
+                                </button>
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+
+            lucide.createIcons();
+        }
+
+        // Message actions with AI learning
+        function approveMessage(messageId) {
+            const message = messages.find(m => m.id === messageId);
+            if (message && currentUser) {
+                const signatureManager = new SignatureManager();
+                const originalResponse = message.aiResponse;
+                const personalizedResponse = signatureManager.personalizeResponse(
+                    message.aiResponse, 
+                    currentUser, 
+                    message.category,
+                    message.content
+                );
+                
+                message.aiResponse = personalizedResponse;
+                message.status = 'sent';
+                
+                // Record AI learning feedback
+                aiLearning.recordFeedback(messageId, originalResponse, personalizedResponse, 'approved');
+                
+                updateStats();
+                renderMessages();
+                showToast('Message approuvé et envoyé avec votre signature !');
+                
+                if (selectedMessage?.id === messageId) {
+                    selectedMessage = message;
+                    renderDetailPanel();
+                }
+            }
+        }
+
+        function rejectMessage(messageId) {
+            const message = messages.find(m => m.id === messageId);
+            if (message) {
+                const originalResponse = message.aiResponse;
+                message.status = 'pending';
+                
+                // Record AI learning feedback
+                aiLearning.recordFeedback(messageId, originalResponse, null, 'rejected');
+                
+                updateStats();
+                renderMessages();
+                showToast('Message rejeté, en attente de nouveau traitement', 'error');
+                
+                if (selectedMessage?.id === messageId) {
+                    selectedMessage = message;
+                    renderDetailPanel();
+                }
+            }
+        }
+
+        function sendResponse() {
+            if (!selectedMessage) return;
+            
+            const originalResponse = selectedMessage.aiResponse;
+            const editedResponse = document.getElementById('edit-response').value;
+            const wasModified = originalResponse !== editedResponse;
+            
+            selectedMessage.aiResponse = editedResponse;
+            selectedMessage.status = 'sent';
+            
+            // Record AI learning feedback
+            aiLearning.recordFeedback(
+                selectedMessage.id, 
+                originalResponse, 
+                editedResponse, 
+                wasModified ? 'modified' : 'approved'
+            );
+            
+            updateStats();
+            renderMessages();
+            showToast('Réponse envoyée avec succès !');
+            closeDetail();
+        }
+
+        function personalizeResponse() {
+            if (!selectedMessage || !currentUser) return;
+            
+            const signatureManager = new SignatureManager();
+            const personalizedResponse = signatureManager.personalizeResponse(
+                selectedMessage.aiResponse, 
+                currentUser, 
+                selectedMessage.category,
+                selectedMessage.content
+            );
+            
+            document.getElementById('edit-response').value = personalizedResponse;
+            showToast('Réponse personnalisée avec votre signature !');
+        }
+
+        function resetResponse() {
+            if (!selectedMessage) return;
+            const originalResponse = selectedMessage.aiResponse.split('\n\n')[0];
+            document.getElementById('edit-response').value = originalResponse;
+        }
+
+        function unmarkSpam(messageId) {
+            const message = messages.find(m => m.id === messageId);
+            if (message) {
+                message.status = 'pending';
+                message.spamScore = Math.max(message.spamScore - 30, 0);
+                updateStats();
+                renderMessages();
+                showToast('Message marqué comme légitime');
+                
+                if (selectedMessage?.id === messageId) {
+                    selectedMessage = message;
+                    renderDetailPanel();
+                }
+            }
+        }
+
+        function closeDetail() {
+            selectedMessage = null;
+            renderDetailPanel();
+            renderMessages();
+        }
+
+        function selectMessage(messageId) {
+            selectedMessage = messages.find(m => m.id === messageId);
+            renderDetailPanel();
+            renderMessages();
+        }
+
+        // AI Training interface
+        function showAITraining() {
+            if (!currentUser) return;
+            
+            const recentFeedback = aiLearning.getRecentFeedback();
+            const stats = aiLearning.learningStats;
+            
+            document.getElementById('ai-training-content').innerHTML = `
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <div class="flex items-center">
+                                <i data-lucide="check" class="w-6 h-6 text-green-500 mr-2"></i>
+                                <div>
+                                    <p class="text-sm text-green-600">Approuvées</p>
+                                    <p class="text-2xl font-bold text-green-700">${stats.approved || 0}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-orange-50 p-4 rounded-lg">
+                            <div class="flex items-center">
+                                <i data-lucide="edit" class="w-6 h-6 text-orange-500 mr-2"></i>
+                                <div>
+                                    <p class="text-sm text-orange-600">Modifiées</p>
+                                    <p class="text-2xl font-bold text-orange-700">${stats.modified || 0}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-lg">
+                            <div class="flex items-center">
+                                <i data-lucide="x" class="w-6 h-6 text-red-500 mr-2"></i>
+                                <div>
+                                    <p class="text-sm text-red-600">Rejetées</p>
+                                    <p class="text-2xl font-bold text-red-700">${stats.rejected || 0}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Taux de précision IA</h3>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm text-gray-600">Précision globale</span>
+                                <span class="text-lg font-bold text-purple-600">${aiLearning.getAccuracyRate()}%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-3">
+                                <div class="confidence-bar h-3 rounded-full" style="width: ${aiLearning.getAccuracyRate()}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Historique des feedbacks récents</h3>
+                        <div class="space-y-3 max-h-64 overflow-y-auto custom-scrollbar">
+                            ${recentFeedback.length > 0 ? recentFeedback.map(feedback => `
+                                <div class="response-diff p-3 rounded-lg border">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm font-medium">Message #${feedback.messageId}</span>
+                                        <span class="text-xs text-gray-500">${new Date(feedback.timestamp).toLocaleDateString()}</span>
+                                    </div>
+                                    <div class="text-sm">
+                                        <span class="inline-block px-2 py-1 rounded text-xs ${
+                                            feedback.userAction === 'approved' ? 'bg-green-100 text-green-700' :
+                                            feedback.userAction === 'modified' ? 'bg-orange-100 text-orange-700' :
+                                            'bg-red-100 text-red-700'
+                                        }">
+                                            ${feedback.userAction === 'approved' ? 'Approuvé' :
+                                              feedback.userAction === 'modified' ? 'Modifié' : 'Rejeté'}
+                                        </span>
+                                        ${feedback.userComment ? `
+                                            <p class="mt-2 text-gray-600 italic">"${feedback.userComment}"</p>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `).join('') : `
+                                <p class="text-gray-500 text-center py-8">Aucun feedback enregistré pour le moment</p>
+                            `}
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-medium text-blue-800 mb-2 flex items-center">
+                            <i data-lucide="lightbulb" class="w-4 h-4 mr-2"></i>
+                            Conseils pour améliorer l'IA
+                        </h4>
+                        <ul class="text-sm text-blue-700 space-y-1">
+                            <li>• Donnez des feedbacks détaillés sur les réponses modifiées</li>
+                            <li>• Marquez clairement les spams pour améliorer la détection</li>
+                            <li>• Utilisez la personnalisation pour enseigner votre style</li>
+                            <li>• Signalez les erreurs de classification pour affiner l'algorithme</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('ai-training-modal').classList.remove('hidden');
+        }
+
+        function closeAITraining() {
+            document.getElementById('ai-training-modal').classList.add('hidden');
+        }
+
+        function showFeedbackForm() {
+            if (!selectedMessage) return;
+            
+            const feedback = prompt('Donnez votre feedback sur cette réponse IA (optionnel) :');
+            if (feedback !== null) {
+                aiLearning.recordFeedback(
+                    selectedMessage.id,
+                    selectedMessage.aiResponse,
+                    selectedMessage.aiResponse,
+                    'feedback',
+                    feedback
+                );
+                showToast('Feedback enregistré ! Merci d\'aider l\'IA à s\'améliorer.');
+            }
+        }
+
+        // Settings
+        function showSettings() {
+            if (!currentUser) return;
+            
+            document.getElementById('settings-content').innerHTML = `
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Profil utilisateur</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+                                <input type="text" value="${currentUser.name}" class="w-full p-2 border border-gray-300 rounded-lg bg-gray-50" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="text" value="${currentUser.email}" class="w-full p-2 border border-gray-300 rounded-lg bg-gray-50" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Rôle et spécialités</h3>
+                        <p class="text-gray-600 bg-gray-50 p-3 rounded-lg mb-3">${currentUser.role}</p>
+                        <div class="flex flex-wrap gap-2">
+                            ${currentUser.specialties.map(specialty => `
+                                <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm">${specialty}</span>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Signature personnelle</h3>
+                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <pre class="whitespace-pre-wrap text-sm text-gray-700">${currentUser.signature}</pre>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Style de réponse IA</h3>
+                        <p class="text-sm text-gray-600 capitalize bg-gray-50 p-3 rounded mb-2">${currentUser.style}</p>
+                        <div class="bg-blue-50 p-3 rounded-lg">
+                            <p class="text-sm text-blue-700">${currentUser.aiPromptPersonality}</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Statistiques de performance</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-green-50 p-3 rounded-lg">
+                                <p class="text-sm text-green-600">Messages traités aujourd'hui</p>
+                                <p class="text-xl font-bold text-green-700">${messages.filter(m => m.status === 'auto-sent' || m.status === 'sent').length}</p>
+                            </div>
+                            <div class="bg-purple-50 p-3 rounded-lg">
+                                <p class="text-sm text-purple-600">Efficacité IA</p>
+                                <p class="text-xl font-bold text-purple-700">${aiLearning.getAccuracyRate()}%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('settings-modal').classList.remove('hidden');
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        // Enhanced utilities
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `px-4 py-3 rounded-lg shadow-lg text-white ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} fade-in flex items-center space-x-2`;
+            toast.innerHTML = `
+                <i data-lucide="${type === 'success' ? 'check' : 'alert-circle'}" class="w-4 h-4"></i>
+                <span>${message}</span>
+            `;
+            
+            document.getElementById('toast-container').appendChild(toast);
+            lucide.createIcons();
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 4000);
+        }
+
+        // Event listeners
+        document.getElementById('login-form').addEventListener('submit', handleLogin);
+        
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            renderMessages();
+        });
+
+        document.getElementById('filter-select').addEventListener('change', (e) => {
+            currentFilter = e.target.value;
+            renderMessages();
+        });
+
+        document.getElementById('priority-filter').addEventListener('change', (e) => {
+            priorityFilter = e.target.value;
+            renderMessages();
+        });
+
+        document.getElementById('category-filter').addEventListener('change', (e) => {
+            categoryFilter = e.target.value;
+            renderMessages();
+        });
+
+        // Enhanced message simulation
+        function simulateNewMessage() {
+            if (!currentUser) return;
+            
+            const sampleMessages = [
+                {
+                    from: 'nouveaucontact@gmail.com',
+                    subject: 'Demande d\'information événement',
+                    content: 'Bonjour, j\'aimerais organiser un petit concert dans mon jardin. Comment faire ?',
+                    category: 'hote',
+                    priority: 'medium'
+                },
+                {
+                    from: 'artiste.emergent@outlook.fr',
+                    subject: 'Question sur les commissions',
+                    content: 'Salut ! Je voulais savoir quel pourcentage vous prenez sur les ventes de billets ?',
+                    category: 'artiste',
+                    priority: 'low'
+                },
+                {
+                    from: 'spectateur.curieux@yahoo.fr',
+                    subject: 'Aucun événement dans ma région',
+                    content: 'Bonjour, je ne vois aucun événement proche de chez moi (Toulouse). Est-ce normal ?',
+                    category: 'spectateur',
+                    priority: 'medium'
+                }
+            ];
+
+            if (Math.random() > 0.7) {
+                const template = sampleMessages[Math.floor(Math.random() * sampleMessages.length)];
+                const newMessage = {
+                    id: Date.now(),
+                    ...template,
+                    receivedAt: new Date().toISOString().slice(0, 16).replace('T', ' '),
+                    status: Math.random() > 0.3 ? 'pending' : 'auto-sent',
+                    aiResponse: 'Bonjour ! Merci pour votre message. Notre équipe va traiter votre demande et vous répondre rapidement.',
+                    confidence: Math.floor(Math.random() * 20) + 80,
+                    spamScore: Math.floor(Math.random() * 15) + 5,
+                    conversationHistory: [],
+                    aiClassification: 'Nouvelle demande à traiter'
+                };
+
+                messages.unshift(newMessage);
+                updateStats();
+                renderMessages();
+                showToast('Nouveau message reçu !');
+            }
+        }
+
+        // Initialization
+        function init() {
+            if (!currentUser) return;
+            
+            updateStats();
+            renderMessages();
+            renderDetailPanel();
+            lucide.createIcons();
+            
+            // Simulate new messages periodically
+            setInterval(simulateNewMessage, 60000); // Every minute
+        }
+
+        // Start application
+        document.addEventListener('DOMContentLoaded', () => {
+            initAuth();
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>
