@@ -1,0 +1,33 @@
+{
+  "name": "support-client-hormur",
+  "version": "1.0.0",
+  "description": "Système de classification automatique des messages clients avec intelligence artificielle",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run build:functions",
+    "build:functions": "echo 'Building Netlify functions...' && mkdir -p build && cp -r netlify build/ && cp -r public build/",
+    "dev": "netlify dev",
+    "start": "serve build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ai",
+    "support",
+    "classification",
+    "netlify",
+    "functions"
+  ],
+  "author": "Votre nom",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.0.0",
+    "serve": "^14.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+
