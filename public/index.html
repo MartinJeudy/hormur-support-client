@@ -14,6 +14,13 @@
             overflow: hidden;
         }
         
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
         .fade-in {
             animation: fadeIn 0.5s ease-in-out;
         }
@@ -23,139 +30,161 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
+        .slide-in-right {
+            animation: slideInRight 0.3s ease-out;
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .pulse-urgent {
+            animation: pulseUrgent 2s infinite;
+        }
+        
+        @keyframes pulseUrgent {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+        }
+        
+        .auto-send-indicator {
+            background: linear-gradient(45deg, #10b981, #059669);
+            animation: pulse 2s infinite;
+        }
+        
+        .urgent-indicator {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            animation: bounce 1s infinite;
+        }
+        
+        .hormur-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .tab-active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .tab-inactive {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+        
+        .message-card {
+            transition: all 0.2s ease;
+            transform: translateZ(0);
+        }
+        
+        .message-card:active {
+            transform: scale(0.98);
+        }
+        
+        .bottom-nav {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .modal-overlay {
+            backdrop-filter: blur(6px);
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .priority-high {
+            border-left: 4px solid #ef4444;
+            background: linear-gradient(90deg, #fef2f2 0%, #ffffff 30%);
+        }
+        
+        .priority-medium {
+            border-left: 4px solid #f59e0b;
+            background: linear-gradient(90deg, #fef3c7 0%, #ffffff 30%);
+        }
+        
+        .priority-low {
+            border-left: 4px solid #10b981;
+        }
+        
+        .auto-send-badge {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        .archived-badge {
+            background: linear-gradient(45deg, #6b7280, #4b5563);
+            color: white;
+        }
+        
         .custom-scrollbar {
             scrollbar-width: thin;
             scrollbar-color: #d1d5db #f3f4f6;
         }
         
         .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
         }
         
         .custom-scrollbar::-webkit-scrollbar-track {
             background: #f3f4f6;
-            border-radius: 3px;
         }
         
         .custom-scrollbar::-webkit-scrollbar-thumb {
             background: #d1d5db;
-            border-radius: 3px;
+            border-radius: 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-only { display: block; }
+            .desktop-only { display: none; }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-only { display: none; }
+            .desktop-only { display: block; }
         }
 
-        .spam-message {
-            background: repeating-linear-gradient(
-                45deg,
-                #fef2f2,
-                #fef2f2 10px,
-                #fee2e2 10px,
-                #fee2e2 20px
-            );
-            border-left-color: #dc2626 !important;
+        .archive-transition {
+            transition: all 0.3s ease;
         }
 
-        .high-priority {
-            border-left-color: #dc2626 !important;
-            background: linear-gradient(90deg, #fef2f2 0%, #ffffff 50%);
-        }
-
-        .medium-priority {
-            border-left-color: #f59e0b !important;
-            background: linear-gradient(90deg, #fef3c7 0%, #ffffff 50%);
-        }
-
-        .low-priority {
-            border-left-color: #10b981 !important;
-        }
-
-        .conversation-thread {
-            border-left: 3px solid #e5e7eb;
-            background: #f9fafb;
-        }
-
-        .login-overlay {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(6px);
-        }
-
-        .user-avatar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .login-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .shake {
-            animation: shake 0.5s ease-in-out;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        .confidence-bar {
-            background: linear-gradient(90deg, #dc2626 0%, #f59e0b 50%, #10b981 100%);
-        }
-
-        .ai-learning-indicator {
-            background: linear-gradient(45deg, #8b5cf6, #06b6d4);
-            animation: pulse 2s infinite;
-        }
-
-        .priority-indicator {
-            animation: bounce 1s infinite;
-        }
-
-        .response-diff {
-            background: linear-gradient(90deg, #fef3c7 0%, #d1fae5 100%);
-        }
-
-        .hormur-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .hormur-accent {
-            color: #667eea;
+        .archive-transition.archived {
+            opacity: 0.6;
+            transform: scale(0.95);
         }
     </style>
 </head>
 <body class="min-h-screen bg-gray-50">
     <!-- Login Overlay -->
-    <div id="login-overlay" class="fixed inset-0 login-overlay z-50 flex items-center justify-center">
-        <div class="login-card p-8 rounded-2xl shadow-2xl max-w-md w-full mx-4 text-white">
-            <div class="text-center mb-8">
-                <div class="w-20 h-20 mx-auto mb-4 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                    <i data-lucide="bot" class="w-10 h-10 text-white"></i>
+    <div id="login-overlay" class="fixed inset-0 modal-overlay z-50 flex items-center justify-center p-4">
+        <div class="hormur-gradient p-6 sm:p-8 rounded-2xl shadow-2xl max-w-md w-full text-white">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 mx-auto mb-4 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                    <i data-lucide="bot" class="w-8 h-8 text-white"></i>
                 </div>
-                <h2 class="text-3xl font-bold">Hormur IA Assistant</h2>
-                <p class="text-indigo-100 mt-2">Support Client Automatisé</p>
+                <h2 class="text-2xl font-bold">Hormur IA Assistant</h2>
+                <p class="text-indigo-100 mt-2 text-sm">Support Client Automatisé</p>
             </div>
             
-            <form id="login-form" class="space-y-6">
+            <form id="login-form" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-indigo-100 mb-2">
-                        Email professionnel
-                    </label>
+                    <label class="block text-sm font-medium text-indigo-100 mb-2">Email professionnel</label>
                     <input 
                         type="email" 
                         id="login-email"
                         required
-                        class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg focus:ring-2 focus:ring-white focus:border-transparent text-white placeholder-indigo-200"
+                        class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-indigo-200"
                         placeholder="votre.email@hormur.com"
                     />
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-indigo-100 mb-2">
-                        Mot de passe
-                    </label>
+                    <label class="block text-sm font-medium text-indigo-100 mb-2">Mot de passe</label>
                     <input 
                         type="password" 
                         id="login-password"
                         required
-                        class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg focus:ring-2 focus:ring-white focus:border-transparent text-white placeholder-indigo-200"
+                        class="w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-indigo-200"
                         placeholder="••••••••"
                     />
                 </div>
@@ -172,8 +201,8 @@
                 </button>
             </form>
             
-            <div class="mt-8 text-center text-sm text-indigo-200">
-                <p class="mb-2">Équipe Hormur autorisée :</p>
+            <div class="mt-6 text-center text-xs text-indigo-200">
+                <p class="mb-2">Équipe Hormur :</p>
                 <div class="space-y-1">
                     <p>🎨 Eléonore - Relations Artistes</p>
                     <p>🏡 Martin - Partenariats Lieux</p>
@@ -184,296 +213,411 @@
 
     <!-- Main Application -->
     <div id="main-app" class="hidden">
-        <!-- Header -->
+        <!-- Mobile Header -->
         <header class="bg-white shadow-sm border-b sticky top-0 z-40">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16">
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center space-x-2">
-                            <i data-lucide="bot" class="w-8 h-8 hormur-accent"></i>
-                            <h1 class="text-xl font-bold text-gray-900">Hormur IA Assistant</h1>
-                        </div>
-                        <div class="hidden sm:block text-sm text-gray-500">
-                            Support Client Automatisé • Brevo + Make.com + OpenAI
-                        </div>
-                        <div id="ai-status" class="flex items-center space-x-2 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs">
-                            <div class="w-2 h-2 bg-green-500 rounded-full ai-learning-indicator"></div>
-                            <span>IA Hormur Active</span>
+            <div class="px-4 py-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="bot" class="w-6 h-6 text-indigo-600"></i>
+                        <div>
+                            <h1 class="text-lg font-bold text-gray-900">Hormur IA</h1>
+                            <div class="flex items-center space-x-2">
+                                <div id="ai-status" class="flex items-center space-x-1">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full auto-send-indicator"></div>
+                                    <span class="text-xs text-gray-600">IA Active</span>
+                                </div>
+                                <span id="total-count" class="text-xs text-gray-500">15 messages</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center space-x-2">
-                            <div id="user-avatar" class="w-8 h-8 user-avatar rounded-full flex items-center justify-center">
-                                <span id="user-initials" class="text-white text-sm font-medium"></span>
-                            </div>
-                            <span id="user-name" class="text-sm font-medium text-gray-700"></span>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="showQuickActions()" class="p-2 text-gray-400 hover:text-gray-600">
+                            <i data-lucide="zap" class="w-5 h-5"></i>
+                        </button>
+                        <div id="user-avatar" class="w-8 h-8 hormur-gradient rounded-full flex items-center justify-center">
+                            <span id="user-initials" class="text-white text-sm font-medium"></span>
                         </div>
-                        <button onclick="showAITraining()" class="text-gray-400 hover:text-gray-600" title="Formation IA">
-                            <i data-lucide="brain" class="w-5 h-5"></i>
-                        </button>
-                        <button onclick="showSettings()" class="text-gray-400 hover:text-gray-600">
-                            <i data-lucide="settings" class="w-5 h-5"></i>
-                        </button>
-                        <button onclick="logout()" class="text-gray-400 hover:text-gray-600" title="Déconnexion">
-                            <i data-lucide="log-out" class="w-5 h-5"></i>
-                        </button>
+                    </div>
+                </div>
+                
+                <!-- Quick Stats Bar -->
+                <div class="mt-3 grid grid-cols-5 gap-2 text-center">
+                    <div class="bg-green-50 p-2 rounded-lg">
+                        <div class="text-sm font-bold text-green-700" id="auto-count">6</div>
+                        <div class="text-xs text-green-600">Auto</div>
+                    </div>
+                    <div class="bg-orange-50 p-2 rounded-lg">
+                        <div class="text-sm font-bold text-orange-700" id="review-count">4</div>
+                        <div class="text-xs text-orange-600">À valider</div>
+                    </div>
+                    <div class="bg-red-50 p-2 rounded-lg">
+                        <div class="text-sm font-bold text-red-700" id="urgent-count">2</div>
+                        <div class="text-xs text-red-600">Urgent</div>
+                    </div>
+                    <div class="bg-gray-50 p-2 rounded-lg">
+                        <div class="text-sm font-bold text-gray-700" id="pending-count">3</div>
+                        <div class="text-xs text-gray-600">En attente</div>
+                    </div>
+                    <div class="bg-blue-50 p-2 rounded-lg">
+                        <div class="text-sm font-bold text-blue-700" id="archived-count">125</div>
+                        <div class="text-xs text-blue-600">Archivées</div>
                     </div>
                 </div>
             </div>
         </header>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <!-- User Info Banner -->
-            <div id="user-banner" class="hormur-gradient text-white p-4 rounded-lg mb-6">
-                <div class="flex items-center space-x-3">
-                    <div id="banner-avatar" class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                        <span id="banner-initials" class="text-white font-bold"></span>
-                    </div>
-                    <div class="flex-1">
-                        <h2 id="banner-name" class="text-lg font-semibold"></h2>
-                        <p id="banner-role" class="text-indigo-100 text-sm"></p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-sm text-indigo-100">Messages traités aujourd'hui</p>
-                        <p id="daily-processed" class="text-2xl font-bold">12</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Enhanced Stats Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mb-6">
-                <div class="bg-white p-4 rounded-lg shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-600">Total messages</p>
-                            <p id="total-messages" class="text-2xl font-bold text-gray-900">15</p>
-                        </div>
-                        <i data-lucide="message-circle" class="w-8 h-8 text-blue-500"></i>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-600">Auto-envoyés</p>
-                            <p id="auto-sent" class="text-2xl font-bold text-green-600">6</p>
-                        </div>
-                        <i data-lucide="zap" class="w-8 h-8 text-green-500"></i>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-600">À valider</p>
-                            <p id="pending-review" class="text-2xl font-bold text-orange-600">4</p>
-                        </div>
-                        <i data-lucide="alert-triangle" class="w-8 h-8 text-orange-500"></i>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-600">Spams bloqués</p>
-                            <p id="spam-blocked" class="text-2xl font-bold text-red-600">3</p>
-                        </div>
-                        <i data-lucide="shield" class="w-8 h-8 text-red-500"></i>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-600">En attente</p>
-                            <p id="pending" class="text-2xl font-bold text-gray-600">2</p>
-                        </div>
-                        <i data-lucide="clock" class="w-8 h-8 text-gray-500"></i>
-                    </div>
-                </div>
-                <div class="bg-white p-4 rounded-lg shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-600">Efficacité IA</p>
-                            <p id="ai-efficiency" class="text-2xl font-bold text-purple-600">94%</p>
-                        </div>
-                        <i data-lucide="brain" class="w-8 h-8 text-purple-500"></i>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Enhanced Filters and Search -->
-            <div class="bg-white p-4 rounded-lg shadow-sm mb-6">
-                <div class="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
-                    <div class="flex-1">
-                        <div class="relative">
-                            <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400"></i>
-                            <input
-                                type="text"
-                                id="search-input"
-                                placeholder="Rechercher dans les messages..."
-                                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                            />
-                        </div>
-                    </div>
-                    <div class="flex flex-wrap gap-2">
-                        <select 
-                            id="filter-select"
-                            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                        >
-                            <option value="all">Tous les messages</option>
-                            <option value="pending">En attente de traitement</option>
-                            <option value="manual-review">À valider manuellement</option>
-                            <option value="auto-sent">Envoyés automatiquement</option>
-                            <option value="sent">Envoyés manuellement</option>
-                            <option value="spam">Spams détectés</option>
-                        </select>
-                        <select 
-                            id="priority-filter"
-                            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                        >
-                            <option value="all">Toutes priorités</option>
-                            <option value="high">Priorité haute</option>
-                            <option value="medium">Priorité moyenne</option>
-                            <option value="low">Priorité basse</option>
-                        </select>
-                        <select 
-                            id="category-filter"
-                            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                        >
-                            <option value="all">Toutes catégories</option>
-                            <option value="artiste">Questions artistes 🎨</option>
-                            <option value="hote">Questions hôtes 🏡</option>
-                            <option value="spectateur">Questions spectateurs 🎭</option>
-                            <option value="paiement">Paiements & SACEM 💳</option>
-                            <option value="technique">Support technique 🔧</option>
-                            <option value="partenariat">Partenariats B2B 🤝</option>
-                            <option value="assurance">Assurance Beloy 🛡️</option>
-                            <option value="juridique">Questions juridiques ⚖️</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Messages List and Detail Panel -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Enhanced Messages List -->
-                <div class="lg:col-span-2 space-y-4" id="messages-list">
-                    <!-- Messages will be loaded here -->
-                </div>
-
-                <!-- Enhanced Message Detail Panel -->
-                <div class="lg:col-span-1">
-                    <div id="detail-panel" class="bg-white p-6 rounded-lg shadow-sm text-center text-gray-500 sticky top-24">
-                        <i data-lucide="message-circle" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
-                        <p>Sélectionnez un message pour voir les détails</p>
-                    </div>
-                </div>
+        <!-- Tab Navigation -->
+        <div class="bg-white border-b sticky top-[140px] z-30">
+            <div class="flex overflow-x-auto custom-scrollbar">
+                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-active px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                    <span>Dashboard</span>
+                    <span id="dashboard-badge" class="bg-white bg-opacity-20 text-xs px-2 py-1 rounded-full">2</span>
+                </button>
+                <button onclick="switchTab('auto-send')" id="tab-auto-send" class="tab-inactive px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
+                    <i data-lucide="zap" class="w-4 h-4"></i>
+                    <span>Auto-Send</span>
+                    <span id="auto-badge" class="bg-green-600 text-white text-xs px-2 py-1 rounded-full">6</span>
+                </button>
+                <button onclick="switchTab('validation')" id="tab-validation" class="tab-inactive px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
+                    <i data-lucide="eye" class="w-4 h-4"></i>
+                    <span>À Valider</span>
+                    <span id="validation-badge" class="bg-orange-600 text-white text-xs px-2 py-1 rounded-full">4</span>
+                </button>
+                <button onclick="switchTab('archives')" id="tab-archives" class="tab-inactive px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
+                    <i data-lucide="archive" class="w-4 h-4"></i>
+                    <span>Archives</span>
+                    <span id="archive-badge" class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">125</span>
+                </button>
+                <button onclick="switchTab('all')" id="tab-all" class="tab-inactive px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
+                    <i data-lucide="list" class="w-4 h-4"></i>
+                    <span>Tous</span>
+                </button>
             </div>
         </div>
-    </div>
 
-    <!-- AI Training Modal -->
-    <div id="ai-training-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-screen overflow-y-auto">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-gray-900 flex items-center">
-                        <i data-lucide="brain" class="w-6 h-6 mr-2 text-purple-600"></i>
-                        Formation et Apprentissage IA Hormur
-                    </h2>
-                    <button onclick="closeAITraining()" class="text-gray-400 hover:text-gray-600">
-                        <i data-lucide="x" class="w-6 h-6"></i>
+        <!-- Content Container -->
+        <div class="pb-20">
+            <!-- Dashboard Tab -->
+            <div id="content-dashboard" class="p-4 space-y-4">
+                <!-- Urgent Actions Card -->
+                <div id="urgent-actions" class="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <h3 class="font-medium text-red-800 mb-3 flex items-center">
+                        <i data-lucide="alert-triangle" class="w-5 h-5 mr-2"></i>
+                        Actions Urgentes
+                        <span class="ml-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full" id="urgent-actions-count">2</span>
+                    </h3>
+                    <div id="urgent-messages" class="space-y-2">
+                        <!-- Urgent messages will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Auto-Send Surveillance -->
+                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <h3 class="font-medium text-green-800 mb-3 flex items-center">
+                        <i data-lucide="bot" class="w-5 h-5 mr-2"></i>
+                        Surveillance Auto-Send (30min)
+                        <span class="ml-2 bg-green-600 text-white text-xs px-2 py-1 rounded-full" id="surveillance-count">3</span>
+                    </h3>
+                    <div id="surveillance-auto-send" class="space-y-2">
+                        <!-- Recent auto-send messages will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Quick Stats for Today -->
+                <div class="bg-white rounded-lg p-4 border">
+                    <h3 class="font-medium text-gray-900 mb-3 flex items-center">
+                        <i data-lucide="trending-up" class="w-5 h-5 mr-2"></i>
+                        Statistiques du jour
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-green-600" id="today-auto">6</div>
+                            <div class="text-sm text-gray-600">Auto-envoyés</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-purple-600" id="ai-accuracy">94%</div>
+                            <div class="text-sm text-gray-600">Précision IA</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="refreshMessages()" class="bg-white p-4 rounded-lg shadow-sm border flex items-center space-x-3 hover:bg-gray-50">
+                        <i data-lucide="refresh-cw" class="w-6 h-6 text-blue-600"></i>
+                        <div class="text-left">
+                            <div class="font-medium text-gray-900">Actualiser</div>
+                            <div class="text-sm text-gray-500">Nouveaux messages</div>
+                        </div>
+                    </button>
+                    <button onclick="showArchiveManager()" class="bg-white p-4 rounded-lg shadow-sm border flex items-center space-x-3 hover:bg-gray-50">
+                        <i data-lucide="archive" class="w-6 h-6 text-indigo-600"></i>
+                        <div class="text-left">
+                            <div class="font-medium text-gray-900">Archivage</div>
+                            <div class="text-sm text-gray-500">Gérer les archives</div>
+                        </div>
                     </button>
                 </div>
-                <div id="ai-training-content">
-                    <!-- AI Training content will be loaded here -->
+            </div>
+
+            <!-- Auto-Send Tab -->
+            <div id="content-auto-send" class="hidden p-4">
+                <div class="mb-4 bg-green-50 border border-green-200 rounded-lg p-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-medium text-green-800">Surveillance Auto-Send Active</h3>
+                            <p class="text-sm text-green-600">Messages envoyés automatiquement par l'IA</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-green-700" id="auto-send-today">6</div>
+                            <div class="text-xs text-green-600">Aujourd'hui</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Auto-Archive Settings -->
+                <div class="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <h4 class="font-medium text-blue-800 mb-2">Archivage automatique</h4>
+                    <div class="flex items-center space-x-3">
+                        <label class="flex items-center space-x-2">
+                            <input type="checkbox" id="auto-archive-enabled" class="rounded" checked>
+                            <span class="text-sm text-blue-700">Activer l'archivage auto après</span>
+                        </label>
+                        <select id="auto-archive-delay" class="text-sm border rounded px-2 py-1">
+                            <option value="24">24h</option>
+                            <option value="48" selected>48h</option>
+                            <option value="72">72h</option>
+                            <option value="168">7 jours</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="auto-send-messages" class="space-y-3">
+                    <!-- Auto-send messages will be loaded here -->
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Settings Modal -->
-    <div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold text-gray-900">Paramètres Hormur</h2>
-                    <button onclick="closeSettings()" class="text-gray-400 hover:text-gray-600">
-                        <i data-lucide="x" class="w-6 h-6"></i>
+            <!-- Validation Tab -->
+            <div id="content-validation" class="hidden p-4">
+                <div class="mb-4 bg-orange-50 border border-orange-200 rounded-lg p-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-medium text-orange-800">Messages à Valider</h3>
+                            <p class="text-sm text-orange-600">Nécessitent une intervention humaine</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-orange-700" id="validation-today">4</div>
+                            <div class="text-xs text-orange-600">En attente</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="validation-messages" class="space-y-3">
+                    <!-- Validation messages will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Archives Tab -->
+            <div id="content-archives" class="hidden p-4">
+                <div class="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-medium text-blue-800">Archives</h3>
+                            <p class="text-sm text-blue-600">Conversations terminées et archivées</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-blue-700" id="total-archived">125</div>
+                            <div class="text-xs text-blue-600">Total archivées</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Archive Filters -->
+                <div class="mb-4 flex space-x-2 overflow-x-auto custom-scrollbar">
+                    <select id="archive-period-filter" class="flex-shrink-0 px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                        <option value="all">Toute période</option>
+                        <option value="today">Aujourd'hui</option>
+                        <option value="week">Cette semaine</option>
+                        <option value="month">Ce mois</option>
+                        <option value="quarter">Ce trimestre</option>
+                    </select>
+                    <select id="archive-category-filter" class="flex-shrink-0 px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                        <option value="all">Toutes catégories</option>
+                        <option value="artiste">Artistes</option>
+                        <option value="hote">Hôtes</option>
+                        <option value="spectateur">Spectateurs</option>
+                        <option value="partenariat">Partenariats</option>
+                    </select>
+                    <button onclick="exportArchives()" class="flex-shrink-0 px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700">
+                        <i data-lucide="download" class="w-4 h-4 inline mr-1"></i>
+                        Exporter
                     </button>
                 </div>
-                <div id="settings-content">
-                    <!-- Settings content will be loaded here -->
+
+                <div id="archived-messages" class="space-y-3">
+                    <!-- Archived messages will be loaded here -->
+                </div>
+            </div>
+
+            <!-- All Messages Tab -->
+            <div id="content-all" class="hidden p-4">
+                <!-- Search Bar -->
+                <div class="mb-4">
+                    <div class="relative">
+                        <i data-lucide="search" class="absolute left-3 top-3 w-4 h-4 text-gray-400"></i>
+                        <input
+                            type="text"
+                            id="search-input"
+                            placeholder="Rechercher..."
+                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                        />
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="mb-4 flex space-x-2 overflow-x-auto custom-scrollbar">
+                    <select id="status-filter" class="flex-shrink-0 px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                        <option value="all">Tous statuts</option>
+                        <option value="auto-sent">Auto-envoyés</option>
+                        <option value="manual-review">À valider</option>
+                        <option value="pending">En attente</option>
+                        <option value="spam">Spam</option>
+                        <option value="archived">Archivés</option>
+                    </select>
+                    <select id="category-filter" class="flex-shrink-0 px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                        <option value="all">Toutes catégories</option>
+                        <option value="artiste">Artistes</option>
+                        <option value="hote">Hôtes</option>
+                        <option value="spectateur">Spectateurs</option>
+                        <option value="partenariat">Partenariats</option>
+                    </select>
+                    <button onclick="bulkArchive()" class="flex-shrink-0 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 flex items-center space-x-1">
+                        <i data-lucide="archive" class="w-4 h-4"></i>
+                        <span>Archiver sélection</span>
+                    </button>
+                </div>
+
+                <div id="all-messages" class="space-y-3">
+                    <!-- All messages will be loaded here -->
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Toast notifications -->
-    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+        <!-- Message Detail Modal -->
+        <div id="message-modal" class="fixed inset-0 modal-overlay z-50 hidden">
+            <div class="min-h-screen px-4 flex items-end sm:items-center justify-center">
+                <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden slide-in-right">
+                    <div class="sticky top-0 bg-white border-b px-4 py-3 flex items-center justify-between">
+                        <h3 class="font-semibold text-gray-900 flex items-center">
+                            <i data-lucide="message-circle" class="w-5 h-5 mr-2"></i>
+                            Détails du message
+                        </h3>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="archiveMessage(selectedMessage?.id)" class="text-blue-600 hover:text-blue-800" title="Archiver">
+                                <i data-lucide="archive" class="w-5 h-5"></i>
+                            </button>
+                            <button onclick="closeMessageModal()" class="text-gray-400 hover:text-gray-600">
+                                <i data-lucide="x" class="w-6 h-6"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="message-detail-content" class="p-4 overflow-y-auto custom-scrollbar" style="max-height: calc(90vh - 60px);">
+                        <!-- Message details will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Archive Manager Modal -->
+        <div id="archive-manager-modal" class="fixed inset-0 modal-overlay z-50 hidden">
+            <div class="min-h-screen px-4 flex items-center justify-center">
+                <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+                    <div class="sticky top-0 bg-white border-b px-4 py-3 flex items-center justify-between">
+                        <h3 class="font-semibold text-gray-900 flex items-center">
+                            <i data-lucide="archive" class="w-5 h-5 mr-2"></i>
+                            Gestionnaire d'Archives
+                        </h3>
+                        <button onclick="closeArchiveManager()" class="text-gray-400 hover:text-gray-600">
+                            <i data-lucide="x" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                    <div id="archive-manager-content" class="p-4 overflow-y-auto custom-scrollbar" style="max-height: calc(90vh - 60px);">
+                        <!-- Archive manager content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions Modal -->
+        <div id="quick-actions-modal" class="fixed inset-0 modal-overlay z-50 hidden">
+            <div class="min-h-screen px-4 flex items-end justify-center">
+                <div class="bg-white rounded-t-2xl shadow-xl w-full max-w-sm mb-0 slide-in-right">
+                    <div class="p-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-semibold text-gray-900">Actions Rapides</h3>
+                            <button onclick="closeQuickActions()" class="text-gray-400">
+                                <i data-lucide="x" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <div class="space-y-3">
+                            <button onclick="refreshMessages(); closeQuickActions();" class="w-full p-3 bg-blue-50 text-blue-700 rounded-lg flex items-center space-x-3">
+                                <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                                <span>Actualiser les messages</span>
+                            </button>
+                            <button onclick="showArchiveManager(); closeQuickActions();" class="w-full p-3 bg-indigo-50 text-indigo-700 rounded-lg flex items-center space-x-3">
+                                <i data-lucide="archive" class="w-5 h-5"></i>
+                                <span>Gestionnaire d'archives</span>
+                            </button>
+                            <button onclick="exportData(); closeQuickActions();" class="w-full p-3 bg-green-50 text-green-700 rounded-lg flex items-center space-x-3">
+                                <i data-lucide="download" class="w-5 h-5"></i>
+                                <span>Exporter les données</span>
+                            </button>
+                            <button onclick="showSettings(); closeQuickActions();" class="w-full p-3 bg-gray-50 text-gray-700 rounded-lg flex items-center space-x-3">
+                                <i data-lucide="settings" class="w-5 h-5"></i>
+                                <span>Paramètres</span>
+                            </button>
+                            <button onclick="logout(); closeQuickActions();" class="w-full p-3 bg-red-50 text-red-700 rounded-lg flex items-center space-x-3">
+                                <i data-lucide="log-out" class="w-5 h-5"></i>
+                                <span>Déconnexion</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Toast -->
+        <div id="toast-container" class="fixed bottom-4 left-4 right-4 z-50 space-y-2"></div>
+    </div>
 
     <script>
-        // Configuration utilisateurs Hormur avec emails corrects
+        // Configuration utilisateurs Hormur
         const AUTHORIZED_USERS = {
             'eleonore@hormur.com': {
                 password: 'Hormur2025!',
                 name: 'Eléonore',
                 role: 'Responsable Relations Artistes',
-                signature: `Cordialement,
-
-Eléonore
-Responsable Relations Artistes
-Hormur - Créons ensemble des moments uniques
-
-📧 eleonore@hormur.com
-🌐 www.hormur.com
-🎭 "L'art se vit partout, créons l'inattendu"`,
-                style: 'warm',
-                specialties: ['artistes', 'événements', 'créativité', 'onboarding-artistes'],
+                signature: `Cordialement,\n\nEléonore\nResponsable Relations Artistes\nHormur - Créons ensemble des moments uniques\n\n📧 eleonore@hormur.com\n🌐 www.hormur.com\n🎭 "L'art se vit partout, créons l'inattendu"`,
+                specialties: ['artistes', 'événements', 'créativité'],
                 color: '#e11d48',
-                aiPromptPersonality: 'Sois chaleureux et créatif, utilise des émojis avec parcimonie, tutoie les artistes et montre de l\'enthousiasme pour leurs projets.'
+                brevoAgentId: '6223aae91d1bcc698a514cd6_67d814247e4a70279409c965'
             },
-            
             'martin.jeudy@hormur.com': {
                 password: 'Hormur2025!',
                 name: 'Martin',
                 role: 'Responsable Partenariats Lieux',
-                signature: `Bien à vous,
-
-Martin
-Responsable Partenariats Lieux
-Hormur - Transformons vos espaces en scènes
-
-📧 martin.jeudy@hormur.com
-🌐 www.hormur.com
-🏡 "Votre lieu a une histoire, donnons-lui une scène"`,
-                style: 'professional',
-                specialties: ['lieux', 'hôtes', 'logistique', 'partenariats', 'onboarding-lieux'],
+                signature: `Bien à vous,\n\nMartin\nResponsable Partenariats Lieux\nHormur - Transformons vos espaces en scènes\n\n📧 martin.jeudy@hormur.com\n🌐 www.hormur.com\n🏡 "Votre lieu a une histoire, donnons-lui une scène"`,
+                specialties: ['lieux', 'hôtes', 'logistique', 'partenariats'],
                 color: '#059669',
-                aiPromptPersonality: 'Sois professionnel et rassurant, valorise les espaces uniques et montre l\'expertise technique pour l\'organisation d\'événements.'
+                brevoAgentId: '6223aae91d1bcc698a514cd6_67a0bf5edbc8f653740f31c8'
             }
         };
 
-        // Messages de démonstration enrichis avec contexte Hormur
+        // Messages de démonstration enrichis avec système d'archivage
         let messages = [
+            // Messages actifs
             {
                 id: 1,
-                from: 'marie.spectateur@gmail.com',
-                subject: 'Question sur l\'événement jazz prévu chez M. Martin',
-                content: 'Bonjour, je voudrais savoir si l\'événement de concert jazz prévu chez M. Martin est toujours d\'actualité ? J\'ai acheté mes places il y a une semaine et je n\'ai pas eu de nouvelles.',
-                receivedAt: '2025-06-07 14:30',
-                status: 'auto-sent',
-                category: 'spectateur',
-                priority: 'medium',
-                aiResponse: 'Bonjour Marie,\n\nMerci pour votre message ! Le concert jazz est bien maintenu comme prévu. Vous pouvez suivre les dernières informations directement sur la page événement.\n\nL\'événement aura lieu le 15 juin à 20h chez notre hôte Martin. Vous recevrez un email de rappel avec l\'adresse exacte 24h avant.\n\nN\'hésitez pas si vous avez d\'autres questions !\n\nCordialement,\nL\'équipe Hormur',
-                confidence: 95,
-                spamScore: 5,
-                conversationHistory: [
-                    { date: '2025-05-20', content: 'Première demande d\'info sur les événements jazz', type: 'incoming' },
-                    { date: '2025-05-20', content: 'Envoi de la liste des événements disponibles', type: 'outgoing' }
-                ],
-                aiClassification: 'Demande d\'information simple sur événement existant',
-                suggestedActions: ['Confirmer l\'événement', 'Fournir lien de suivi']
-            },
-            {
-                id: 2,
                 from: 'artiste.piano@hotmail.com',
                 subject: 'Problème de paiement - événement du mois dernier',
                 content: 'Bonjour, je n\'ai pas reçu mon paiement pour l\'événement du mois dernier (Concert piano chez Sophie, 15 mai). Mon événement s\'est bien passé, il y avait 12 spectateurs. Pouvez-vous vérifier mon compte Stripe Connect ?',
@@ -481,318 +625,371 @@ Hormur - Transformons vos espaces en scènes
                 status: 'manual-review',
                 category: 'paiement',
                 priority: 'high',
-                aiResponse: 'Bonjour,\n\nJe comprends votre préoccupation concernant le paiement de votre événement du 15 mai.\n\nSelon nos informations, les virements Stripe Connect sont automatiquement déclenchés dans les 7 à 14 jours ouvrés après l\'événement. Je vais vérifier immédiatement votre dossier dans notre système.\n\nPourriez-vous vérifier que vos coordonnées bancaires sont bien à jour dans votre espace artiste ?\n\nJe reviens vers vous dans les plus brefs délais avec une réponse précise.\n\nÉléonore\nResponsable Relations Artistes\nHormur',
+                aiResponse: 'Bonjour,\n\nJe comprends votre préoccupation concernant le paiement de votre événement du 15 mai.\n\nSelon nos informations, les virements Stripe Connect sont automatiquement déclenchés dans les 7 à 14 jours ouvrés après l\'événement. Je vais vérifier immédiatement votre dossier dans notre système.\n\nÉléonore\nResponsable Relations Artistes\nHormur',
                 confidence: 88,
-                spamScore: 8,
-                conversationHistory: [],
-                aiClassification: 'Question paiement - nécessite vérification manuelle Stripe',
-                suggestedActions: ['Vérifier Stripe Connect', 'Contacter finance', 'Demander RIB'],
-                needsHumanReview: true,
+                assignedTo: 'eleonore',
                 escalationReason: 'Problème financier nécessitant vérification comptable',
-                assignedTo: 'eleonore'
+                timeReceived: new Date().getTime() - 3600000, // 1h ago
+                archived: false
+            },
+            {
+                id: 2,
+                from: 'contact@ehpad-soleil.fr',
+                subject: 'Partenariat EHPAD - événements culturels résidents',
+                content: 'Bonjour, nous sommes l\'EHPAD Les Jardins du Soleil à Lyon (120 résidents). Nous aimerions proposer des événements culturels réguliers à nos résidents. Comment établir un partenariat avec Hormur ? Tarification spéciale ?',
+                receivedAt: '2025-06-07 12:30',
+                status: 'manual-review',
+                category: 'partenariat',
+                priority: 'high',
+                aiResponse: 'Bonjour,\n\nNous serions ravis de développer un partenariat avec votre EHPAD !\n\nMartin\nResponsable Partenariats Lieux\nHormur',
+                confidence: 92,
+                assignedTo: 'martin',
+                escalationReason: 'Opportunité commerciale B2B importante',
+                timeReceived: new Date().getTime() - 2400000, // 40min ago
+                archived: false
             },
             {
                 id: 3,
-                from: 'crypto.winner@tempmail.com',
-                subject: 'URGENT: Gagnez des Bitcoin maintenant!',
-                content: 'Félicitations! Vous avez été sélectionné pour gagner 5 Bitcoin GRATUITEMENT! Cliquez ici immédiatement: http://suspicious-link.com',
-                receivedAt: '2025-06-07 11:30',
-                status: 'spam',
-                category: 'spam',
-                priority: 'low',
-                aiResponse: null,
-                confidence: 0,
-                spamScore: 95,
-                conversationHistory: [],
-                aiClassification: 'SPAM évident - cryptomonnaie',
-                spamIndicators: ['Mots-clés crypto', 'Urgence artificielle', 'Domaine temporaire', 'Lien suspect']
+                from: 'marie.spectateur@gmail.com',
+                subject: 'Question sur l\'événement jazz prévu chez M. Martin',
+                content: 'Bonjour, je voudrais savoir si l\'événement de concert jazz prévu chez M. Martin est toujours d\'actualité ? J\'ai acheté mes places il y a une semaine.',
+                receivedAt: '2025-06-07 14:30',
+                status: 'auto-sent',
+                category: 'spectateur',
+                priority: 'medium',
+                aiResponse: 'Bonjour Marie,\n\nMerci pour votre message ! Le concert jazz est bien maintenu comme prévu.\n\nCordialement,\nL\'équipe Hormur',
+                confidence: 95,
+                autoSentAt: new Date().getTime() - 600000, // 10min ago
+                timeReceived: new Date().getTime() - 900000, // 15min ago
+                archived: false
             },
             {
                 id: 4,
                 from: 'sophie.comedienne@gmail.com',
-                subject: 'Création projet théâtre intimiste - besoin de conseils',
-                content: 'Bonjour, je suis comédienne et je cherche un lieu pour organiser une représentation théâtrale intimiste pour 20 personnes maximum. J\'aimerais quelque chose d\'atypique, peut-être un salon ou un jardin ? Comment bien remplir mon profil ?',
+                subject: 'Création projet théâtre intimiste',
+                content: 'Bonjour, je cherche un lieu pour une représentation théâtrale intimiste pour 20 personnes maximum. Comment bien remplir mon profil ?',
                 receivedAt: '2025-06-07 09:20',
                 status: 'auto-sent',
                 category: 'artiste',
                 priority: 'medium',
-                aiResponse: 'Bonjour Sophie !\n\nTon projet de théâtre intimiste sonne passionnant ! Nous avons effectivement plusieurs lieux parfaits pour ce type d\'expérience.\n\nPour créer ton projet :\n1. Va sur https://hormur.com/projet/new\n2. Décris ton univers artistique et tes besoins techniques\n3. Précise ta jauge idéale (20 personnes c\'est parfait !)\n4. Ajoute tes préférences géographiques\n\nNos hôtes proposent des salons, jardins, cours intérieures et même des bibliothèques privées ! Une fois ton projet créé, tu recevras automatiquement des propositions de lieux compatibles.\n\nConsulte aussi notre FAQ artistes : https://vivacious-phosphorus-9a9.notion.site/FAQ-pour-les-artistes-sur-Hormur-18f3052419ea80ce8d1ac4618dc25699\n\nÀ bientôt sur scène !\n\nÉléonore\nResponsable Relations Artistes\nHormur',
+                aiResponse: 'Bonjour Sophie !\n\nTon projet sonne passionnant ! Pour créer ton projet :\n1. Va sur https://hormur.com/projet/new\n\nÉléonore\nResponsable Relations Artistes\nHormur',
                 confidence: 94,
-                spamScore: 3,
-                conversationHistory: [],
-                aiClassification: 'Demande création projet artiste - onboarding standard',
-                suggestedActions: ['Rediriger vers création projet', 'Proposer lieux adaptés'],
-                urls: ['https://hormur.com/projet/new', 'https://vivacious-phosphorus-9a9.notion.site/FAQ-pour-les-artistes-sur-Hormur-18f3052419ea80ce8d1ac4618dc25699'],
-                assignedTo: 'eleonore'
+                autoSentAt: new Date().getTime() - 300000, // 5min ago
+                timeReceived: new Date().getTime() - 600000, // 10min ago
+                archived: false
             },
             {
                 id: 5,
-                from: 'lucas.photographe@outlook.fr',
-                subject: 'Exposition photo dans un jardin - questions assurance',
-                content: 'Bonsoir, je suis photographe professionnel et j\'aimerais organiser une exposition de mes œuvres dans un jardin ou une cour. Est-ce possible ? Quelles sont les contraintes d\'assurance pour ce type d\'événement ? Mes tirages ont de la valeur.',
-                receivedAt: '2025-06-06 18:45',
-                status: 'auto-sent',
-                category: 'artiste',
-                priority: 'medium',
-                aiResponse: 'Bonsoir Lucas !\n\nOrganiser une exposition photo dans un jardin est tout à fait possible et même très apprécié sur Hormur !\n\nConcernant l\'assurance, excellente nouvelle : tous les événements Hormur sont automatiquement couverts par notre partenariat Beloy x Hiscox :\n- Jusqu\'à 1 000 000 € pour les dommages corporels, matériels et immatériels\n- Jusqu\'à 5 000 € pour tes équipements/œuvres endommagés (franchise 500€)\n- Aucune démarche de ta part, tout est automatique\n\nPlus d\'infos détaillées : https://webviews.beloy.com/hormur/hormur.html\n\nPour commencer :\n1. Crée ton projet : https://hormur.com/projet/new\n2. Précise tes besoins (accrochage, protection météo, éclairage)\n3. Nos hôtes avec jardins seront ravis de t\'accueillir !\n\nÀ bientôt !\n\nÉléonore\nResponsable Relations Artistes\nHormur',
-                confidence: 96,
-                spamScore: 4,
-                conversationHistory: [],
-                aiClassification: 'Question assurance exposition - informations standard',
-                urls: ['https://webviews.beloy.com/hormur/hormur.html', 'https://hormur.com/projet/new'],
-                assignedTo: 'eleonore'
-            },
-            {
-                id: 6,
-                from: 'contact@maisonderetraite-soleil.fr',
-                subject: 'Partenariat EHPAD - événements culturels résidents',
-                content: 'Bonjour, nous sommes l\'EHPAD Les Jardins du Soleil à Lyon (120 résidents). Nous aimerions proposer des événements culturels réguliers à nos résidents (concerts, lectures, ateliers). Comment établir un partenariat avec Hormur ? Tarification spéciale ?',
-                receivedAt: '2025-06-06 16:30',
-                status: 'manual-review',
-                category: 'partenariat',
-                priority: 'high',
-                aiResponse: 'Bonjour,\n\nNous serions ravis de développer un partenariat avec votre EHPAD ! Les événements culturels apportent beaucoup de joie et de bien-être aux résidents.\n\nHormur propose effectivement :\n- Des concerts adaptés au public senior\n- Des ateliers créatifs et participatifs\n- Des lectures et spectacles intimistes\n- Une tarification préférentielle pour les établissements\n\nPour établir un partenariat :\n1. Inscrivez votre EHPAD : https://hormur.com/place/new\n2. Précisez vos contraintes (horaires, accessibilité, nombre de résidents)\n3. Choisissez entre événements publics ou privés\n\nNotre équipe peut vous accompagner spécifiquement. Souhaitez-vous un rendez-vous téléphonique ?\n\nCordialement,\n\nMartin\nResponsable Partenariats Lieux\nHormur',
-                confidence: 92,
-                spamScore: 2,
-                conversationHistory: [],
-                aiClassification: 'Demande partenariat institutionnel B2B',
-                suggestedActions: ['Proposer RDV', 'Envoyer documentation partenaire'],
-                needsHumanReview: true,
-                escalationReason: 'Opportunité commerciale B2B importante à qualifier',
-                urls: ['https://hormur.com/place/new'],
-                assignedTo: 'martin'
-            },
-            {
-                id: 7,
-                from: 'nouveau.lieu@gmail.com',
-                subject: 'Inscription nouveau lieu - appartement avec terrasse',
-                content: 'Bonjour, je souhaite inscrire mon appartement pour accueillir des événements artistiques. J\'ai un grand salon (40m²) et une terrasse de 25m². Comment ça marche exactement ? Fréquence des événements ? Rémunération ?',
-                receivedAt: '2025-06-07 12:45',
-                status: 'auto-sent',
-                category: 'hote',
-                priority: 'medium',
-                aiResponse: 'Bonjour !\n\nC\'est formidable que vous souhaitiez rejoindre notre communauté d\'hôtes ! Votre appartement avec salon et terrasse semble parfait pour des événements artistiques intimistes.\n\nComment ça marche :\n1. Créez votre profil lieu : https://hormur.com/place/new\n2. Décrivez votre espace (photos, capacité, équipements)\n3. Choisissez vos préférences (types d\'événements, fréquence)\n4. Recevez des propositions d\'artistes compatibles\n\n**Rémunération :** Vous fixez votre tarif de location\n**Fréquence :** Entièrement libre, selon vos disponibilités\n\nConsultez notre FAQ hôtes : https://vivacious-phosphorus-9a9.notion.site/FAQ-pour-les-h-tes-sur-Hormur-17c3052419ea80be8829da9e29dbe137\n\nBienvenue dans l\'aventure Hormur !\n\nMartin\nResponsable Partenariats Lieux\nHormur',
-                confidence: 95,
-                spamScore: 7,
-                conversationHistory: [],
-                aiClassification: 'Inscription hôte standard - onboarding',
-                urls: ['https://hormur.com/place/new', 'https://vivacious-phosphorus-9a9.notion.site/FAQ-pour-les-h-tes-sur-Hormur-17c3052419ea80be8829da9e29dbe137'],
-                assignedTo: 'martin'
-            },
-            {
-                id: 8,
-                from: 'artiste.violin@gmail.com',
-                subject: 'Comment calculer mes droits SACEM pour concert privé ?',
-                content: 'Salut ! Je donne un concert de violon classique chez un particulier pour 18 personnes. Comment Hormur gère-t-il la déclaration SACEM ? Le montant est-il automatiquement déduit de mes recettes ? Merci !',
-                receivedAt: '2025-06-07 10:15',
-                status: 'auto-sent',
-                category: 'artiste',
-                priority: 'medium',
-                aiResponse: 'Salut !\n\nExcellente question ! Hormur automatise complètement la gestion SACEM pour toi :\n\n✅ **Déclaration automatique** si ton répertoire nécessite la SACEM\n✅ **Calcul automatique** : 34€ minimum OU 10% des recettes (le plus élevé)\n✅ **Déduction directe** de tes recettes avant virement\n\nPour ton concert violon 18 personnes :\n- Si recettes < 340€ → 34€ déduits\n- Si recettes > 340€ → 10% déduits\n\nTu n\'as rien à faire, tout est géré automatiquement !\n\nPS : N\'oublie pas de compléter ton profil pour maximiser tes chances de matching ! Les concerts de violon classique en appartement marchent super bien sur Hormur.\n\nÀ bientôt sur scène !\n\nÉléonore\nResponsable Relations Artistes\nHormur',
-                confidence: 98,
-                spamScore: 3,
-                conversationHistory: [],
-                aiClassification: 'Question SACEM standard - processus automatisé',
-                assignedTo: 'eleonore'
-            },
-            {
-                id: 9,
-                from: 'claire.spectateur@gmail.com',
-                subject: 'Demande de remboursement - ne peux plus venir',
-                content: 'Bonjour, j\'ai acheté des places pour un concert de piano le 20 juin mais je ne peux finalement pas venir (problème familial). Puis-je être remboursée ? L\'événement a lieu chez Madame Dupont.',
-                receivedAt: '2025-06-07 08:30',
-                status: 'auto-sent',
-                category: 'spectateur',
+                from: 'crypto.winner@tempmail.com',
+                subject: 'URGENT: Gagnez des Bitcoin maintenant!',
+                content: 'Félicitations! Vous avez été sélectionné pour gagner 5 Bitcoin GRATUITEMENT!',
+                receivedAt: '2025-06-07 11:30',
+                status: 'spam',
+                category: 'spam',
                 priority: 'low',
-                aiResponse: 'Bonjour Claire,\n\nJe comprends votre situation et je suis désolée pour vos soucis familiaux.\n\nSelon nos conditions générales, les billets ne sont pas remboursables sauf en cas d\'annulation de l\'événement par l\'organisateur.\n\nCependant, vous pouvez :\n✅ Revendre ou céder vos billets à un proche\n✅ Les offrir à quelqu\'un d\'autre de votre entourage\n\nSi vous souhaitez que nous transmettions cette information à l\'artiste organisateur, n\'hésitez pas à nous le dire.\n\nEn cas d\'annulation de l\'événement, vous seriez automatiquement remboursée sous 5 à 10 jours ouvrés via Stripe.\n\nPlus d\'infos : https://hormur.com/rbs\n\nCordialement,\nL\'équipe Hormur',
-                confidence: 97,
-                spamScore: 4,
-                conversationHistory: [],
-                aiClassification: 'Demande remboursement standard - politique CGU',
-                urls: ['https://hormur.com/rbs']
-            },
-            {
-                id: 10,
-                from: 'agence.events@wanadoo.fr',
-                subject: 'Collaboration pour événements d\'entreprise B2B',
-                content: 'Bonjour, nous sommes une agence événementielle (50 collaborateurs) et aimerions savoir si Hormur peut gérer des événements privés d\'entreprise (séminaires avec animation culturelle, soirées clients). Tarification ? Process ? Facturation B2B ?',
-                receivedAt: '2025-06-06 15:20',
-                status: 'manual-review',
-                category: 'partenariat',
-                priority: 'high',
-                aiResponse: 'Bonjour,\n\nMerci pour votre intérêt ! Hormur peut effectivement faciliter l\'organisation d\'événements privés d\'entreprise avec nos artistes et lieux partenaires.\n\nNos possibilités :\n- Événements privés (billetterie confidentielle)\n- Large choix de lieux atypiques (lofts, jardins, espaces culturels)\n- Artistes professionnels (musiciens, comédiens, conteurs...)\n- Gestion complète : billetterie, assurance, communication\n\nPour les entreprises :\n- Tarification sur devis personnalisé\n- Accompagnement dédié de notre équipe\n- Facturation B2B adaptée\n- Process streamliné pour vos équipes\n\nSouhaitez-vous un rendez-vous pour discuter de vos projets spécifiques ?\n\nCordialement,\n\nMartin\nResponsable Partenariats Lieux\nHormur',
-                confidence: 89,
-                spamScore: 6,
-                conversationHistory: [],
-                aiClassification: 'Demande partenariat B2B - nécessite qualification commerciale',
-                needsHumanReview: true,
-                escalationReason: 'Opportunité commerciale B2B importante à qualifier',
-                assignedTo: 'martin'
+                confidence: 0,
+                spamScore: 95,
+                spamIndicators: ['Mots-clés crypto', 'Urgence artificielle', 'Domaine temporaire'],
+                archived: false
             }
         ];
 
+        // Messages archivés (exemple)
+        let archivedMessages = [
+            {
+                id: 101,
+                from: 'ancien.artiste@gmail.com',
+                subject: 'Demande d\'informations sur les lieux disponibles',
+                content: 'Bonjour, je cherche des lieux pour mes concerts de piano...',
+                receivedAt: '2025-06-05 10:30',
+                status: 'sent',
+                category: 'artiste',
+                priority: 'medium',
+                aiResponse: 'Bonjour ! Nous avons plusieurs lieux parfaits...',
+                confidence: 96,
+                archived: true,
+                archivedAt: new Date().getTime() - 86400000, // 1 day ago
+                archivedBy: 'eleonore'
+            },
+            // Ajouter plus d'exemples d'archives...
+        ];
+
+        let currentTab = 'dashboard';
         let selectedMessage = null;
-        let currentFilter = 'all';
-        let priorityFilter = 'all';
-        let categoryFilter = 'all';
-        let searchTerm = '';
         let currentUser = null;
 
-        // Enhanced Message Manager with AI Learning
-        class AILearningManager {
+        // Archive Management System
+        class ArchiveManager {
             constructor() {
-                this.feedbackHistory = JSON.parse(localStorage.getItem('ai_feedback_history') || '[]');
-                this.learningStats = JSON.parse(localStorage.getItem('ai_learning_stats') || '{}');
+                this.autoArchiveEnabled = true;
+                this.autoArchiveDelay = 48; // hours
+                this.maxActiveMessages = 100; // Limite de messages actifs avant archivage forcé
             }
 
-            recordFeedback(messageId, originalResponse, finalResponse, userAction, userComment = '') {
-                const feedback = {
-                    id: Date.now(),
-                    messageId,
-                    originalResponse,
-                    finalResponse,
-                    userAction, // 'approved', 'modified', 'rejected'
-                    userComment,
-                    timestamp: new Date().toISOString(),
-                    user: currentUser?.email
-                };
+            // Archiver un message spécifique
+            archiveMessage(messageId, userId = null) {
+                const messageIndex = messages.findIndex(m => m.id === messageId);
+                if (messageIndex === -1) return false;
 
-                this.feedbackHistory.push(feedback);
-                this.updateLearningStats(userAction);
-                this.saveFeedback();
-                
-                return feedback;
+                const message = messages[messageIndex];
+                message.archived = true;
+                message.archivedAt = new Date().getTime();
+                message.archivedBy = userId || currentUser?.email || 'system';
+
+                // Déplacer vers les archives
+                archivedMessages.unshift(message);
+                messages.splice(messageIndex, 1);
+
+                this.saveToLocalStorage();
+                return true;
             }
 
-            updateLearningStats(action) {
-                if (!this.learningStats[action]) {
-                    this.learningStats[action] = 0;
+            // Restaurer un message des archives
+            unarchiveMessage(messageId) {
+                const archiveIndex = archivedMessages.findIndex(m => m.id === messageId);
+                if (archiveIndex === -1) return false;
+
+                const message = archivedMessages[archiveIndex];
+                message.archived = false;
+                delete message.archivedAt;
+                delete message.archivedBy;
+
+                // Remettre dans les messages actifs
+                messages.unshift(message);
+                archivedMessages.splice(archiveIndex, 1);
+
+                this.saveToLocalStorage();
+                return true;
+            }
+
+            // Archivage automatique basé sur l'âge et le statut
+            performAutoArchive() {
+                if (!this.autoArchiveEnabled) return;
+
+                const cutoffTime = new Date().getTime() - (this.autoArchiveDelay * 60 * 60 * 1000);
+                let archivedCount = 0;
+
+                // Archiver les messages anciens selon les critères
+                messages.forEach((message, index) => {
+                    const shouldArchive = 
+                        // Messages auto-envoyés anciens
+                        (message.status === 'auto-sent' && message.autoSentAt && message.autoSentAt < cutoffTime) ||
+                        // Messages envoyés manuellement anciens
+                        (message.status === 'sent' && message.timeReceived < cutoffTime) ||
+                        // Spams anciens
+                        (message.status === 'spam' && message.timeReceived < cutoffTime);
+
+                    if (shouldArchive) {
+                        this.archiveMessage(message.id, 'auto-system');
+                        archivedCount++;
+                    }
+                });
+
+                // Archivage forcé si trop de messages actifs
+                if (messages.length > this.maxActiveMessages) {
+                    const oldestMessages = messages
+                        .filter(m => ['sent', 'auto-sent'].includes(m.status))
+                        .sort((a, b) => (a.timeReceived || 0) - (b.timeReceived || 0))
+                        .slice(0, messages.length - this.maxActiveMessages);
+
+                    oldestMessages.forEach(message => {
+                        this.archiveMessage(message.id, 'auto-system');
+                        archivedCount++;
+                    });
                 }
-                this.learningStats[action]++;
-                this.saveLearningStats();
+
+                if (archivedCount > 0) {
+                    showToast(`${archivedCount} messages archivés automatiquement`, 'info');
+                }
+
+                return archivedCount;
             }
 
-            saveFeedback() {
-                localStorage.setItem('ai_feedback_history', JSON.stringify(this.feedbackHistory.slice(-100))); // Keep last 100
+            // Archivage en lot
+            bulkArchive(messageIds, userId = null) {
+                let archivedCount = 0;
+                messageIds.forEach(id => {
+                    if (this.archiveMessage(id, userId)) {
+                        archivedCount++;
+                    }
+                });
+                return archivedCount;
             }
 
-            saveLearningStats() {
-                localStorage.setItem('ai_learning_stats', JSON.stringify(this.learningStats));
+            // Nettoyage des archives anciennes
+            cleanOldArchives(daysOld = 365) {
+                const cutoffTime = new Date().getTime() - (daysOld * 24 * 60 * 60 * 1000);
+                const originalLength = archivedMessages.length;
+                
+                archivedMessages = archivedMessages.filter(message => 
+                    !message.archivedAt || message.archivedAt > cutoffTime
+                );
+
+                const removedCount = originalLength - archivedMessages.length;
+                this.saveToLocalStorage();
+                return removedCount;
             }
 
-            getAccuracyRate() {
-                const total = Object.values(this.learningStats).reduce((a, b) => a + b, 0);
-                const successful = (this.learningStats.approved || 0) + (this.learningStats.modified || 0);
-                return total > 0 ? Math.round((successful / total) * 100) : 94; // Default 94% for demo
+            // Exporter les archives
+            exportArchives(format = 'json') {
+                const data = {
+                    exportDate: new Date().toISOString(),
+                    totalArchived: archivedMessages.length,
+                    messages: archivedMessages
+                };
+
+                const filename = `hormur_archives_${new Date().toISOString().split('T')[0]}.${format}`;
+                
+                if (format === 'json') {
+                    this.downloadFile(JSON.stringify(data, null, 2), filename, 'application/json');
+                } else if (format === 'csv') {
+                    this.downloadFile(this.convertToCSV(archivedMessages), filename, 'text/csv');
+                }
             }
 
-            getRecentFeedback() {
-                return this.feedbackHistory.slice(-10).reverse();
+            // Convertir en CSV
+            convertToCSV(messages) {
+                const headers = ['ID', 'De', 'Sujet', 'Catégorie', 'Statut', 'Priorité', 'Reçu le', 'Archivé le', 'Archivé par'];
+                const rows = messages.map(msg => [
+                    msg.id,
+                    msg.from,
+                    msg.subject,
+                    msg.category,
+                    msg.status,
+                    msg.priority,
+                    msg.receivedAt,
+                    msg.archivedAt ? new Date(msg.archivedAt).toISOString() : '',
+                    msg.archivedBy || ''
+                ]);
+
+                return [headers, ...rows].map(row => 
+                    row.map(field => `"${field}"`).join(',')
+                ).join('\n');
+            }
+
+            // Télécharger un fichier
+            downloadFile(content, filename, mimeType) {
+                const blob = new Blob([content], { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            // Sauvegarder en localStorage
+            saveToLocalStorage() {
+                localStorage.setItem('hormur_messages', JSON.stringify(messages));
+                localStorage.setItem('hormur_archived_messages', JSON.stringify(archivedMessages));
+                localStorage.setItem('hormur_archive_settings', JSON.stringify({
+                    autoArchiveEnabled: this.autoArchiveEnabled,
+                    autoArchiveDelay: this.autoArchiveDelay,
+                    maxActiveMessages: this.maxActiveMessages
+                }));
+            }
+
+            // Charger depuis localStorage
+            loadFromLocalStorage() {
+                try {
+                    const savedMessages = localStorage.getItem('hormur_messages');
+                    const savedArchived = localStorage.getItem('hormur_archived_messages');
+                    const savedSettings = localStorage.getItem('hormur_archive_settings');
+
+                    if (savedMessages) {
+                        messages = JSON.parse(savedMessages);
+                    }
+                    if (savedArchived) {
+                        archivedMessages = JSON.parse(savedArchived);
+                    }
+                    if (savedSettings) {
+                        const settings = JSON.parse(savedSettings);
+                        this.autoArchiveEnabled = settings.autoArchiveEnabled;
+                        this.autoArchiveDelay = settings.autoArchiveDelay;
+                        this.maxActiveMessages = settings.maxActiveMessages;
+                    }
+                } catch (error) {
+                    console.error('Erreur lors du chargement des archives:', error);
+                }
+            }
+
+            // Statistiques des archives
+            getArchiveStats() {
+                const stats = {
+                    total: archivedMessages.length,
+                    byCategory: {},
+                    byStatus: {},
+                    byUser: {},
+                    thisWeek: 0,
+                    thisMonth: 0
+                };
+
+                const oneWeekAgo = new Date().getTime() - (7 * 24 * 60 * 60 * 1000);
+                const oneMonthAgo = new Date().getTime() - (30 * 24 * 60 * 60 * 1000);
+
+                archivedMessages.forEach(msg => {
+                    // Par catégorie
+                    stats.byCategory[msg.category] = (stats.byCategory[msg.category] || 0) + 1;
+                    
+                    // Par statut
+                    stats.byStatus[msg.status] = (stats.byStatus[msg.status] || 0) + 1;
+                    
+                    // Par utilisateur qui a archivé
+                    if (msg.archivedBy) {
+                        stats.byUser[msg.archivedBy] = (stats.byUser[msg.archivedBy] || 0) + 1;
+                    }
+                    
+                    // Par période
+                    if (msg.archivedAt > oneWeekAgo) stats.thisWeek++;
+                    if (msg.archivedAt > oneMonthAgo) stats.thisMonth++;
+                });
+
+                return stats;
             }
         }
 
-        const aiLearning = new AILearningManager();
+        // Initialiser le gestionnaire d'archives
+        const archiveManager = new ArchiveManager();
 
-        // Enhanced Signature Manager for Hormur
-        class HormurSignatureManager {
-            personalizeResponse(baseResponse, userProfile, messageCategory, messageContent = '') {
-                if (!userProfile) return baseResponse;
-
-                let personalizedResponse = this.adaptToneForHormur(baseResponse, userProfile.style, messageCategory);
-                personalizedResponse = this.addHormurSpecialtyContent(personalizedResponse, userProfile.specialties, messageCategory);
-                personalizedResponse = this.addContextualUrls(personalizedResponse, messageCategory, messageContent);
-                personalizedResponse += '\n\n' + userProfile.signature;
-                
-                return personalizedResponse;
-            }
-
-            adaptToneForHormur(response, style, category) {
-                const hormurAdjustments = {
-                    warm: {
-                        'Bonjour,': category === 'artiste' ? 'Bonjour ! 🎨' : 'Bonjour !',
-                        'problème': 'petite question',
-                        'Nous restons': 'On reste',
-                        'l\'équipe': 'toute l\'équipe'
-                    },
-                    professional: {
-                        'Super !': 'Parfait.',
-                        '🎨': '',
-                        'C\'est parti': 'Nous procédons'
-                    }
-                };
-
-                let adjustedResponse = response;
-                const adjustments = hormurAdjustments[style] || {};
-                
-                Object.entries(adjustments).forEach(([from, to]) => {
-                    adjustedResponse = adjustedResponse.replace(new RegExp(from, 'g'), to);
-                });
-
-                return adjustedResponse;
-            }
-
-            addHormurSpecialtyContent(response, specialties, category) {
-                const hormurSpecialtyContent = {
-                    'artistes': {
-                        'artiste': '\n\nPS : N\'oublie pas de compléter ton profil pour maximiser tes chances de matching ! Notre communauté adore découvrir de nouveaux talents.',
-                        'paiement': '\n\nTous nos virements passent par Stripe Connect - système ultra-sécurisé utilisé par les plus grandes plateformes.',
-                        'événements': '\n\nPetit tip : les événements intimistes (15-30 personnes) ont souvent le plus de succès sur Hormur !'
-                    },
-                    'lieux': {
-                        'hote': '\n\nNos hôtes créent des expériences uniques ! Chaque lieu raconte une histoire artistique différente.',
-                        'assurance': '\n\nNotre partenariat Beloy x Hiscox est spécialement négocié pour les événements culturels intimistes.',
-                        'partenariat': '\n\nHormur grandit grâce à des lieux comme le vôtre qui croient en l\'art partout !'
-                    }
-                };
-
-                specialties.forEach(specialty => {
-                    const content = hormurSpecialtyContent[specialty];
-                    if (content && content[category]) {
-                        response += content[category];
-                    }
-                });
-
-                return response;
-            }
-
-            addContextualUrls(response, category, messageContent) {
-                // URLs spécifiques selon le contexte détecté
-                const contextualUrls = {
-                    'sacem': 'https://hormur.com/sacem-info',
-                    'assurance': 'https://webviews.beloy.com/hormur/hormur.html',
-                    'remboursement': 'https://hormur.com/rbs',
-                    'création projet': 'https://hormur.com/projet/new',
-                    'ajout lieu': 'https://hormur.com/place/new'
-                };
-
-                // Détecter le contexte dans le message
-                const content = messageContent.toLowerCase();
-                Object.entries(contextualUrls).forEach(([keyword, url]) => {
-                    if (content.includes(keyword) && !response.includes(url)) {
-                        response += `\n\nPlus d'infos : ${url}`;
-                    }
-                });
-
-                return response;
-            }
+        // Utility functions
+        function timeAgo(timestamp) {
+            const now = new Date().getTime();
+            const diff = now - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            
+            if (minutes < 1) return 'À l\'instant';
+            if (minutes < 60) return `${minutes}min`;
+            if (hours < 24) return `${hours}h`;
+            if (days < 30) return `${days}j`;
+            return `${Math.floor(days / 30)}mois`;
         }
 
-        const signatureManager = new HormurSignatureManager();
-
-        // Enhanced utilities
         function getCategoryColor(category) {
             const colors = {
                 artiste: 'bg-purple-100 text-purple-800',
-                hote: 'bg-green-100 text-green-800', 
+                hote: 'bg-green-100 text-green-800',
                 spectateur: 'bg-blue-100 text-blue-800',
                 paiement: 'bg-red-100 text-red-800',
-                technique: 'bg-gray-100 text-gray-800',
                 partenariat: 'bg-teal-100 text-teal-800',
-                assurance: 'bg-indigo-100 text-indigo-800',
-                juridique: 'bg-orange-100 text-orange-800',
                 spam: 'bg-red-200 text-red-900'
             };
             return colors[category] || 'bg-gray-100 text-gray-800';
+        }
+
+        function getCategoryIcon(category) {
+            const icons = {
+                artiste: 'palette',
+                hote: 'home',
+                spectateur: 'users',
+                paiement: 'credit-card',
+                partenariat: 'handshake',
+                spam: 'shield'
+            };
+            return icons[category] || 'message-circle';
         }
 
         function getPriorityColor(priority) {
@@ -813,40 +1010,7 @@ Hormur - Transformons vos espaces en scènes
             return icons[priority] || 'circle';
         }
 
-        function getStatusIcon(status) {
-            const icons = {
-                'auto-sent': 'zap',
-                'manual-review': 'eye',
-                'pending': 'clock',
-                'sent': 'send',
-                'spam': 'shield'
-            };
-            return icons[status] || 'clock';
-        }
-
-        function getStatusColor(status) {
-            const colors = {
-                'auto-sent': 'text-green-600',
-                'manual-review': 'text-orange-600',
-                'pending': 'text-gray-600',
-                'sent': 'text-blue-600',
-                'spam': 'text-red-600'
-            };
-            return colors[status] || 'text-gray-600';
-        }
-
-        function getStatusText(status) {
-            const statusTexts = {
-                'auto-sent': 'Envoyé automatiquement',
-                'manual-review': 'À valider manuellement',
-                'pending': 'En attente de traitement',
-                'sent': 'Envoyé manuellement',
-                'spam': 'Spam détecté'
-            };
-            return statusTexts[status] || status;
-        }
-
-        // Authentication functions
+        // Authentication
         function initAuth() {
             const loggedUser = localStorage.getItem('hormur_logged_user');
             if (loggedUser) {
@@ -863,7 +1027,6 @@ Hormur - Transformons vos espaces en scènes
             const email = document.getElementById('login-email').value.toLowerCase().trim();
             const password = document.getElementById('login-password').value;
             const errorDiv = document.getElementById('login-error');
-            const form = document.getElementById('login-form');
             
             if (AUTHORIZED_USERS[email] && AUTHORIZED_USERS[email].password === password) {
                 currentUser = { email, ...AUTHORIZED_USERS[email] };
@@ -872,22 +1035,14 @@ Hormur - Transformons vos espaces en scènes
                 errorDiv.classList.add('hidden');
             } else {
                 errorDiv.classList.remove('hidden');
-                form.classList.add('shake');
-                setTimeout(() => form.classList.remove('shake'), 500);
             }
         }
 
         function handleUserLogin(user) {
-            document.getElementById('user-name').textContent = user.name;
             document.getElementById('user-initials').textContent = user.name.split(' ').map(n => n[0]).join('');
-            
-            document.getElementById('banner-name').textContent = user.name;
-            document.getElementById('banner-role').textContent = user.role;
-            document.getElementById('banner-initials').textContent = user.name.split(' ').map(n => n[0]).join('');
-            
             hideLoginOverlay();
             init();
-            showToast(`Bienvenue ${user.name} ! IA Assistant Hormur activé.`);
+            showToast(`Bienvenue ${user.name} !`, 'success');
         }
 
         function showLoginOverlay() {
@@ -907,462 +1062,869 @@ Hormur - Transformons vos espaces en scènes
             showToast('Déconnecté avec succès');
         }
 
-        // Enhanced filtering
-        function getFilteredMessages() {
-            return messages.filter(message => {
-                const matchesStatus = currentFilter === 'all' || message.status === currentFilter;
-                const matchesPriority = priorityFilter === 'all' || message.priority === priorityFilter;
-                const matchesCategory = categoryFilter === 'all' || message.category === categoryFilter;
-                const matchesSearch = message.from.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                   message.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                   message.content.toLowerCase().includes(searchTerm.toLowerCase());
-                return matchesStatus && matchesPriority && matchesCategory && matchesSearch;
+        // Tab management
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update tab styling
+            document.querySelectorAll('[id^="tab-"]').forEach(t => {
+                t.className = t.className.replace('tab-active', 'tab-inactive');
             });
+            document.getElementById(`tab-${tab}`).className = 
+                document.getElementById(`tab-${tab}`).className.replace('tab-inactive', 'tab-active');
+            
+            // Update content
+            document.querySelectorAll('[id^="content-"]').forEach(c => c.classList.add('hidden'));
+            document.getElementById(`content-${tab}`).classList.remove('hidden');
+            
+            renderCurrentTab();
         }
 
-        // Enhanced stats
-        function updateStats() {
-            const stats = {
-                total: messages.length,
-                autoSent: messages.filter(m => m.status === 'auto-sent').length,
-                pendingReview: messages.filter(m => m.status === 'manual-review').length,
-                pending: messages.filter(m => m.status === 'pending').length,
-                spamBlocked: messages.filter(m => m.status === 'spam').length,
-                efficiency: aiLearning.getAccuracyRate()
-            };
-
-            document.getElementById('total-messages').textContent = stats.total;
-            document.getElementById('auto-sent').textContent = stats.autoSent;
-            document.getElementById('pending-review').textContent = stats.pendingReview;
-            document.getElementById('pending').textContent = stats.pending;
-            document.getElementById('spam-blocked').textContent = stats.spamBlocked;
-            document.getElementById('ai-efficiency').textContent = stats.efficiency + '%';
-            document.getElementById('daily-processed').textContent = stats.autoSent + stats.pendingReview;
-
-            // Update AI status indicator
-            updateHormurAIStatus();
-        }
-
-        function updateHormurAIStatus() {
-            const aiStatus = document.getElementById('ai-status');
-            if (aiStatus) {
-                const efficiency = aiLearning.getAccuracyRate();
-                const statusColor = efficiency >= 90 ? 'green' : efficiency >= 80 ? 'yellow' : 'red';
-                const totalFeedbacks = Object.values(aiLearning.learningStats).reduce((a, b) => a + b, 0);
-                
-                aiStatus.innerHTML = `
-                    <div class="w-2 h-2 bg-${statusColor}-500 rounded-full ai-learning-indicator"></div>
-                    <span>IA Hormur - ${efficiency}% précision</span>
-                    <span class="text-xs">(${totalFeedbacks} apprentissages)</span>
-                `;
+        function renderCurrentTab() {
+            switch(currentTab) {
+                case 'dashboard':
+                    renderDashboard();
+                    break;
+                case 'auto-send':
+                    renderAutoSendMessages();
+                    break;
+                case 'validation':
+                    renderValidationMessages();
+                    break;
+                case 'archives':
+                    renderArchivedMessages();
+                    break;
+                case 'all':
+                    renderAllMessages();
+                    break;
             }
         }
 
-        // Enhanced message rendering
-        function renderMessages() {
-            const messagesList = document.getElementById('messages-list');
-            const filteredMessages = getFilteredMessages();
+        // Dashboard rendering
+        function renderDashboard() {
+            renderUrgentMessages();
+            renderSurveillanceAutoSend();
+        }
 
-            if (filteredMessages.length === 0) {
-                messagesList.innerHTML = `
-                    <div class="bg-white p-8 rounded-lg shadow-sm text-center text-gray-500">
-                        <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
-                        <p>Aucun message trouvé</p>
+        function renderUrgentMessages() {
+            const urgentMessages = messages.filter(m => 
+                (m.status === 'manual-review' && m.priority === 'high') ||
+                (m.status === 'pending' && m.priority === 'high')
+            );
+
+            const container = document.getElementById('urgent-messages');
+            document.getElementById('urgent-actions-count').textContent = urgentMessages.length;
+
+            if (urgentMessages.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4 text-green-600">
+                        <i data-lucide="check-circle" class="w-8 h-8 mx-auto mb-2"></i>
+                        <p class="text-sm">Aucune action urgente !</p>
                     </div>
                 `;
-                lucide.createIcons();
-                return;
+            } else {
+                container.innerHTML = urgentMessages.map(msg => `
+                    <div class="message-card bg-white p-3 rounded-lg border border-red-200 ${msg.priority === 'high' ? 'pulse-urgent' : ''}" onclick="openMessageModal(${msg.id})">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <span class="text-sm font-medium text-gray-900">${msg.from}</span>
+                                    <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
+                                        ${msg.category}
+                                    </span>
+                                    <span class="urgent-indicator px-2 py-1 text-xs text-white rounded-full">URGENT</span>
+                                </div>
+                                <p class="text-sm text-gray-700 line-clamp-2">${msg.subject}</p>
+                                <div class="flex items-center justify-between mt-2">
+                                    <span class="text-xs text-gray-500">${msg.receivedAt}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-1">
+                                <button onclick="event.stopPropagation(); archiveMessage(${msg.id})" class="text-blue-600 hover:text-blue-800" title="Archiver">
+                                    <i data-lucide="archive" class="w-4 h-4"></i>
+                                </button>
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            lucide.createIcons();
+        }
+
+        function renderSurveillanceAutoSend() {
+            const surveillanceMessages = messages.filter(m => 
+                m.status === 'auto-sent' && 
+                (new Date().getTime() - (m.autoSentAt || m.timeReceived)) < 1800000 // Last 30min
+            ).sort((a, b) => (b.autoSentAt || b.timeReceived) - (a.autoSentAt || a.timeReceived));
+
+            const container = document.getElementById('surveillance-auto-send');
+            document.getElementById('surveillance-count').textContent = surveillanceMessages.length;
+
+            if (surveillanceMessages.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4 text-gray-500">
+                        <i data-lucide="clock" class="w-8 h-8 mx-auto mb-2"></i>
+                        <p class="text-sm">Aucun auto-send récent à surveiller</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = surveillanceMessages.map(msg => `
+                    <div class="message-card bg-white p-3 rounded-lg border border-green-200" onclick="openMessageModal(${msg.id})">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-1">
+                                    <div class="auto-send-badge px-2 py-1 text-xs rounded-full">AUTO</div>
+                                    <span class="text-sm font-medium text-gray-900">${msg.from}</span>
+                                    <span class="text-xs text-green-600">${msg.confidence}%</span>
+                                </div>
+                                <p class="text-sm text-gray-700 line-clamp-2">${msg.subject}</p>
+                                <div class="flex items-center justify-between mt-2">
+                                    <span class="text-xs text-gray-500">Envoyé ${timeAgo(msg.autoSentAt || msg.timeReceived)}</span>
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="event.stopPropagation(); markForReview(${msg.id})" class="text-xs text-orange-600 hover:text-orange-800">
+                                            <i data-lucide="eye" class="w-3 h-3 inline mr-1"></i>Réviser
+                                        </button>
+                                        <button onclick="event.stopPropagation(); markAsCorrect(${msg.id})" class="text-xs text-green-600 hover:text-green-800">
+                                            <i data-lucide="check" class="w-3 h-3 inline mr-1"></i>OK
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-2"></i>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            lucide.createIcons();
+        }
+
+        // Auto-send messages rendering
+        function renderAutoSendMessages() {
+            const autoSendMessages = messages.filter(m => m.status === 'auto-sent')
+                .sort((a, b) => (b.autoSentAt || b.timeReceived) - (a.autoSentAt || a.timeReceived));
+
+            const container = document.getElementById('auto-send-messages');
+            document.getElementById('auto-send-today').textContent = autoSendMessages.length;
+
+            container.innerHTML = autoSendMessages.map(msg => `
+                <div class="message-card bg-white p-4 rounded-lg shadow-sm border" onclick="openMessageModal(${msg.id})">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <div class="auto-send-badge px-2 py-1 text-xs rounded-full flex items-center space-x-1">
+                                    <i data-lucide="zap" class="w-3 h-3"></i>
+                                    <span>AUTO</span>
+                                </div>
+                                <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
+                                    ${msg.category}
+                                </span>
+                                <span class="text-xs font-medium ${getPriorityColor(msg.priority)}">${msg.confidence}%</span>
+                            </div>
+                            <div class="mb-2">
+                                <h4 class="font-medium text-gray-900">${msg.from}</h4>
+                                <p class="text-sm text-gray-700">${msg.subject}</p>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500">Envoyé ${timeAgo(msg.autoSentAt || msg.timeReceived)}</span>
+                                <div class="flex items-center space-x-2">
+                                    ${(new Date().getTime() - (msg.autoSentAt || msg.timeReceived)) < 1800000 ? `
+                                        <span class="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full">
+                                            <i data-lucide="clock" class="w-3 h-3 inline mr-1"></i>
+                                            Surveillance active
+                                        </span>
+                                    ` : `
+                                        <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
+                                            <i data-lucide="check" class="w-3 h-3 inline mr-1"></i>
+                                            Validé
+                                        </span>
+                                        <button onclick="event.stopPropagation(); archiveMessage(${msg.id})" class="text-blue-600 hover:text-blue-800" title="Archiver">
+                                            <i data-lucide="archive" class="w-4 h-4"></i>
+                                        </button>
+                                    `}
+                                </div>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-2"></i>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // Validation messages rendering
+        function renderValidationMessages() {
+            const validationMessages = messages.filter(m => m.status === 'manual-review')
+                .sort((a, b) => {
+                    if (a.priority !== b.priority) {
+                        const priorityOrder = { high: 3, medium: 2, low: 1 };
+                        return priorityOrder[b.priority] - priorityOrder[a.priority];
+                    }
+                    return b.timeReceived - a.timeReceived;
+                });
+
+            const container = document.getElementById('validation-messages');
+            document.getElementById('validation-today').textContent = validationMessages.length;
+
+            container.innerHTML = validationMessages.map(msg => `
+                <div class="message-card bg-white p-4 rounded-lg shadow-sm border ${msg.priority === 'high' ? 'priority-high' : msg.priority === 'medium' ? 'priority-medium' : 'priority-low'}" onclick="openMessageModal(${msg.id})">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
+                                    ${msg.category}
+                                </span>
+                                <span class="px-2 py-1 text-xs rounded-full ${
+                                    msg.priority === 'high' ? 'bg-red-100 text-red-700' :
+                                    msg.priority === 'medium' ? 'bg-orange-100 text-orange-700' :
+                                    'bg-green-100 text-green-700'
+                                }">
+                                    <i data-lucide="${getPriorityIcon(msg.priority)}" class="w-3 h-3 inline mr-1"></i>
+                                    ${msg.priority === 'high' ? 'Urgent' : msg.priority === 'medium' ? 'Moyen' : 'Faible'}
+                                </span>
+                                ${msg.assignedTo ? `
+                                    <span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">
+                                        ${msg.assignedTo === 'martin' ? '🏡' : '🎨'} ${msg.assignedTo}
+                                    </span>
+                                ` : ''}
+                            </div>
+                            <div class="mb-2">
+                                <h4 class="font-medium text-gray-900">${msg.from}</h4>
+                                <p class="text-sm text-gray-700">${msg.subject}</p>
+                            </div>
+                            <p class="text-sm text-gray-600 line-clamp-3 mb-3">${msg.content}</p>
+                            ${msg.escalationReason ? `
+                                <div class="bg-yellow-50 border border-yellow-200 rounded p-2 mb-3">
+                                    <p class="text-xs text-yellow-800">
+                                        <i data-lucide="alert-triangle" class="w-3 h-3 inline mr-1"></i>
+                                        ${msg.escalationReason}
+                                    </p>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="flex flex-col items-center space-y-2">
+                            <button onclick="event.stopPropagation(); archiveMessage(${msg.id})" class="text-blue-600 hover:text-blue-800" title="Archiver">
+                                <i data-lucide="archive" class="w-4 h-4"></i>
+                            </button>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button
+                            onclick="event.stopPropagation(); quickApprove(${msg.id})"
+                            class="flex-1 bg-green-100 text-green-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors flex items-center justify-center space-x-1"
+                        >
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                            <span>Approuver</span>
+                        </button>
+                        <button
+                            onclick="event.stopPropagation(); quickReject(${msg.id})"
+                            class="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors flex items-center justify-center space-x-1"
+                        >
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                            <span>Rejeter</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // Archived messages rendering
+        function renderArchivedMessages() {
+            const periodFilter = document.getElementById('archive-period-filter')?.value || 'all';
+            const categoryFilter = document.getElementById('archive-category-filter')?.value || 'all';
+            
+            let filteredArchives = archivedMessages;
+
+            // Filtrer par période
+            if (periodFilter !== 'all') {
+                const now = new Date().getTime();
+                let cutoffTime;
+                
+                switch(periodFilter) {
+                    case 'today':
+                        cutoffTime = now - 24 * 60 * 60 * 1000;
+                        break;
+                    case 'week':
+                        cutoffTime = now - 7 * 24 * 60 * 60 * 1000;
+                        break;
+                    case 'month':
+                        cutoffTime = now - 30 * 24 * 60 * 60 * 1000;
+                        break;
+                    case 'quarter':
+                        cutoffTime = now - 90 * 24 * 60 * 60 * 1000;
+                        break;
+                }
+                
+                filteredArchives = filteredArchives.filter(msg => 
+                    msg.archivedAt && msg.archivedAt > cutoffTime
+                );
             }
 
-            // Sort by priority and date
-            const sortedMessages = filteredMessages.sort((a, b) => {
+            // Filtrer par catégorie
+            if (categoryFilter !== 'all') {
+                filteredArchives = filteredArchives.filter(msg => msg.category === categoryFilter);
+            }
+
+            const container = document.getElementById('archived-messages');
+            document.getElementById('total-archived').textContent = archivedMessages.length;
+
+            if (filteredArchives.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i data-lucide="archive" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
+                        <p>Aucune archive trouvée pour ces critères</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = filteredArchives.map(msg => `
+                    <div class="message-card bg-gray-50 p-4 rounded-lg border" onclick="openMessageModal(${msg.id}, true)">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <span class="archived-badge px-2 py-1 text-xs rounded-full">ARCHIVÉ</span>
+                                    <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
+                                        ${msg.category}
+                                    </span>
+                                    <span class="text-xs text-gray-500">
+                                        ${msg.archivedAt ? timeAgo(msg.archivedAt) : ''}
+                                    </span>
+                                </div>
+                                <div class="mb-2">
+                                    <h4 class="font-medium text-gray-700">${msg.from}</h4>
+                                    <p class="text-sm text-gray-600">${msg.subject}</p>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-gray-500">Reçu: ${msg.receivedAt}</span>
+                                    <span class="text-xs text-gray-500">
+                                        Archivé par: ${msg.archivedBy || 'Système'}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center space-y-2">
+                                <button onclick="event.stopPropagation(); unarchiveMessage(${msg.id})" class="text-green-600 hover:text-green-800" title="Désarchiver">
+                                    <i data-lucide="archive-restore" class="w-4 h-4"></i>
+                                </button>
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            lucide.createIcons();
+        }
+
+        // All messages rendering
+        function renderAllMessages() {
+            const filteredMessages = getFilteredMessages();
+            const container = document.getElementById('all-messages');
+
+            container.innerHTML = filteredMessages.map(msg => `
+                <div class="message-card bg-white p-4 rounded-lg shadow-sm border ${msg.archived ? 'archive-transition archived' : ''}" onclick="openMessageModal(${msg.id}, ${msg.archived})">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <i data-lucide="${getCategoryIcon(msg.category)}" class="w-4 h-4 text-gray-500"></i>
+                                <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
+                                    ${msg.category}
+                                </span>
+                                <span class="text-xs ${getPriorityColor(msg.priority)}">${msg.priority}</span>
+                                ${msg.status === 'auto-sent' ? '<div class="auto-send-badge px-2 py-1 text-xs rounded-full">AUTO</div>' : ''}
+                                ${msg.archived ? '<div class="archived-badge px-2 py-1 text-xs rounded-full">ARCHIVÉ</div>' : ''}
+                            </div>
+                            <div class="mb-2">
+                                <h4 class="font-medium text-gray-900">${msg.from}</h4>
+                                <p class="text-sm text-gray-700">${msg.subject}</p>
+                            </div>
+                            <p class="text-sm text-gray-600 line-clamp-2 mb-2">${msg.content}</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-500">${msg.receivedAt}</span>
+                                <span class="text-xs ${
+                                    msg.status === 'auto-sent' ? 'text-green-600' :
+                                    msg.status === 'manual-review' ? 'text-orange-600' :
+                                    msg.status === 'spam' ? 'text-red-600' : 'text-gray-600'
+                                }">
+                                    ${msg.status === 'auto-sent' ? 'Auto-envoyé' :
+                                      msg.status === 'manual-review' ? 'À valider' :
+                                      msg.status === 'spam' ? 'Spam' : 
+                                      msg.status === 'sent' ? 'Envoyé' : 'En attente'}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-center space-y-2">
+                            ${!msg.archived ? `
+                                <button onclick="event.stopPropagation(); archiveMessage(${msg.id})" class="text-blue-600 hover:text-blue-800" title="Archiver">
+                                    <i data-lucide="archive" class="w-4 h-4"></i>
+                                </button>
+                            ` : `
+                                <button onclick="event.stopPropagation(); unarchiveMessage(${msg.id})" class="text-green-600 hover:text-green-800" title="Désarchiver">
+                                    <i data-lucide="archive-restore" class="w-4 h-4"></i>
+                                </button>
+                            `}
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function getFilteredMessages() {
+            const statusFilter = document.getElementById('status-filter')?.value || 'all';
+            const categoryFilter = document.getElementById('category-filter')?.value || 'all';
+            const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || '';
+
+            // Combine active and archived messages for "all" view
+            const allMessages = statusFilter === 'archived' ? archivedMessages : 
+                               statusFilter === 'all' ? [...messages, ...archivedMessages] : messages;
+
+            return allMessages.filter(msg => {
+                const matchesStatus = statusFilter === 'all' || 
+                                    (statusFilter === 'archived' && msg.archived) ||
+                                    (statusFilter !== 'archived' && msg.status === statusFilter);
+                const matchesCategory = categoryFilter === 'all' || msg.category === categoryFilter;
+                const matchesSearch = !searchTerm || 
+                    msg.from.toLowerCase().includes(searchTerm) ||
+                    msg.subject.toLowerCase().includes(searchTerm) ||
+                    msg.content.toLowerCase().includes(searchTerm);
+                
+                return matchesStatus && matchesCategory && matchesSearch;
+            }).sort((a, b) => {
+                // Sort by priority first, then by time
                 const priorityOrder = { high: 3, medium: 2, low: 1 };
                 if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
                     return priorityOrder[b.priority] - priorityOrder[a.priority];
                 }
-                return new Date(b.receivedAt) - new Date(a.receivedAt);
+                const aTime = a.archivedAt || a.timeReceived || new Date(a.receivedAt).getTime();
+                const bTime = b.archivedAt || b.timeReceived || new Date(b.receivedAt).getTime();
+                return bTime - aTime;
             });
-
-            messagesList.innerHTML = sortedMessages.map(message => `
-                <div 
-                    class="bg-white p-4 rounded-lg shadow-sm border-l-4 cursor-pointer transition-all hover:shadow-md ${
-                        message.status === 'spam' ? 'spam-message' :
-                        message.priority === 'high' ? 'high-priority' :
-                        message.priority === 'medium' ? 'medium-priority' : 'low-priority'
-                    } ${selectedMessage?.id === message.id ? 'ring-2 ring-indigo-500' : ''} fade-in"
-                    onclick="selectMessage(${message.id})"
-                >
-                    <div class="flex items-start justify-between mb-2">
-                        <div class="flex-1">
-                            <div class="flex items-center space-x-2 mb-1">
-                                <h3 class="font-medium text-gray-900">${message.from}</h3>
-                                <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(message.category)}">
-                                    ${message.category}
-                                </span>
-                                ${message.priority === 'high' ? `
-                                    <span class="px-2 py-1 text-xs bg-red-100 text-red-600 rounded-full priority-indicator">
-                                        <i data-lucide="${getPriorityIcon(message.priority)}" class="w-3 h-3 inline mr-1"></i>
-                                        Priorité haute
-                                    </span>
-                                ` : ''}
-                                ${message.conversationHistory && message.conversationHistory.length > 0 ? `
-                                    <span class="px-2 py-1 text-xs bg-purple-100 text-purple-600 rounded-full">
-                                        <i data-lucide="message-square" class="w-3 h-3 inline mr-1"></i>
-                                        ${message.conversationHistory.length}
-                                    </span>
-                                ` : ''}
-                                ${message.needsHumanReview ? `
-                                    <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-full">
-                                        <i data-lucide="eye" class="w-3 h-3 inline mr-1"></i>
-                                        Validation requise
-                                    </span>
-                                ` : ''}
-                                ${message.assignedTo && message.assignedTo !== 'auto' ? `
-                                    <span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">
-                                        ${message.assignedTo === 'martin' ? '🏡' : '🎨'} ${message.assignedTo}
-                                    </span>
-                                ` : ''}
-                            </div>
-                            <p class="text-sm font-medium text-gray-700">${message.subject}</p>
-                            <p class="text-sm text-gray-500 mt-1">${message.receivedAt}</p>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <div class="flex items-center space-x-1">
-                                <i data-lucide="${getStatusIcon(message.status)}" class="w-4 h-4 ${getStatusColor(message.status)}"></i>
-                                ${message.status !== 'spam' ? `<span class="text-xs text-gray-600">${message.confidence}%</span>` : ''}
-                                ${message.spamScore && message.spamScore > 30 ? `
-                                    <span class="text-xs text-red-600">(🛡️${message.spamScore}%)</span>
-                                ` : ''}
-                            </div>
-                        </div>
-                    </div>
-                    <p class="text-sm text-gray-600 line-clamp-2">${message.content}</p>
-                    <div class="mt-3 flex items-center justify-between">
-                        <span class="text-xs text-gray-500">${getStatusText(message.status)}</span>
-                        ${message.status === 'manual-review' ? `
-                            <div class="flex space-x-2">
-                                <button
-                                    onclick="event.stopPropagation(); approveMessage(${message.id})"
-                                    class="px-3 py-1 bg-green-100 text-green-700 rounded text-xs hover:bg-green-200 transition-colors"
-                                >
-                                    <i data-lucide="check" class="w-3 h-3 inline mr-1"></i>
-                                    Approuver
-                                </button>
-                                <button
-                                    onclick="event.stopPropagation(); rejectMessage(${message.id})"
-                                    class="px-3 py-1 bg-red-100 text-red-700 rounded text-xs hover:bg-red-200 transition-colors"
-                                >
-                                    <i data-lucide="x" class="w-3 h-3 inline mr-1"></i>
-                                    Rejeter
-                                </button>
-                            </div>
-                        ` : ''}
-                        ${message.status === 'spam' ? `
-                            <div class="flex space-x-2">
-                                <button
-                                    onclick="event.stopPropagation(); unmarkSpam(${message.id})"
-                                    class="px-3 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200 transition-colors"
-                                >
-                                    <i data-lucide="shield-off" class="w-3 h-3 inline mr-1"></i>
-                                    Pas spam
-                                </button>
-                            </div>
-                        ` : ''}
-                    </div>
-                    ${message.aiClassification ? `
-                        <div class="mt-2 text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                            <strong>IA Hormur:</strong> ${message.aiClassification}
-                        </div>
-                    ` : ''}
-                </div>
-            `).join('');
-
-            lucide.createIcons();
         }
 
-        // Enhanced detail panel
-        function renderDetailPanel() {
-            const detailPanel = document.getElementById('detail-panel');
-            
-            if (!selectedMessage) {
-                detailPanel.innerHTML = `
-                    <div class="text-center text-gray-500">
-                        <i data-lucide="message-circle" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
-                        <p>Sélectionnez un message pour voir les détails</p>
-                    </div>
-                `;
-                lucide.createIcons();
-                return;
+        // Archive functions
+        function archiveMessage(messageId) {
+            if (archiveManager.archiveMessage(messageId, currentUser?.email)) {
+                updateStats();
+                renderCurrentTab();
+                showToast('Message archivé avec succès', 'success');
+                if (selectedMessage?.id === messageId) {
+                    closeMessageModal();
+                }
             }
+        }
 
-            detailPanel.innerHTML = `
-                <div class="text-left">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="font-medium text-gray-900 flex items-center">
-                            <i data-lucide="message-circle" class="w-5 h-5 mr-2"></i>
-                            Détails du message
-                        </h3>
-                        <button onclick="closeDetail()" class="text-gray-400 hover:text-gray-600">
-                            <i data-lucide="x" class="w-4 h-4"></i>
-                        </button>
+        function unarchiveMessage(messageId) {
+            if (archiveManager.unarchiveMessage(messageId)) {
+                updateStats();
+                renderCurrentTab();
+                showToast('Message restauré des archives', 'success');
+                if (selectedMessage?.id === messageId) {
+                    closeMessageModal();
+                }
+            }
+        }
+
+        function bulkArchive() {
+            // Implémenter l'archivage en lot des messages sélectionnés
+            showToast('Archivage en lot en développement', 'info');
+        }
+
+        function exportArchives() {
+            archiveManager.exportArchives('json');
+            showToast('Export des archives démarré', 'info');
+        }
+
+        function exportData() {
+            // Exporter toutes les données
+            const allData = {
+                exportDate: new Date().toISOString(),
+                activeMessages: messages,
+                archivedMessages: archivedMessages,
+                stats: archiveManager.getArchiveStats()
+            };
+            
+            archiveManager.downloadFile(
+                JSON.stringify(allData, null, 2), 
+                `hormur_export_${new Date().toISOString().split('T')[0]}.json`, 
+                'application/json'
+            );
+            showToast('Export complet terminé', 'success');
+        }
+
+        // Archive Manager Modal
+        function showArchiveManager() {
+            const stats = archiveManager.getArchiveStats();
+            
+            document.getElementById('archive-manager-content').innerHTML = `
+                <div class="space-y-6">
+                    <!-- Statistiques des archives -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-blue-50 p-4 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-blue-700">${stats.total}</div>
+                            <div class="text-sm text-blue-600">Total archivées</div>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-green-700">${stats.thisWeek}</div>
+                            <div class="text-sm text-green-600">Cette semaine</div>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-purple-700">${stats.thisMonth}</div>
+                            <div class="text-sm text-purple-600">Ce mois</div>
+                        </div>
+                        <div class="bg-orange-50 p-4 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-orange-700">${messages.length}</div>
+                            <div class="text-sm text-orange-600">Messages actifs</div>
+                        </div>
                     </div>
 
-                    ${selectedMessage.conversationHistory && selectedMessage.conversationHistory.length > 0 ? `
-                        <div class="conversation-thread p-3 rounded-lg mb-4">
-                            <h4 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
-                                <i data-lucide="message-square" class="w-4 h-4 mr-1"></i>
-                                Historique des échanges (${selectedMessage.conversationHistory.length})
-                            </h4>
-                            <div class="space-y-2 max-h-24 overflow-y-auto custom-scrollbar">
-                                ${selectedMessage.conversationHistory.map(h => `
-                                    <div class="text-xs p-2 rounded ${h.type === 'incoming' ? 'bg-blue-50' : 'bg-green-50'}">
-                                        <div class="font-medium">${h.date} - ${h.type === 'incoming' ? 'Client' : 'Hormur'}</div>
-                                        <div class="text-gray-600">${h.content}</div>
-                                    </div>
-                                `).join('')}
+                    <!-- Paramètres d'archivage -->
+                    <div class="bg-white border rounded-lg p-4">
+                        <h4 class="font-medium text-gray-900 mb-4">Paramètres d'archivage automatique</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="auto-archive-setting" ${archiveManager.autoArchiveEnabled ? 'checked' : ''} class="rounded">
+                                <label for="auto-archive-setting" class="text-sm text-gray-700">Activer l'archivage automatique</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <label class="text-sm text-gray-700">Délai d'archivage :</label>
+                                <select id="archive-delay-setting" class="border rounded px-3 py-1 text-sm">
+                                    <option value="24" ${archiveManager.autoArchiveDelay === 24 ? 'selected' : ''}>24 heures</option>
+                                    <option value="48" ${archiveManager.autoArchiveDelay === 48 ? 'selected' : ''}>48 heures</option>
+                                    <option value="72" ${archiveManager.autoArchiveDelay === 72 ? 'selected' : ''}>72 heures</option>
+                                    <option value="168" ${archiveManager.autoArchiveDelay === 168 ? 'selected' : ''}>7 jours</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <label class="text-sm text-gray-700">Limite messages actifs :</label>
+                                <input type="number" id="max-active-setting" value="${archiveManager.maxActiveMessages}" min="50" max="500" class="border rounded px-3 py-1 text-sm w-20">
                             </div>
                         </div>
-                    ` : ''}
+                        <div class="mt-4 flex space-x-2">
+                            <button onclick="saveArchiveSettings()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700">
+                                Sauvegarder
+                            </button>
+                            <button onclick="performManualArchive()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700">
+                                Archivage manuel
+                            </button>
+                        </div>
+                    </div>
 
-                    ${selectedMessage.aiClassification ? `
-                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-3 mb-4">
-                            <h4 class="text-sm font-medium text-purple-800 mb-1 flex items-center">
-                                <i data-lucide="brain" class="w-4 h-4 mr-1"></i>
-                                Classification IA Hormur
-                            </h4>
-                            <p class="text-sm text-purple-700">${selectedMessage.aiClassification}</p>
-                            ${selectedMessage.suggestedActions && selectedMessage.suggestedActions.length > 0 ? `
-                                <div class="mt-2">
-                                    <p class="text-xs text-purple-600 font-medium">Actions suggérées :</p>
-                                    <ul class="text-xs text-purple-600 ml-3">
-                                        ${selectedMessage.suggestedActions.map(action => `<li>• ${action}</li>`).join('')}
-                                    </ul>
-                                </div>
-                            ` : ''}
-                            ${selectedMessage.assignedTo && selectedMessage.assignedTo !== 'auto' ? `
-                                <div class="mt-2">
-                                    <p class="text-xs text-purple-600 font-medium">Assigné à : ${selectedMessage.assignedTo === 'martin' ? '🏡 Martin (Lieux)' : '🎨 Eléonore (Artistes)'}</p>
-                                </div>
-                            ` : ''}
+                    <!-- Actions sur les archives -->
+                    <div class="bg-white border rounded-lg p-4">
+                        <h4 class="font-medium text-gray-900 mb-4">Actions sur les archives</h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="exportArchives()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 flex items-center space-x-2">
+                                <i data-lucide="download" class="w-4 h-4"></i>
+                                <span>Exporter archives</span>
+                            </button>
+                            <button onclick="cleanOldArchives()" class="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-700 flex items-center space-x-2">
+                                <i data-lucide="trash" class="w-4 h-4"></i>
+                                <span>Nettoyer anciennes</span>
+                            </button>
                         </div>
-                    ` : ''}
+                    </div>
 
-                    <div class="space-y-4">
-                        <div>
-                            <label class="text-sm font-medium text-gray-700">De :</label>
-                            <p class="text-sm text-gray-600">${selectedMessage.from}</p>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium text-gray-700">Sujet :</label>
-                            <p class="text-sm text-gray-600">${selectedMessage.subject}</p>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium text-gray-700">Catégorie :</label>
-                            <span class="inline-block px-2 py-1 text-xs rounded-full ${getCategoryColor(selectedMessage.category)} ml-2">
-                                ${selectedMessage.category}
-                            </span>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium text-gray-700">Priorité :</label>
-                            <span class="inline-block px-2 py-1 text-xs rounded-full ml-2 ${
-                                selectedMessage.priority === 'high' ? 'bg-red-100 text-red-600' :
-                                selectedMessage.priority === 'medium' ? 'bg-orange-100 text-orange-600' :
-                                'bg-green-100 text-green-600'
-                            }">
-                                ${selectedMessage.priority === 'high' ? 'Haute' : 
-                                  selectedMessage.priority === 'medium' ? 'Moyenne' : 'Basse'}
-                            </span>
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium text-gray-700">Message :</label>
-                            <p class="text-sm text-gray-600 bg-gray-50 p-3 rounded mt-1">${selectedMessage.content}</p>
-                        </div>
-                        
-                        ${selectedMessage.spamScore && selectedMessage.spamScore > 20 ? `
-                            <div class="bg-red-50 border border-red-200 rounded-lg p-3">
-                                <div class="flex items-center">
-                                    <i data-lucide="shield" class="w-4 h-4 text-red-500 mr-2"></i>
-                                    <span class="text-sm font-medium text-red-800">Score de spam: ${selectedMessage.spamScore}%</span>
+                    <!-- Répartition par catégorie -->
+                    <div class="bg-white border rounded-lg p-4">
+                        <h4 class="font-medium text-gray-900 mb-4">Répartition par catégorie</h4>
+                        <div class="space-y-2">
+                            ${Object.entries(stats.byCategory).map(([category, count]) => `
+                                <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
+                                    <span class="text-sm text-gray-700 capitalize">${category}</span>
+                                    <span class="text-sm font-medium text-gray-900">${count}</span>
                                 </div>
-                                ${selectedMessage.spamIndicators && selectedMessage.spamIndicators.length > 0 ? `
-                                    <div class="mt-2">
-                                        <p class="text-xs text-red-600 font-medium">Indicateurs détectés :</p>
-                                        <ul class="text-xs text-red-600 ml-3">
-                                            ${selectedMessage.spamIndicators.map(indicator => `<li>• ${indicator}</li>`).join('')}
-                                        </ul>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        ` : ''}
-
-                        ${selectedMessage.confidence !== undefined && selectedMessage.status !== 'spam' ? `
-                            <div class="bg-gray-50 p-3 rounded-lg">
-                                <label class="text-sm font-medium text-gray-700 block mb-2">
-                                    Confiance IA: ${selectedMessage.confidence}%
-                                </label>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div class="confidence-bar h-2 rounded-full" style="width: ${selectedMessage.confidence}%"></div>
-                                </div>
-                            </div>
-                        ` : ''}
-
-                        ${selectedMessage.status !== 'spam' ? `
-                            <div>
-                                <label class="text-sm font-medium text-gray-700">Réponse IA Hormur :</label>
-                                <div class="mt-2">
-                                    <textarea
-                                        id="edit-response"
-                                        class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm custom-scrollbar"
-                                        rows="12"
-                                        placeholder="Réponse générée par l'IA Hormur..."
-                                    >${selectedMessage.aiResponse || ''}</textarea>
-                                </div>
-                            </div>
-                            <div class="flex flex-col space-y-2 pt-4">
-                                <div class="flex space-x-2">
-                                    <button
-                                        onclick="sendResponse()"
-                                        class="flex-1 hormur-gradient text-white px-4 py-2 rounded-lg hover:opacity-90 transition-colors flex items-center justify-center space-x-2"
-                                    >
-                                        <i data-lucide="send" class="w-4 h-4"></i>
-                                        <span>Envoyer</span>
-                                    </button>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button
-                                        onclick="personalizeResponse()"
-                                        class="flex-1 px-4 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors flex items-center justify-center space-x-2"
-                                        title="Personnaliser avec ma signature Hormur"
-                                    >
-                                        <i data-lucide="user" class="w-4 h-4"></i>
-                                        <span class="hidden sm:inline">Personnaliser</span>
-                                    </button>
-                                    <button
-                                        onclick="resetResponse()"
-                                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                                        title="Réinitialiser"
-                                    >
-                                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-                                    </button>
-                                    <button
-                                        onclick="showFeedbackForm()"
-                                        class="px-4 py-2 bg-yellow-100 text-yellow-700 rounded-lg hover:bg-yellow-200 transition-colors"
-                                        title="Donner un feedback à l'IA"
-                                    >
-                                        <i data-lucide="message-square-plus" class="w-4 h-4"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        ` : `
-                            <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-                                <i data-lucide="shield" class="w-8 h-8 text-red-500 mx-auto mb-2"></i>
-                                <p class="text-red-800 font-medium">Message marqué comme spam</p>
-                                <button
-                                    onclick="unmarkSpam(${selectedMessage.id})"
-                                    class="mt-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                                >
-                                    Marquer comme légitime
-                                </button>
-                            </div>
-                        `}
+                            `).join('')}
+                        </div>
                     </div>
                 </div>
             `;
-
+            
+            document.getElementById('archive-manager-modal').classList.remove('hidden');
             lucide.createIcons();
         }
 
-        // Message actions with AI learning
-        function approveMessage(messageId) {
+        function closeArchiveManager() {
+            document.getElementById('archive-manager-modal').classList.add('hidden');
+        }
+
+        function saveArchiveSettings() {
+            const autoEnabled = document.getElementById('auto-archive-setting').checked;
+            const delay = parseInt(document.getElementById('archive-delay-setting').value);
+            const maxActive = parseInt(document.getElementById('max-active-setting').value);
+
+            archiveManager.autoArchiveEnabled = autoEnabled;
+            archiveManager.autoArchiveDelay = delay;
+            archiveManager.maxActiveMessages = maxActive;
+            archiveManager.saveToLocalStorage();
+
+            showToast('Paramètres d\'archivage sauvegardés', 'success');
+        }
+
+        function performManualArchive() {
+            const archivedCount = archiveManager.performAutoArchive();
+            updateStats();
+            renderCurrentTab();
+            showToast(`${archivedCount} messages archivés manuellement`, 'success');
+        }
+
+        function cleanOldArchives() {
+            const removedCount = archiveManager.cleanOldArchives(365); // Supprimer archives > 1 an
+            updateStats();
+            renderCurrentTab();
+            showToast(`${removedCount} anciennes archives supprimées`, 'success');
+        }
+
+        // Message actions
+        function markForReview(messageId) {
             const message = messages.find(m => m.id === messageId);
-            if (message && currentUser) {
-                const originalResponse = message.aiResponse;
-                const personalizedResponse = signatureManager.personalizeResponse(
-                    message.aiResponse, 
-                    currentUser, 
-                    message.category,
-                    message.content
-                );
-                
-                message.aiResponse = personalizedResponse;
-                message.status = 'sent';
-                
-                // Record AI learning feedback
-                aiLearning.recordFeedback(messageId, originalResponse, personalizedResponse, 'approved');
-                
+            if (message) {
+                message.status = 'manual-review';
+                message.priority = 'medium';
                 updateStats();
-                renderMessages();
-                showToast('Message approuvé et envoyé avec votre signature Hormur !');
-                
-                if (selectedMessage?.id === messageId) {
-                    selectedMessage = message;
-                    renderDetailPanel();
-                }
+                renderCurrentTab();
+                showToast('Message marqué pour révision', 'info');
             }
         }
 
-        function rejectMessage(messageId) {
+        function markAsCorrect(messageId) {
             const message = messages.find(m => m.id === messageId);
             if (message) {
-                const originalResponse = message.aiResponse;
-                message.status = 'pending';
-                
-                // Record AI learning feedback
-                aiLearning.recordFeedback(messageId, originalResponse, null, 'rejected');
-                
-                updateStats();
-                renderMessages();
-                showToast('Message rejeté, en attente de nouveau traitement', 'error');
-                
-                if (selectedMessage?.id === messageId) {
-                    selectedMessage = message;
-                    renderDetailPanel();
-                }
+                // Marquer comme validé et programmer pour archivage
+                showToast('Message validé comme correct', 'success');
             }
+        }
+
+        function quickApprove(messageId) {
+            const message = messages.find(m => m.id === messageId);
+            if (message) {
+                message.status = 'sent';
+                updateStats();
+                renderCurrentTab();
+                showToast('Message approuvé et envoyé !', 'success');
+            }
+        }
+
+        function quickReject(messageId) {
+            const message = messages.find(m => m.id === messageId);
+            if (message) {
+                message.status = 'pending';
+                updateStats();
+                renderCurrentTab();
+                showToast('Message rejeté', 'error');
+            }
+        }
+
+        // Message modal
+        function openMessageModal(messageId, isArchived = false) {
+            const messageSource = isArchived ? archivedMessages : messages;
+            selectedMessage = messageSource.find(m => m.id === messageId);
+            if (!selectedMessage) return;
+
+            document.getElementById('message-detail-content').innerHTML = `
+                <div class="space-y-4">
+                    <div class="flex items-center space-x-2 flex-wrap">
+                        <span class="px-3 py-1 text-sm rounded-full ${getCategoryColor(selectedMessage.category)}">
+                            <i data-lucide="${getCategoryIcon(selectedMessage.category)}" class="w-4 h-4 inline mr-1"></i>
+                            ${selectedMessage.category}
+                        </span>
+                        <span class="px-3 py-1 text-sm rounded-full ${
+                            selectedMessage.priority === 'high' ? 'bg-red-100 text-red-700' :
+                            selectedMessage.priority === 'medium' ? 'bg-orange-100 text-orange-700' :
+                            'bg-green-100 text-green-700'
+                        }">
+                            <i data-lucide="${getPriorityIcon(selectedMessage.priority)}" class="w-4 h-4 inline mr-1"></i>
+                            Priorité ${selectedMessage.priority === 'high' ? 'haute' : selectedMessage.priority === 'medium' ? 'moyenne' : 'basse'}
+                        </span>
+                        ${selectedMessage.status === 'auto-sent' ? `
+                            <span class="auto-send-badge px-3 py-1 text-sm rounded-full">
+                                <i data-lucide="zap" class="w-4 h-4 inline mr-1"></i>
+                                Auto-envoyé
+                            </span>
+                        ` : ''}
+                        ${selectedMessage.archived ? `
+                            <span class="archived-badge px-3 py-1 text-sm rounded-full">
+                                <i data-lucide="archive" class="w-4 h-4 inline mr-1"></i>
+                                Archivé
+                            </span>
+                        ` : ''}
+                    </div>
+
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-medium text-gray-900 mb-2">Message original</h4>
+                        <div class="space-y-2 text-sm">
+                            <div><strong>De :</strong> ${selectedMessage.from}</div>
+                            <div><strong>Sujet :</strong> ${selectedMessage.subject}</div>
+                            <div><strong>Reçu :</strong> ${selectedMessage.receivedAt}</div>
+                            ${selectedMessage.archived ? `
+                                <div><strong>Archivé :</strong> ${selectedMessage.archivedAt ? new Date(selectedMessage.archivedAt).toLocaleString() : 'Date inconnue'}</div>
+                                <div><strong>Archivé par :</strong> ${selectedMessage.archivedBy || 'Système'}</div>
+                            ` : ''}
+                        </div>
+                        <div class="mt-3">
+                            <p class="text-sm text-gray-700 bg-white p-3 rounded border">${selectedMessage.content}</p>
+                        </div>
+                    </div>
+
+                    ${selectedMessage.aiResponse ? `
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="font-medium text-blue-900 mb-2 flex items-center">
+                                <i data-lucide="bot" class="w-4 h-4 mr-1"></i>
+                                Réponse IA Hormur
+                                ${selectedMessage.confidence ? `<span class="ml-2 text-sm">(${selectedMessage.confidence}% confiance)</span>` : ''}
+                            </h4>
+                            <div>
+                                <textarea
+                                    id="ai-response-edit"
+                                    class="w-full p-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                                    rows="8"
+                                    ${selectedMessage.archived ? 'readonly' : ''}
+                                >${selectedMessage.aiResponse}</textarea>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${selectedMessage.escalationReason ? `
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                            <h4 class="font-medium text-yellow-800 mb-1 flex items-center">
+                                <i data-lucide="alert-triangle" class="w-4 h-4 mr-1"></i>
+                                Raison de l'escalation
+                            </h4>
+                            <p class="text-sm text-yellow-700">${selectedMessage.escalationReason}</p>
+                        </div>
+                    ` : ''}
+
+                    ${selectedMessage.spamIndicators && selectedMessage.spamIndicators.length > 0 ? `
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-3">
+                            <h4 class="font-medium text-red-800 mb-2 flex items-center">
+                                <i data-lucide="shield" class="w-4 h-4 mr-1"></i>
+                                Indicateurs de spam détectés
+                            </h4>
+                            <ul class="text-sm text-red-700 space-y-1">
+                                ${selectedMessage.spamIndicators.map(indicator => `<li>• ${indicator}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+
+                    ${!selectedMessage.archived && selectedMessage.status !== 'spam' ? `
+                        <div class="flex flex-col space-y-3">
+                            <button
+                                onclick="sendResponse()"
+                                class="w-full hormur-gradient text-white px-4 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center space-x-2"
+                            >
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                <span>Envoyer la réponse</span>
+                            </button>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button
+                                    onclick="personalizeResponse()"
+                                    class="px-3 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors flex items-center justify-center space-x-1 text-sm"
+                                >
+                                    <i data-lucide="user" class="w-4 h-4"></i>
+                                    <span>Personnaliser</span>
+                                </button>
+                                <button
+                                    onclick="regenerateResponse()"
+                                    class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center space-x-1 text-sm"
+                                >
+                                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                    <span>Régénérer</span>
+                                </button>
+                                <button
+                                    onclick="archiveMessage(${selectedMessage.id})"
+                                    class="px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors flex items-center justify-center space-x-1 text-sm"
+                                >
+                                    <i data-lucide="archive" class="w-4 h-4"></i>
+                                    <span>Archiver</span>
+                                </button>
+                            </div>
+                        </div>
+                    ` : selectedMessage.archived ? `
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                            <i data-lucide="archive" class="w-8 h-8 text-blue-500 mx-auto mb-2"></i>
+                            <p class="text-blue-800 font-medium mb-3">Message archivé</p>
+                            <button
+                                onclick="unarchiveMessage(${selectedMessage.id})"
+                                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                            >
+                                <i data-lucide="archive-restore" class="w-4 h-4 inline mr-1"></i>
+                                Restaurer des archives
+                            </button>
+                        </div>
+                    ` : `
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                            <i data-lucide="shield" class="w-8 h-8 text-red-500 mx-auto mb-2"></i>
+                            <p class="text-red-800 font-medium mb-3">Message marqué comme spam</p>
+                            <div class="flex space-x-2 justify-center">
+                                <button
+                                    onclick="unmarkSpam(${selectedMessage.id})"
+                                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                                >
+                                    <i data-lucide="shield-off" class="w-4 h-4 inline mr-1"></i>
+                                    Marquer comme légitime
+                                </button>
+                                <button
+                                    onclick="archiveMessage(${selectedMessage.id})"
+                                    class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+                                >
+                                    <i data-lucide="archive" class="w-4 h-4 inline mr-1"></i>
+                                    Archiver
+                                </button>
+                            </div>
+                        </div>
+                    `}
+                </div>
+            `;
+
+            document.getElementById('message-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeMessageModal() {
+            document.getElementById('message-modal').classList.add('hidden');
+            selectedMessage = null;
         }
 
         function sendResponse() {
             if (!selectedMessage) return;
             
-            const originalResponse = selectedMessage.aiResponse;
-            const editedResponse = document.getElementById('edit-response').value;
-            const wasModified = originalResponse !== editedResponse;
+            const editedResponse = document.getElementById('ai-response-edit')?.value;
+            if (editedResponse) {
+                selectedMessage.aiResponse = editedResponse;
+            }
             
-            selectedMessage.aiResponse = editedResponse;
             selectedMessage.status = 'sent';
-            
-            // Record AI learning feedback
-            aiLearning.recordFeedback(
-                selectedMessage.id, 
-                originalResponse, 
-                editedResponse, 
-                wasModified ? 'modified' : 'approved'
-            );
-            
             updateStats();
-            renderMessages();
-            showToast('Réponse envoyée avec succès via Brevo !');
-            closeDetail();
+            closeMessageModal();
+            renderCurrentTab();
+            showToast('Réponse envoyée avec succès !', 'success');
         }
 
         function personalizeResponse() {
             if (!selectedMessage || !currentUser) return;
             
-            const personalizedResponse = signatureManager.personalizeResponse(
-                selectedMessage.aiResponse, 
-                currentUser, 
-                selectedMessage.category,
-                selectedMessage.content
-            );
+            const currentResponse = document.getElementById('ai-response-edit')?.value || selectedMessage.aiResponse;
+            const personalizedResponse = currentResponse + '\n\n' + currentUser.signature;
             
-            document.getElementById('edit-response').value = personalizedResponse;
-            showToast('Réponse personnalisée avec votre signature Hormur !');
+            document.getElementById('ai-response-edit').value = personalizedResponse;
+            showToast('Réponse personnalisée avec votre signature', 'info');
         }
 
-        function resetResponse() {
+        function regenerateResponse() {
             if (!selectedMessage) return;
-            const originalResponse = selectedMessage.aiResponse.split('\n\n')[0];
-            document.getElementById('edit-response').value = originalResponse;
+            
+            showToast('Régénération de la réponse IA...', 'info');
+            // Simulate AI regeneration
+            setTimeout(() => {
+                const responses = [
+                    'Nouvelle réponse générée par l\'IA Hormur avec amélioration de la personnalisation...',
+                    'Réponse améliorée basée sur l\'apprentissage continu de l\'IA...',
+                    'Version optimisée de la réponse avec meilleur ton Hormur...'
+                ];
+                const newResponse = responses[Math.floor(Math.random() * responses.length)];
+                document.getElementById('ai-response-edit').value = newResponse;
+                showToast('Nouvelle réponse générée !', 'success');
+            }, 2000);
         }
 
         function unmarkSpam(messageId) {
@@ -1371,233 +1933,80 @@ Hormur - Transformons vos espaces en scènes
                 message.status = 'pending';
                 message.spamScore = Math.max(message.spamScore - 30, 0);
                 updateStats();
-                renderMessages();
-                showToast('Message marqué comme légitime');
-                
-                if (selectedMessage?.id === messageId) {
-                    selectedMessage = message;
-                    renderDetailPanel();
-                }
+                closeMessageModal();
+                renderCurrentTab();
+                showToast('Message marqué comme légitime', 'success');
             }
         }
 
-        function closeDetail() {
-            selectedMessage = null;
-            renderDetailPanel();
-            renderMessages();
+        // Quick actions
+        function showQuickActions() {
+            document.getElementById('quick-actions-modal').classList.remove('hidden');
         }
 
-        function selectMessage(messageId) {
-            selectedMessage = messages.find(m => m.id === messageId);
-            renderDetailPanel();
-            renderMessages();
+        function closeQuickActions() {
+            document.getElementById('quick-actions-modal').classList.add('hidden');
         }
 
-        // AI Training interface
-        function showAITraining() {
-            if (!currentUser) return;
-            
-            const recentFeedback = aiLearning.getRecentFeedback();
-            const stats = aiLearning.learningStats;
-            
-            document.getElementById('ai-training-content').innerHTML = `
-                <div class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="bg-green-50 p-4 rounded-lg">
-                            <div class="flex items-center">
-                                <i data-lucide="check" class="w-6 h-6 text-green-500 mr-2"></i>
-                                <div>
-                                    <p class="text-sm text-green-600">Approuvées</p>
-                                    <p class="text-2xl font-bold text-green-700">${stats.approved || 0}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-orange-50 p-4 rounded-lg">
-                            <div class="flex items-center">
-                                <i data-lucide="edit" class="w-6 h-6 text-orange-500 mr-2"></i>
-                                <div>
-                                    <p class="text-sm text-orange-600">Modifiées</p>
-                                    <p class="text-2xl font-bold text-orange-700">${stats.modified || 0}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-red-50 p-4 rounded-lg">
-                            <div class="flex items-center">
-                                <i data-lucide="x" class="w-6 h-6 text-red-500 mr-2"></i>
-                                <div>
-                                    <p class="text-sm text-red-600">Rejetées</p>
-                                    <p class="text-2xl font-bold text-red-700">${stats.rejected || 0}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Taux de précision IA Hormur</h3>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-gray-600">Précision globale</span>
-                                <span class="text-lg font-bold text-purple-600">${aiLearning.getAccuracyRate()}%</span>
-                            </div>
-                            <div class="w-full bg-gray-200 rounded-full h-3">
-                                <div class="confidence-bar h-3 rounded-full" style="width: ${aiLearning.getAccuracyRate()}%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Historique des feedbacks récents</h3>
-                        <div class="space-y-3 max-h-64 overflow-y-auto custom-scrollbar">
-                            ${recentFeedback.length > 0 ? recentFeedback.map(feedback => `
-                                <div class="response-diff p-3 rounded-lg border">
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span class="text-sm font-medium">Message #${feedback.messageId}</span>
-                                        <span class="text-xs text-gray-500">${new Date(feedback.timestamp).toLocaleDateString()}</span>
-                                    </div>
-                                    <div class="text-sm">
-                                        <span class="inline-block px-2 py-1 rounded text-xs ${
-                                            feedback.userAction === 'approved' ? 'bg-green-100 text-green-700' :
-                                            feedback.userAction === 'modified' ? 'bg-orange-100 text-orange-700' :
-                                            'bg-red-100 text-red-700'
-                                        }">
-                                            ${feedback.userAction === 'approved' ? 'Approuvé' :
-                                              feedback.userAction === 'modified' ? 'Modifié' : 'Rejeté'}
-                                        </span>
-                                        ${feedback.userComment ? `
-                                            <p class="mt-2 text-gray-600 italic">"${feedback.userComment}"</p>
-                                        ` : ''}
-                                    </div>
-                                </div>
-                            `).join('') : `
-                                <p class="text-gray-500 text-center py-8">Aucun feedback enregistré pour le moment</p>
-                            `}
-                        </div>
-                    </div>
-
-                    <div class="bg-blue-50 p-4 rounded-lg">
-                        <h4 class="font-medium text-blue-800 mb-2 flex items-center">
-                            <i data-lucide="lightbulb" class="w-4 h-4 mr-2"></i>
-                            Conseils pour améliorer l'IA Hormur
-                        </h4>
-                        <ul class="text-sm text-blue-700 space-y-1">
-                            <li>• Donnez des feedbacks détaillés sur les réponses spécifiques à Hormur</li>
-                            <li>• Marquez clairement les spams pour améliorer la détection</li>
-                            <li>• Utilisez la personnalisation pour enseigner le style Hormur</li>
-                            <li>• Signalez les erreurs sur les processus Hormur (SACEM, Stripe, etc.)</li>
-                            <li>• Corrigez les assignments artiste/hôte pour affiner l'algorithme</li>
-                        </ul>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('ai-training-modal').classList.remove('hidden');
+        function refreshMessages() {
+            showToast('Actualisation des messages...', 'info');
+            // Simulate refresh
+            setTimeout(() => {
+                // Perform auto-archive
+                archiveManager.performAutoArchive();
+                updateStats();
+                renderCurrentTab();
+                showToast('Messages actualisés !', 'success');
+            }, 1500);
         }
 
-        function closeAITraining() {
-            document.getElementById('ai-training-modal').classList.add('hidden');
-        }
-
-        function showFeedbackForm() {
-            if (!selectedMessage) return;
-            
-            const feedback = prompt('Donnez votre feedback sur cette réponse IA Hormur (optionnel) :');
-            if (feedback !== null) {
-                aiLearning.recordFeedback(
-                    selectedMessage.id,
-                    selectedMessage.aiResponse,
-                    selectedMessage.aiResponse,
-                    'feedback',
-                    feedback
-                );
-                showToast('Feedback enregistré ! Merci d\'aider l\'IA Hormur à s\'améliorer.');
-            }
-        }
-
-        // Settings
         function showSettings() {
-            if (!currentUser) return;
-            
-            document.getElementById('settings-content').innerHTML = `
-                <div class="space-y-6">
-                    <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Profil utilisateur Hormur</h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Nom</label>
-                                <input type="text" value="${currentUser.name}" class="w-full p-2 border border-gray-300 rounded-lg bg-gray-50" readonly>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                                <input type="text" value="${currentUser.email}" class="w-full p-2 border border-gray-300 rounded-lg bg-gray-50" readonly>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Rôle et spécialités Hormur</h3>
-                        <p class="text-gray-600 bg-gray-50 p-3 rounded-lg mb-3">${currentUser.role}</p>
-                        <div class="flex flex-wrap gap-2">
-                            ${currentUser.specialties.map(specialty => `
-                                <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm">${specialty}</span>
-                            `).join('')}
-                        </div>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Signature personnelle Hormur</h3>
-                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                            <pre class="whitespace-pre-wrap text-sm text-gray-700">${currentUser.signature}</pre>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Style de réponse IA</h3>
-                        <p class="text-sm text-gray-600 capitalize bg-gray-50 p-3 rounded mb-2">${currentUser.style}</p>
-                        <div class="bg-blue-50 p-3 rounded-lg">
-                            <p class="text-sm text-blue-700">${currentUser.aiPromptPersonality}</p>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Statistiques de performance</h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-green-50 p-3 rounded-lg">
-                                <p class="text-sm text-green-600">Messages traités aujourd'hui</p>
-                                <p class="text-xl font-bold text-green-700">${messages.filter(m => m.status === 'auto-sent' || m.status === 'sent').length}</p>
-                            </div>
-                            <div class="bg-purple-50 p-3 rounded-lg">
-                                <p class="text-sm text-purple-600">Efficacité IA Hormur</p>
-                                <p class="text-xl font-bold text-purple-700">${aiLearning.getAccuracyRate()}%</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="hormur-gradient p-4 rounded-lg text-white">
-                        <h4 class="font-medium mb-2">🎭 Configuration Hormur</h4>
-                        <ul class="text-sm space-y-1">
-                            <li>• Intégration Brevo + Make.com + OpenAI</li>
-                            <li>• Classification automatique artistes/hôtes/spectateurs</li>
-                            <li>• Gestion SACEM, Stripe Connect, assurance Beloy</li>
-                            <li>• Apprentissage continu des spécificités Hormur</li>
-                        </ul>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('settings-modal').classList.remove('hidden');
+            showToast('Paramètres en développement', 'info');
         }
 
-        function closeSettings() {
-            document.getElementById('settings-modal').classList.add('hidden');
+        // Statistics update
+        function updateStats() {
+            const stats = {
+                total: messages.length,
+                auto: messages.filter(m => m.status === 'auto-sent').length,
+                review: messages.filter(m => m.status === 'manual-review').length,
+                urgent: messages.filter(m => 
+                    m.priority === 'high' || 
+                    (m.status === 'auto-sent' && (new Date().getTime() - (m.autoSentAt || m.timeReceived)) < 1800000)
+                ).length,
+                pending: messages.filter(m => m.status === 'pending').length,
+                archived: archivedMessages.length
+            };
+
+            // Update header stats
+            document.getElementById('total-count').textContent = `${stats.total} messages`;
+            document.getElementById('auto-count').textContent = stats.auto;
+            document.getElementById('review-count').textContent = stats.review;
+            document.getElementById('urgent-count').textContent = stats.urgent;
+            document.getElementById('pending-count').textContent = stats.pending;
+            document.getElementById('archived-count').textContent = stats.archived;
+
+            // Update tab badges
+            document.getElementById('dashboard-badge').textContent = stats.urgent;
+            document.getElementById('auto-badge').textContent = stats.auto;
+            document.getElementById('validation-badge').textContent = stats.review;
+            document.getElementById('archive-badge').textContent = stats.archived;
+
+            // Update specific stats
+            document.getElementById('today-auto').textContent = stats.auto;
+            document.getElementById('ai-accuracy').textContent = '94%';
         }
 
-        // Enhanced utilities
+        // Toast notifications
         function showToast(message, type = 'success') {
             const toast = document.createElement('div');
-            toast.className = `px-4 py-3 rounded-lg shadow-lg text-white ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} fade-in flex items-center space-x-2`;
+            const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+            const icon = type === 'success' ? 'check' : type === 'error' ? 'alert-circle' : 'info';
+            
+            toast.className = `${bgColor} text-white px-4 py-3 rounded-lg shadow-lg fade-in flex items-center space-x-2`;
             toast.innerHTML = `
-                <i data-lucide="${type === 'success' ? 'check' : 'alert-circle'}" class="w-4 h-4"></i>
-                <span>${message}</span>
+                <i data-lucide="${icon}" class="w-4 h-4"></i>
+                <span class="text-sm">${message}</span>
             `;
             
             document.getElementById('toast-container').appendChild(toast);
@@ -1610,111 +2019,248 @@ Hormur - Transformons vos espaces en scènes
 
         // Event listeners
         document.getElementById('login-form').addEventListener('submit', handleLogin);
-        
-        document.getElementById('search-input').addEventListener('input', (e) => {
-            searchTerm = e.target.value;
-            renderMessages();
+
+        // Add search functionality
+        document.getElementById('search-input')?.addEventListener('input', () => {
+            if (currentTab === 'all') {
+                renderAllMessages();
+            }
         });
 
-        document.getElementById('filter-select').addEventListener('change', (e) => {
-            currentFilter = e.target.value;
-            renderMessages();
+        // Add filter functionality
+        document.getElementById('status-filter')?.addEventListener('change', () => {
+            if (currentTab === 'all') {
+                renderAllMessages();
+            }
         });
 
-        document.getElementById('priority-filter').addEventListener('change', (e) => {
-            priorityFilter = e.target.value;
-            renderMessages();
+        document.getElementById('category-filter')?.addEventListener('change', () => {
+            if (currentTab === 'all') {
+                renderAllMessages();
+            }
         });
 
-        document.getElementById('category-filter').addEventListener('change', (e) => {
-            categoryFilter = e.target.value;
-            renderMessages();
+        // Archive filters
+        document.getElementById('archive-period-filter')?.addEventListener('change', () => {
+            if (currentTab === 'archives') {
+                renderArchivedMessages();
+            }
         });
 
-        // Enhanced message simulation with Hormur context
-        function simulateHormurMessage() {
-            if (!currentUser) return;
+        document.getElementById('archive-category-filter')?.addEventListener('change', () => {
+            if (currentTab === 'archives') {
+                renderArchivedMessages();
+            }
+        });
+
+        // Auto-archive settings
+        document.getElementById('auto-archive-enabled')?.addEventListener('change', (e) => {
+            archiveManager.autoArchiveEnabled = e.target.checked;
+            archiveManager.saveToLocalStorage();
+        });
+
+        document.getElementById('auto-archive-delay')?.addEventListener('change', (e) => {
+            archiveManager.autoArchiveDelay = parseInt(e.target.value);
+            archiveManager.saveToLocalStorage();
+        });
+
+        // Simulate new messages with enhanced realism
+        function simulateNewMessage() {
+            if (!currentUser || Math.random() > 0.4) return;
             
-            const hormurMessageTemplates = [
+            const templates = [
                 {
-                    from: 'nouveau.artiste@gmail.com',
-                    subject: 'Question sur les tarifs conseillés pour concerts intimistes',
-                    content: 'Salut ! Je débute sur Hormur avec des concerts de guitare folk. Quel tarif conseillez-vous pour des concerts chez l\'habitant ? Entre 15-25€ selon mes calculs mais je ne sais pas...',
+                    from: `artiste.${Date.now()}@gmail.com`,
+                    subject: 'Question sur les tarifs Hormur',
+                    content: 'Bonjour, je suis musicien et j\'aimerais savoir comment fixer mes tarifs sur Hormur. Avez-vous des recommandations ?',
                     category: 'artiste',
-                    priority: 'low'
+                    priority: ['medium', 'low'][Math.floor(Math.random() * 2)],
+                    status: Math.random() > 0.3 ? 'auto-sent' : 'manual-review'
                 },
                 {
-                    from: 'hote.curieux@orange.fr',
-                    subject: 'Fréquence des événements - combien par mois ?',
-                    content: 'Bonjour, j\'ai un bel appartement avec salon de 35m². Combien d\'événements puis-je accueillir par mois sur Hormur ? Y a-t-il des restrictions de fréquence ?',
+                    from: `hote.curieux${Date.now()}@orange.fr`,
+                    subject: 'Assurance pour mon lieu',
+                    content: 'Bonjour, j\'ai un jardin de 100m² et j\'aimerais accueillir des concerts. L\'assurance Hormur couvre-t-elle les événements en extérieur ?',
                     category: 'hote',
-                    priority: 'medium'
+                    priority: 'medium',
+                    status: Math.random() > 0.5 ? 'auto-sent' : 'manual-review'
                 },
                 {
-                    from: 'spectateur.nantes@yahoo.fr',
-                    subject: 'Pas d\'événements à Nantes - quand ça arrive ?',
-                    content: 'Bonjour, je suis à Nantes et j\'aimerais vraiment découvrir des événements Hormur mais je ne vois rien dans ma région. Hormur se développe-t-il en Loire-Atlantique ?',
+                    from: `spectateur${Date.now()}@yahoo.fr`,
+                    subject: 'Annulation de dernière minute',
+                    content: 'Bonjour, je ne peux malheureusement plus venir au concert de demain. Puis-je être remboursé ?',
                     category: 'spectateur',
-                    priority: 'medium'
+                    priority: 'low',
+                    status: Math.random() > 0.2 ? 'auto-sent' : 'pending'
                 },
                 {
-                    from: 'artiste.theatre@outlook.fr',
-                    subject: 'Spectacle de théâtre - contraintes techniques',
-                    content: 'Bonjour, je fais du théâtre contemporain et cherche des lieux adaptés. Quelles sont les contraintes techniques que je peux demander aux hôtes ? Éclairage, sono, espace scénique...',
-                    category: 'artiste',
-                    priority: 'medium'
+                    from: `spam${Date.now()}@tempmail.co`,
+                    subject: 'FÉLICITATIONS ! Vous avez gagné !',
+                    content: 'Cliquez ici pour réclamer votre prix de 1000€ ! Offre limitée !',
+                    category: 'spam',
+                    priority: 'low',
+                    status: 'spam'
                 }
             ];
+            
+            const template = templates[Math.floor(Math.random() * templates.length)];
+            const newMessage = {
+                id: Date.now(),
+                ...template,
+                receivedAt: new Date().toISOString().slice(0, 16).replace('T', ' '),
+                aiResponse: template.status === 'auto-sent' ? generateAIResponse(template.category, template.content) : null,
+                confidence: template.status === 'auto-sent' ? Math.floor(Math.random() * 20) + 80 : Math.floor(Math.random() * 30) + 60,
+                timeReceived: new Date().getTime(),
+                autoSentAt: template.status === 'auto-sent' ? new Date().getTime() : null,
+                spamScore: template.status === 'spam' ? Math.floor(Math.random() * 30) + 70 : Math.floor(Math.random() * 20) + 5,
+                spamIndicators: template.status === 'spam' ? ['Urgence artificielle', 'Promesse d\'argent', 'Domaine temporaire'] : [],
+                archived: false
+            };
+            
+            messages.unshift(newMessage);
+            updateStats();
+            renderCurrentTab();
+            showToast('Nouveau message reçu !', 'info');
 
-            if (Math.random() > 0.7) {
-                const template = hormurMessageTemplates[Math.floor(Math.random() * hormurMessageTemplates.length)];
-                const newMessage = {
-                    id: Date.now(),
-                    ...template,
-                    receivedAt: new Date().toISOString().slice(0, 16).replace('T', ' '),
-                    status: Math.random() > 0.3 ? 'pending' : 'auto-sent',
-                    aiResponse: generateHormurResponse(template.category, template.content),
-                    confidence: Math.floor(Math.random() * 20) + 80,
-                    spamScore: Math.floor(Math.random() * 15) + 5,
-                    conversationHistory: [],
-                    aiClassification: 'Nouvelle demande Hormur à traiter',
-                    assignedTo: template.category === 'artiste' ? 'eleonore' : template.category === 'hote' ? 'martin' : 'auto'
-                };
-
-                messages.unshift(newMessage);
-                updateStats();
-                renderMessages();
-                showToast('Nouveau message Hormur reçu !');
+            // Auto-archive if needed
+            if (messages.length > archiveManager.maxActiveMessages) {
+                setTimeout(() => {
+                    archiveManager.performAutoArchive();
+                    updateStats();
+                    renderCurrentTab();
+                }, 2000);
             }
         }
 
-        function generateHormurResponse(category, content) {
+        function generateAIResponse(category, content) {
             const responses = {
-                artiste: 'Salut ! Excellente question ! Pour les tarifs, tout dépend de ton expérience et du type de concert. Entre 15-25€ c\'est un bon début ! Tu peux aussi proposer prix libre pour commencer. Crée ton projet sur https://hormur.com/projet/new et nos hôtes te feront des propositions.\n\nÉléonore\nResponsable Relations Artistes\nHormur',
-                hote: 'Bonjour ! Parfait, 35m² c\'est idéal pour des événements intimistes ! Il n\'y a aucune restriction de fréquence - c\'est entièrement selon vos envies et disponibilités. Certains hôtes accueillent chaque semaine, d\'autres une fois par mois. Inscrivez votre lieu : https://hormur.com/place/new\n\nMartin\nResponsable Partenariats Lieux\nHormur',
-                spectateur: 'Bonjour ! Hormur se développe progressivement partout en France, Nantes inclus ! Pour être informé dès qu\'un événement se crée près de chez vous, remplissez vos préférences : https://hormur-preferences-public.netlify.app/\n\nCordialement,\nL\'équipe Hormur'
+                artiste: 'Bonjour !\n\nExcellente question ! Pour les tarifs, nous recommandons de commencer entre 15-25€ selon votre expérience. Vous pouvez aussi proposer prix libre pour débuter.\n\nCréez votre projet : https://hormur.com/projet/new\n\nÉléonore\nResponsable Relations Artistes\nHormur',
+                hote: 'Bonjour !\n\nParfait ! Les jardins sont très appréciés sur Hormur. Notre assurance Beloy x Hiscox couvre effectivement les événements extérieurs jusqu\'à 1M€.\n\nPlus d\'infos : https://webviews.beloy.com/hormur/hormur.html\n\nMartin\nResponsable Partenariats Lieux\nHormur',
+                spectateur: 'Bonjour,\n\nJe comprends votre situation. Selon nos CGU, les billets ne sont pas remboursables sauf annulation par l\'organisateur.\n\nVous pouvez cependant céder vos billets à un proche.\n\nCordialement,\nL\'équipe Hormur'
             };
-            return responses[category] || 'Bonjour ! Merci pour votre message. Notre équipe va traiter votre demande rapidement.\n\nCordialement,\nL\'équipe Hormur';
+            return responses[category] || 'Bonjour,\n\nMerci pour votre message. Notre équipe va traiter votre demande rapidement.\n\nCordialement,\nL\'équipe Hormur';
         }
 
-        // Initialization
+        // Initialize app
         function init() {
             if (!currentUser) return;
             
+            // Load saved data
+            archiveManager.loadFromLocalStorage();
+            
             updateStats();
-            renderMessages();
-            renderDetailPanel();
+            renderCurrentTab();
             lucide.createIcons();
             
-            // Simulate new Hormur messages periodically
-            setInterval(simulateHormurMessage, 90000); // Every 1.5 minutes
+            // Perform initial auto-archive
+            setTimeout(() => {
+                archiveManager.performAutoArchive();
+                updateStats();
+                renderCurrentTab();
+            }, 1000);
+            
+            // Simulate new messages
+            setInterval(simulateNewMessage, 45000); // Every 45 seconds
+
+            // Auto-archive check every hour
+            setInterval(() => {
+                if (archiveManager.autoArchiveEnabled) {
+                    const archivedCount = archiveManager.performAutoArchive();
+                    if (archivedCount > 0) {
+                        updateStats();
+                        renderCurrentTab();
+                    }
+                }
+            }, 3600000); // Every hour
         }
 
-        // Start application
+        // Start app
         document.addEventListener('DOMContentLoaded', () => {
             initAuth();
             lucide.createIcons();
         });
+
+        // Handle back button for modals
+        window.addEventListener('popstate', (event) => {
+            if (!document.getElementById('message-modal').classList.contains('hidden')) {
+                closeMessageModal();
+            }
+            if (!document.getElementById('quick-actions-modal').classList.contains('hidden')) {
+                closeQuickActions();
+            }
+            if (!document.getElementById('archive-manager-modal').classList.contains('hidden')) {
+                closeArchiveManager();
+            }
+        });
+
+        // Handle page visibility for auto-archive
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && archiveManager.autoArchiveEnabled) {
+                // Check for auto-archive when page becomes visible
+                setTimeout(() => {
+                    const archivedCount = archiveManager.performAutoArchive();
+                    if (archivedCount > 0) {
+                        updateStats();
+                        renderCurrentTab();
+                    }
+                }, 1000);
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Échap pour fermer les modals
+            if (e.key === 'Escape') {
+                if (!document.getElementById('message-modal').classList.contains('hidden')) {
+                    closeMessageModal();
+                }
+                if (!document.getElementById('quick-actions-modal').classList.contains('hidden')) {
+                    closeQuickActions();
+                }
+                if (!document.getElementById('archive-manager-modal').classList.contains('hidden')) {
+                    closeArchiveManager();
+                }
+            }
+            
+            // Raccourcis pour navigation (Ctrl + nombre)
+            if (e.ctrlKey && !e.shiftKey && !e.altKey) {
+                switch(e.key) {
+                    case '1':
+                        e.preventDefault();
+                        switchTab('dashboard');
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        switchTab('auto-send');
+                        break;
+                    case '3':
+                        e.preventDefault();
+                        switchTab('validation');
+                        break;
+                    case '4':
+                        e.preventDefault();
+                        switchTab('archives');
+                        break;
+                    case '5':
+                        e.preventDefault();
+                        switchTab('all');
+                        break;
+                    case 'r':
+                        e.preventDefault();
+                        refreshMessages();
+                        break;
+                }
+            }
+        });
+
+        // Window resize handler for responsive adjustments
+        window.addEventListener('resize', () => {
+            // Force re-render of current tab to adjust layout
+            setTimeout(() => {
+                renderCurrentTab();
+            }, 100);
+        });
+
     </script>
 </body>
 </html>
