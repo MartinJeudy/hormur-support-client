@@ -1502,26 +1502,82 @@
             });
         }
 
-        // Archive functions
-        function archiveMessage(messageId) {
-            if (archiveManager.archiveMessage(messageId, currentUser?.email)) {
-                updateStats();
-                renderCurrentTab();
-                showToast('Message archivé avec succès', 'success');
-                if (selectedMessage?.id === messageId) {
-                    closeMessageModal();
+        // Archive functions avec datastore Netlify
+        async function archiveMessage(messageId) {
+            try {
+                showToast('Archivage en cours...', 'info');
+                
+                const response = await fetch('/.netlify/functions/update-datastore', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'archive',
+                        message_id: messageId,
+                        user_email: currentUser?.email
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    // Mise à jour locale pour réactivité immédiate
+                    if (archiveManager.archiveMessage(messageId, currentUser?.email)) {
+                        updateStats();
+                        renderCurrentTab();
+                        showToast('Message archivé avec succès', 'success');
+                        if (selectedMessage?.id === messageId) {
+                            closeMessageModal();
+                        }
+                    }
+                } else {
+                    const error = await response.json();
+                    console.error('Erreur archivage datastore:', error);
+                    showToast('Erreur lors de l\'archivage: ' + error.error, 'error');
                 }
+            } catch (error) {
+                console.error('Erreur archivage:', error);
+                showToast('Erreur de connexion lors de l\'archivage', 'error');
             }
         }
 
-        function unarchiveMessage(messageId) {
-            if (archiveManager.unarchiveMessage(messageId)) {
-                updateStats();
-                renderCurrentTab();
-                showToast('Message restauré des archives', 'success');
-                if (selectedMessage?.id === messageId) {
-                    closeMessageModal();
+        async function unarchiveMessage(messageId) {
+            try {
+                showToast('Restauration en cours...', 'info');
+                
+                const response = await fetch('/.netlify/functions/update-datastore', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'unarchive',
+                        message_id: messageId,
+                        user_email: currentUser?.email
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    // Mise à jour locale
+                    if (archiveManager.unarchiveMessage(messageId)) {
+                        updateStats();
+                        renderCurrentTab();
+                        showToast('Message restauré des archives', 'success');
+                        if (selectedMessage?.id === messageId) {
+                            closeMessageModal();
+                        }
+                    }
+                } else {
+                    const error = await response.json();
+                    console.error('Erreur désarchivage datastore:', error);
+                    showToast('Erreur lors de la restauration: ' + error.error, 'error');
                 }
+            } catch (error) {
+                console.error('Erreur désarchivage:', error);
+                showToast('Erreur de connexion lors de la restauration', 'error');
             }
         }
 
