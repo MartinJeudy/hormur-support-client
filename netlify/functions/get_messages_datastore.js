@@ -1,3 +1,6 @@
+// Fonction de debug à ajouter temporairement dans get_messages_datastore.js
+// POUR DEBUG UNIQUEMENT - À SUPPRIMER APRÈS
+
 exports.handler = async (event, context) => {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -9,126 +12,91 @@ exports.handler = async (event, context) => {
     return { statusCode: 200, headers: corsHeaders };
   }
 
+  // 🔍 DEBUG: Vérifier les variables d'environnement
+  console.log('=== DEBUG VARIABLES D\'ENVIRONNEMENT ===');
+  console.log('GOOGLE_APPS_SCRIPT_URL:', process.env.GOOGLE_APPS_SCRIPT_URL);
+  console.log('HORMUR_API_KEY:', process.env.HORMUR_API_KEY ? 'CONFIGURÉ ✅' : 'MANQUANT ❌');
+  
+  // Si variables manquantes, arrêter ici
+  if (!process.env.GOOGLE_APPS_SCRIPT_URL) {
+    return {
+      statusCode: 500,
+      headers: corsHeaders,
+      body: JSON.stringify({ 
+        error: 'GOOGLE_APPS_SCRIPT_URL non configuré',
+        debug: {
+          allEnvVars: Object.keys(process.env).filter(key => key.includes('GOOGLE') || key.includes('HORMUR'))
+        }
+      })
+    };
+  }
+
+  if (!process.env.HORMUR_API_KEY) {
+    return {
+      statusCode: 500,
+      headers: corsHeaders,
+      body: JSON.stringify({ 
+        error: 'HORMUR_API_KEY non configuré',
+        debug: {
+          gasUrl: process.env.GOOGLE_APPS_SCRIPT_URL,
+          allEnvVars: Object.keys(process.env).filter(key => key.includes('GOOGLE') || key.includes('HORMUR'))
+        }
+      })
+    };
+  }
+
+  // Test simple de l'URL Google Apps Script
   try {
-    // 📥 DONNÉES REÇUES DE L'APP
-    let filters = {};
-    if (event.httpMethod === 'GET') {
-      filters = event.queryStringParameters || {};
-    } else {
-      const body = event.body ? JSON.parse(event.body) : {};
-      filters = body.filters || {};
-    }
-
-    console.log('=== GET MESSAGES FROM GOOGLE SHEETS ===');
-    console.log('Filters:', filters);
-
-    // ✅ Configuration Google Apps Script
-    const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL || 
-      'https://script.google.com/macros/s/AKfycbw0PCN3NSWGP07EwCJiUHXWmBvEAVuS5I2RHfUKFG74B9ktk8fQEBn7Hk1kJ11SPsFnEw/exec';
-    const HORMUR_API_KEY = process.env.HORMUR_API_KEY;
-
-    if (!HORMUR_API_KEY) {
-      return {
-        statusCode: 500,
-        headers: corsHeaders,
-        body: JSON.stringify({ 
-          error: 'Configuration manquante',
-          details: 'HORMUR_API_KEY non configuré'
-        })
-      };
-    }
-
-    // 📤 PAYLOAD POUR GOOGLE APPS SCRIPT
-    const requestPayload = {
+    const testPayload = {
       action: 'get',
-      filters: {
-        status: filters.status && filters.status !== 'all' ? filters.status : undefined,
-        category: filters.category && filters.category !== 'all' ? filters.category : undefined,
-        priority: filters.priority && filters.priority !== 'all' ? filters.priority : undefined,
-        archived: filters.archived
-      },
-      search: filters.search || undefined,
-      limit: parseInt(filters.limit) || 100,
-      timestamp: new Date().toISOString(),
-      api_key: HORMUR_API_KEY
+      api_key: process.env.HORMUR_API_KEY,
+      timestamp: new Date().toISOString()
     };
 
-    // Nettoyer les undefined
-    Object.keys(requestPayload.filters).forEach(key => {
-      if (requestPayload.filters[key] === undefined) {
-        delete requestPayload.filters[key];
-      }
-    });
+    console.log('🧪 Test URL Google Apps Script...');
+    console.log('URL:', process.env.GOOGLE_APPS_SCRIPT_URL);
 
-    console.log('📤 Requête vers Google Sheets:', JSON.stringify(requestPayload, null, 2));
-
-    // 🚀 APPEL VERS GOOGLE APPS SCRIPT SÉCURISÉ
-    const sheetsResponse = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+    const response = await fetch(process.env.GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-Key': HORMUR_API_KEY,
-        'User-Agent': 'Hormur-Support/2.0'
+        'X-API-Key': process.env.HORMUR_API_KEY
       },
-      body: JSON.stringify(requestPayload),
-      timeout: 15000
+      body: JSON.stringify(testPayload)
     });
 
-    if (!sheetsResponse.ok) {
-      const errorText = await sheetsResponse.text();
-      console.error('❌ Erreur Google Sheets:', {
-        status: sheetsResponse.status,
-        body: errorText
-      });
-      
-      return {
-        statusCode: 502,
-        headers: corsHeaders,
-        body: JSON.stringify({ 
-          error: 'Erreur Google Sheets',
-          status: sheetsResponse.status,
-          details: errorText
-        })
-      };
-    }
+    console.log('Status:', response.status);
+    console.log('Headers:', response.headers);
 
-    const sheetsData = await sheetsResponse.json();
-    console.log('✅ Données reçues de Google Sheets:', sheetsData?.messages?.length || 0, 'messages');
+    const responseText = await response.text();
+    console.log('Response preview:', responseText.substring(0, 200));
 
-    // 🔄 VÉRIFICATION ET TRANSFORMATION DES DONNÉES
-    if (!sheetsData.success) {
-      console.error('❌ Erreur métier Google Sheets:', sheetsData);
-      return {
-        statusCode: 400,
-        headers: corsHeaders,
-        body: JSON.stringify(sheetsData)
-      };
-    }
-
-    // 📤 RÉPONSE POUR L'APP (format attendu par l'interface)
     return {
       statusCode: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        success: true,
-        source: 'google_sheets_secure',
-        messages: sheetsData.messages || [],
-        total: sheetsData.total || 0,
-        timestamp: new Date().toISOString(),
-        filters_applied: filters
+        debug: true,
+        gasUrl: process.env.GOOGLE_APPS_SCRIPT_URL,
+        apiKeyConfigured: !!process.env.HORMUR_API_KEY,
+        testResponse: {
+          status: response.status,
+          ok: response.ok,
+          responsePreview: responseText.substring(0, 200),
+          isHtml: responseText.includes('<!DOCTYPE html>')
+        }
       })
     };
 
   } catch (error) {
-    console.error('💥 ERREUR CRITIQUE get-messages:', error);
+    console.error('💥 Erreur test:', error);
     
     return {
       statusCode: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
-        error: 'Erreur serveur interne',
+        error: 'Erreur test Google Apps Script',
         details: error.message,
-        timestamp: new Date().toISOString()
+        gasUrl: process.env.GOOGLE_APPS_SCRIPT_URL
       })
     };
   }
