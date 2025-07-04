@@ -20,7 +20,7 @@ exports.handler = async (event, context) => {
   try {
     const data = JSON.parse(event.body);
     
-    console.log('=== UPDATE MESSAGE VIA GOOGLE SHEETS ===');
+    console.log('=== UPDATE MESSAGE VIA GOOGLE APPS SCRIPT ===');
     console.log('Action:', data.action);
     console.log('Message ID:', data.message_id);
 
@@ -36,27 +36,26 @@ exports.handler = async (event, context) => {
     }
 
     // ✅ Configuration Google Apps Script
-    const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL || 
-      'https://script.google.com/macros/s/AKfycbw0PCN3NSWGP07EwCJiUHXWmBvEAVuS5I2RHfUKFG74B9ktk8fQEBn7Hk1kJ11SPsFnEw/exec';
+    const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL;
     const HORMUR_API_KEY = process.env.HORMUR_API_KEY;
     
-    if (!HORMUR_API_KEY) {
+    if (!GOOGLE_APPS_SCRIPT_URL || !HORMUR_API_KEY) {
       return {
         statusCode: 500,
         headers: corsHeaders,
         body: JSON.stringify({ 
           error: 'Configuration manquante',
-          details: 'HORMUR_API_KEY requis'
+          details: 'GOOGLE_APPS_SCRIPT_URL et HORMUR_API_KEY requis'
         })
       };
     }
 
     // 📤 PAYLOAD POUR GOOGLE APPS SCRIPT
     const updatePayload = {
-      action: 'update', // Action principale
+      action: 'update',
       message_id: data.message_id,
       user_email: data.user_email || 'system',
-      action: data.action, // Sous-action (archive, mark_spam, etc.)
+      update_action: data.action, // Renommé pour éviter la confusion
       new_status: data.new_status,
       assigned_to: data.assigned_to,
       reason: data.reason,
@@ -65,46 +64,45 @@ exports.handler = async (event, context) => {
       api_key: HORMUR_API_KEY
     };
 
-    console.log('📤 Mise à jour Google Sheets:', JSON.stringify(updatePayload, null, 2));
+    console.log('📤 Mise à jour Google Apps Script:', JSON.stringify(updatePayload, null, 2));
 
     // 🚀 APPEL VERS GOOGLE APPS SCRIPT
-    const sheetsResponse = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+    const gasResponse = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-API-Key': HORMUR_API_KEY,
         'User-Agent': 'Hormur-Support/2.0'
       },
-      body: JSON.stringify(updatePayload),
-      timeout: 10000
+      body: JSON.stringify(updatePayload)
     });
 
-    if (!sheetsResponse.ok) {
-      const errorText = await sheetsResponse.text();
-      console.error('❌ Erreur Google Sheets:', {
-        status: sheetsResponse.status,
-        body: errorText
+    if (!gasResponse.ok) {
+      const errorText = await gasResponse.text();
+      console.error('❌ Erreur Google Apps Script:', {
+        status: gasResponse.status,
+        body: errorText.substring(0, 500)
       });
       
       return {
         statusCode: 502,
         headers: corsHeaders,
         body: JSON.stringify({ 
-          error: 'Erreur mise à jour Google Sheets',
-          status: sheetsResponse.status,
-          details: errorText
+          error: 'Erreur mise à jour Google Apps Script',
+          status: gasResponse.status,
+          details: gasResponse.status === 401 ? 'URL ou API Key incorrecte' : 'Erreur serveur GAS'
         })
       };
     }
 
-    const sheetsResult = await sheetsResponse.json();
+    const gasResult = await gasResponse.json();
     
-    if (!sheetsResult.success) {
-      console.error('❌ Erreur métier Google Sheets:', sheetsResult);
+    if (!gasResult.success) {
+      console.error('❌ Erreur métier Google Apps Script:', gasResult);
       return {
         statusCode: 400,
         headers: corsHeaders,
-        body: JSON.stringify(sheetsResult)
+        body: JSON.stringify(gasResult)
       };
     }
 
@@ -113,7 +111,7 @@ exports.handler = async (event, context) => {
     return {
       statusCode: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      body: JSON.stringify(sheetsResult)
+      body: JSON.stringify(gasResult)
     };
 
   } catch (error) {
