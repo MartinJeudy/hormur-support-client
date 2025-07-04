@@ -152,6 +152,20 @@
             opacity: 0.6;
             transform: scale(0.95);
         }
+
+        .loading-spinner {
+            border: 2px solid #f3f4f6;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gray-50">
@@ -195,9 +209,11 @@
                 
                 <button 
                     type="submit"
-                    class="w-full bg-white text-indigo-600 py-3 px-4 rounded-lg hover:bg-indigo-50 transition-colors font-semibold"
+                    id="login-button"
+                    class="w-full bg-white text-indigo-600 py-3 px-4 rounded-lg hover:bg-indigo-50 transition-colors font-semibold flex items-center justify-center"
                 >
-                    Se connecter
+                    <span id="login-text">Se connecter</span>
+                    <div id="login-spinner" class="loading-spinner ml-2 hidden"></div>
                 </button>
             </form>
             
@@ -226,7 +242,7 @@
                                     <div class="w-2 h-2 bg-green-500 rounded-full auto-send-indicator"></div>
                                     <span class="text-xs text-gray-600">IA Active</span>
                                 </div>
-                                <span id="total-count" class="text-xs text-gray-500">15 messages</span>
+                                <span id="total-count" class="text-xs text-gray-500">Chargement...</span>
                             </div>
                         </div>
                     </div>
@@ -243,23 +259,23 @@
                 <!-- Quick Stats Bar -->
                 <div class="mt-3 grid grid-cols-5 gap-2 text-center">
                     <div class="bg-green-50 p-2 rounded-lg">
-                        <div class="text-sm font-bold text-green-700" id="auto-count">6</div>
+                        <div class="text-sm font-bold text-green-700" id="auto-count">-</div>
                         <div class="text-xs text-green-600">Auto</div>
                     </div>
                     <div class="bg-orange-50 p-2 rounded-lg">
-                        <div class="text-sm font-bold text-orange-700" id="review-count">4</div>
+                        <div class="text-sm font-bold text-orange-700" id="review-count">-</div>
                         <div class="text-xs text-orange-600">À valider</div>
                     </div>
                     <div class="bg-red-50 p-2 rounded-lg">
-                        <div class="text-sm font-bold text-red-700" id="urgent-count">2</div>
+                        <div class="text-sm font-bold text-red-700" id="urgent-count">-</div>
                         <div class="text-xs text-red-600">Urgent</div>
                     </div>
                     <div class="bg-gray-50 p-2 rounded-lg">
-                        <div class="text-sm font-bold text-gray-700" id="pending-count">3</div>
+                        <div class="text-sm font-bold text-gray-700" id="pending-count">-</div>
                         <div class="text-xs text-gray-600">En attente</div>
                     </div>
                     <div class="bg-blue-50 p-2 rounded-lg">
-                        <div class="text-sm font-bold text-blue-700" id="archived-count">125</div>
+                        <div class="text-sm font-bold text-blue-700" id="archived-count">-</div>
                         <div class="text-xs text-blue-600">Archivées</div>
                     </div>
                 </div>
@@ -272,22 +288,22 @@
                 <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-active px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
                     <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
                     <span>Dashboard</span>
-                    <span id="dashboard-badge" class="bg-white bg-opacity-20 text-xs px-2 py-1 rounded-full">2</span>
+                    <span id="dashboard-badge" class="bg-white bg-opacity-20 text-xs px-2 py-1 rounded-full">-</span>
                 </button>
                 <button onclick="switchTab('auto-send')" id="tab-auto-send" class="tab-inactive px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
                     <i data-lucide="zap" class="w-4 h-4"></i>
                     <span>Auto-Send</span>
-                    <span id="auto-badge" class="bg-green-600 text-white text-xs px-2 py-1 rounded-full">6</span>
+                    <span id="auto-badge" class="bg-green-600 text-white text-xs px-2 py-1 rounded-full">-</span>
                 </button>
                 <button onclick="switchTab('validation')" id="tab-validation" class="tab-inactive px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
                     <i data-lucide="eye" class="w-4 h-4"></i>
                     <span>À Valider</span>
-                    <span id="validation-badge" class="bg-orange-600 text-white text-xs px-2 py-1 rounded-full">4</span>
+                    <span id="validation-badge" class="bg-orange-600 text-white text-xs px-2 py-1 rounded-full">-</span>
                 </button>
                 <button onclick="switchTab('archives')" id="tab-archives" class="tab-inactive px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
                     <i data-lucide="archive" class="w-4 h-4"></i>
                     <span>Archives</span>
-                    <span id="archive-badge" class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">125</span>
+                    <span id="archive-badge" class="bg-blue-600 text-white text-xs px-2 py-1 rounded-full">-</span>
                 </button>
                 <button onclick="switchTab('all')" id="tab-all" class="tab-inactive px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
                     <i data-lucide="list" class="w-4 h-4"></i>
@@ -305,10 +321,13 @@
                     <h3 class="font-medium text-red-800 mb-3 flex items-center">
                         <i data-lucide="alert-triangle" class="w-5 h-5 mr-2"></i>
                         Actions Urgentes
-                        <span class="ml-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full" id="urgent-actions-count">2</span>
+                        <span class="ml-2 bg-red-600 text-white text-xs px-2 py-1 rounded-full" id="urgent-actions-count">-</span>
                     </h3>
                     <div id="urgent-messages" class="space-y-2">
-                        <!-- Urgent messages will be loaded here -->
+                        <div class="text-center py-4 text-gray-500">
+                            <div class="loading-spinner mx-auto mb-2"></div>
+                            <p class="text-sm">Chargement des messages urgents...</p>
+                        </div>
                     </div>
                 </div>
 
@@ -317,10 +336,13 @@
                     <h3 class="font-medium text-green-800 mb-3 flex items-center">
                         <i data-lucide="bot" class="w-5 h-5 mr-2"></i>
                         Surveillance Auto-Send (30min)
-                        <span class="ml-2 bg-green-600 text-white text-xs px-2 py-1 rounded-full" id="surveillance-count">3</span>
+                        <span class="ml-2 bg-green-600 text-white text-xs px-2 py-1 rounded-full" id="surveillance-count">-</span>
                     </h3>
                     <div id="surveillance-auto-send" class="space-y-2">
-                        <!-- Recent auto-send messages will be loaded here -->
+                        <div class="text-center py-4 text-gray-500">
+                            <div class="loading-spinner mx-auto mb-2"></div>
+                            <p class="text-sm">Chargement de la surveillance...</p>
+                        </div>
                     </div>
                 </div>
 
@@ -332,11 +354,11 @@
                     </h3>
                     <div class="grid grid-cols-2 gap-4">
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-green-600" id="today-auto">6</div>
+                            <div class="text-2xl font-bold text-green-600" id="today-auto">-</div>
                             <div class="text-sm text-gray-600">Auto-envoyés</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-2xl font-bold text-purple-600" id="ai-accuracy">94%</div>
+                            <div class="text-2xl font-bold text-purple-600" id="ai-accuracy">-%</div>
                             <div class="text-sm text-gray-600">Précision IA</div>
                         </div>
                     </div>
@@ -361,7 +383,7 @@
                 </div>
             </div>
 
-            <!-- Auto-Send Tab -->
+            <!-- Other content tabs would be here, but I'll include the key message loading containers -->
             <div id="content-auto-send" class="hidden p-4">
                 <div class="mb-4 bg-green-50 border border-green-200 rounded-lg p-3">
                     <div class="flex items-center justify-between">
@@ -370,35 +392,19 @@
                             <p class="text-sm text-green-600">Messages envoyés automatiquement par l'IA</p>
                         </div>
                         <div class="text-right">
-                            <div class="text-lg font-bold text-green-700" id="auto-send-today">6</div>
+                            <div class="text-lg font-bold text-green-700" id="auto-send-today">-</div>
                             <div class="text-xs text-green-600">Aujourd'hui</div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Auto-Archive Settings -->
-                <div class="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                    <h4 class="font-medium text-blue-800 mb-2">Archivage automatique</h4>
-                    <div class="flex items-center space-x-3">
-                        <label class="flex items-center space-x-2">
-                            <input type="checkbox" id="auto-archive-enabled" class="rounded" checked>
-                            <span class="text-sm text-blue-700">Activer l'archivage auto après</span>
-                        </label>
-                        <select id="auto-archive-delay" class="text-sm border rounded px-2 py-1">
-                            <option value="24">24h</option>
-                            <option value="48" selected>48h</option>
-                            <option value="72">72h</option>
-                            <option value="168">7 jours</option>
-                        </select>
-                    </div>
-                </div>
-
                 <div id="auto-send-messages" class="space-y-3">
-                    <!-- Auto-send messages will be loaded here -->
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="loading-spinner mx-auto mb-4"></div>
+                        <p class="text-sm">Chargement des messages auto-envoyés...</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Validation Tab -->
             <div id="content-validation" class="hidden p-4">
                 <div class="mb-4 bg-orange-50 border border-orange-200 rounded-lg p-3">
                     <div class="flex items-center justify-between">
@@ -407,17 +413,19 @@
                             <p class="text-sm text-orange-600">Nécessitent une intervention humaine</p>
                         </div>
                         <div class="text-right">
-                            <div class="text-lg font-bold text-orange-700" id="validation-today">4</div>
+                            <div class="text-lg font-bold text-orange-700" id="validation-today">-</div>
                             <div class="text-xs text-orange-600">En attente</div>
                         </div>
                     </div>
                 </div>
                 <div id="validation-messages" class="space-y-3">
-                    <!-- Validation messages will be loaded here -->
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="loading-spinner mx-auto mb-4"></div>
+                        <p class="text-sm">Chargement des messages à valider...</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Archives Tab -->
             <div id="content-archives" class="hidden p-4">
                 <div class="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
                     <div class="flex items-center justify-between">
@@ -426,40 +434,19 @@
                             <p class="text-sm text-blue-600">Conversations terminées et archivées</p>
                         </div>
                         <div class="text-right">
-                            <div class="text-lg font-bold text-blue-700" id="total-archived">125</div>
+                            <div class="text-lg font-bold text-blue-700" id="total-archived">-</div>
                             <div class="text-xs text-blue-600">Total archivées</div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Archive Filters -->
-                <div class="mb-4 flex space-x-2 overflow-x-auto custom-scrollbar">
-                    <select id="archive-period-filter" class="flex-shrink-0 px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                        <option value="all">Toute période</option>
-                        <option value="today">Aujourd'hui</option>
-                        <option value="week">Cette semaine</option>
-                        <option value="month">Ce mois</option>
-                        <option value="quarter">Ce trimestre</option>
-                    </select>
-                    <select id="archive-category-filter" class="flex-shrink-0 px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                        <option value="all">Toutes catégories</option>
-                        <option value="artiste">Artistes</option>
-                        <option value="hote">Hôtes</option>
-                        <option value="spectateur">Spectateurs</option>
-                        <option value="partenariat">Partenariats</option>
-                    </select>
-                    <button onclick="exportArchives()" class="flex-shrink-0 px-3 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700">
-                        <i data-lucide="download" class="w-4 h-4 inline mr-1"></i>
-                        Exporter
-                    </button>
-                </div>
-
                 <div id="archived-messages" class="space-y-3">
-                    <!-- Archived messages will be loaded here -->
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="loading-spinner mx-auto mb-4"></div>
+                        <p class="text-sm">Chargement des archives...</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- All Messages Tab -->
             <div id="content-all" class="hidden p-4">
                 <!-- Search Bar -->
                 <div class="mb-4">
@@ -491,14 +478,13 @@
                         <option value="spectateur">Spectateurs</option>
                         <option value="partenariat">Partenariats</option>
                     </select>
-                    <button onclick="bulkArchive()" class="flex-shrink-0 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 flex items-center space-x-1">
-                        <i data-lucide="archive" class="w-4 h-4"></i>
-                        <span>Archiver sélection</span>
-                    </button>
                 </div>
 
                 <div id="all-messages" class="space-y-3">
-                    <!-- All messages will be loaded here -->
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="loading-spinner mx-auto mb-4"></div>
+                        <p class="text-sm">Chargement de tous les messages...</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -528,26 +514,6 @@
             </div>
         </div>
 
-        <!-- Archive Manager Modal -->
-        <div id="archive-manager-modal" class="fixed inset-0 modal-overlay z-50 hidden">
-            <div class="min-h-screen px-4 flex items-center justify-center">
-                <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
-                    <div class="sticky top-0 bg-white border-b px-4 py-3 flex items-center justify-between">
-                        <h3 class="font-semibold text-gray-900 flex items-center">
-                            <i data-lucide="archive" class="w-5 h-5 mr-2"></i>
-                            Gestionnaire d'Archives
-                        </h3>
-                        <button onclick="closeArchiveManager()" class="text-gray-400 hover:text-gray-600">
-                            <i data-lucide="x" class="w-6 h-6"></i>
-                        </button>
-                    </div>
-                    <div id="archive-manager-content" class="p-4 overflow-y-auto custom-scrollbar" style="max-height: calc(90vh - 60px);">
-                        <!-- Archive manager content will be loaded here -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Quick Actions Modal -->
         <div id="quick-actions-modal" class="fixed inset-0 modal-overlay z-50 hidden">
             <div class="min-h-screen px-4 flex items-end justify-center">
@@ -563,18 +529,6 @@
                             <button onclick="refreshMessages(); closeQuickActions();" class="w-full p-3 bg-blue-50 text-blue-700 rounded-lg flex items-center space-x-3">
                                 <i data-lucide="refresh-cw" class="w-5 h-5"></i>
                                 <span>Actualiser les messages</span>
-                            </button>
-                            <button onclick="showArchiveManager(); closeQuickActions();" class="w-full p-3 bg-indigo-50 text-indigo-700 rounded-lg flex items-center space-x-3">
-                                <i data-lucide="archive" class="w-5 h-5"></i>
-                                <span>Gestionnaire d'archives</span>
-                            </button>
-                            <button onclick="exportData(); closeQuickActions();" class="w-full p-3 bg-green-50 text-green-700 rounded-lg flex items-center space-x-3">
-                                <i data-lucide="download" class="w-5 h-5"></i>
-                                <span>Exporter les données</span>
-                            </button>
-                            <button onclick="showSettings(); closeQuickActions();" class="w-full p-3 bg-gray-50 text-gray-700 rounded-lg flex items-center space-x-3">
-                                <i data-lucide="settings" class="w-5 h-5"></i>
-                                <span>Paramètres</span>
                             </button>
                             <button onclick="logout(); closeQuickActions();" class="w-full p-3 bg-red-50 text-red-700 rounded-lg flex items-center space-x-3">
                                 <i data-lucide="log-out" class="w-5 h-5"></i>
@@ -613,345 +567,22 @@
             }
         };
 
-        // Messages de démonstration enrichis avec système d'archivage
-        let messages = [
-            // Messages actifs
-            {
-                id: 1,
-                from: 'artiste.piano@hotmail.com',
-                subject: 'Problème de paiement - événement du mois dernier',
-                content: 'Bonjour, je n\'ai pas reçu mon paiement pour l\'événement du mois dernier (Concert piano chez Sophie, 15 mai). Mon événement s\'est bien passé, il y avait 12 spectateurs. Pouvez-vous vérifier mon compte Stripe Connect ?',
-                receivedAt: '2025-06-07 13:15',
-                status: 'manual-review',
-                category: 'paiement',
-                priority: 'high',
-                aiResponse: 'Bonjour,\n\nJe comprends votre préoccupation concernant le paiement de votre événement du 15 mai.\n\nSelon nos informations, les virements Stripe Connect sont automatiquement déclenchés dans les 7 à 14 jours ouvrés après l\'événement. Je vais vérifier immédiatement votre dossier dans notre système.\n\nÉléonore\nResponsable Relations Artistes\nHormur',
-                confidence: 88,
-                assignedTo: 'eleonore',
-                escalationReason: 'Problème financier nécessitant vérification comptable',
-                timeReceived: new Date().getTime() - 3600000, // 1h ago
-                archived: false
-            },
-            {
-                id: 2,
-                from: 'contact@ehpad-soleil.fr',
-                subject: 'Partenariat EHPAD - événements culturels résidents',
-                content: 'Bonjour, nous sommes l\'EHPAD Les Jardins du Soleil à Lyon (120 résidents). Nous aimerions proposer des événements culturels réguliers à nos résidents. Comment établir un partenariat avec Hormur ? Tarification spéciale ?',
-                receivedAt: '2025-06-07 12:30',
-                status: 'manual-review',
-                category: 'partenariat',
-                priority: 'high',
-                aiResponse: 'Bonjour,\n\nNous serions ravis de développer un partenariat avec votre EHPAD !\n\nMartin\nResponsable Partenariats Lieux\nHormur',
-                confidence: 92,
-                assignedTo: 'martin',
-                escalationReason: 'Opportunité commerciale B2B importante',
-                timeReceived: new Date().getTime() - 2400000, // 40min ago
-                archived: false
-            },
-            {
-                id: 3,
-                from: 'marie.spectateur@gmail.com',
-                subject: 'Question sur l\'événement jazz prévu chez M. Martin',
-                content: 'Bonjour, je voudrais savoir si l\'événement de concert jazz prévu chez M. Martin est toujours d\'actualité ? J\'ai acheté mes places il y a une semaine.',
-                receivedAt: '2025-06-07 14:30',
-                status: 'auto-sent',
-                category: 'spectateur',
-                priority: 'medium',
-                aiResponse: 'Bonjour Marie,\n\nMerci pour votre message ! Le concert jazz est bien maintenu comme prévu.\n\nCordialement,\nL\'équipe Hormur',
-                confidence: 95,
-                autoSentAt: new Date().getTime() - 600000, // 10min ago
-                timeReceived: new Date().getTime() - 900000, // 15min ago
-                archived: false
-            },
-            {
-                id: 4,
-                from: 'sophie.comedienne@gmail.com',
-                subject: 'Création projet théâtre intimiste',
-                content: 'Bonjour, je cherche un lieu pour une représentation théâtrale intimiste pour 20 personnes maximum. Comment bien remplir mon profil ?',
-                receivedAt: '2025-06-07 09:20',
-                status: 'auto-sent',
-                category: 'artiste',
-                priority: 'medium',
-                aiResponse: 'Bonjour Sophie !\n\nTon projet sonne passionnant ! Pour créer ton projet :\n1. Va sur https://hormur.com/projet/new\n\nÉléonore\nResponsable Relations Artistes\nHormur',
-                confidence: 94,
-                autoSentAt: new Date().getTime() - 300000, // 5min ago
-                timeReceived: new Date().getTime() - 600000, // 10min ago
-                archived: false
-            },
-            {
-                id: 5,
-                from: 'crypto.winner@tempmail.com',
-                subject: 'URGENT: Gagnez des Bitcoin maintenant!',
-                content: 'Félicitations! Vous avez été sélectionné pour gagner 5 Bitcoin GRATUITEMENT!',
-                receivedAt: '2025-06-07 11:30',
-                status: 'spam',
-                category: 'spam',
-                priority: 'low',
-                confidence: 0,
-                spamScore: 95,
-                spamIndicators: ['Mots-clés crypto', 'Urgence artificielle', 'Domaine temporaire'],
-                archived: false
-            }
-        ];
-
-        // Messages archivés (exemple)
-        let archivedMessages = [
-            {
-                id: 101,
-                from: 'ancien.artiste@gmail.com',
-                subject: 'Demande d\'informations sur les lieux disponibles',
-                content: 'Bonjour, je cherche des lieux pour mes concerts de piano...',
-                receivedAt: '2025-06-05 10:30',
-                status: 'sent',
-                category: 'artiste',
-                priority: 'medium',
-                aiResponse: 'Bonjour ! Nous avons plusieurs lieux parfaits...',
-                confidence: 96,
-                archived: true,
-                archivedAt: new Date().getTime() - 86400000, // 1 day ago
-                archivedBy: 'eleonore'
-            },
-            // Ajouter plus d'exemples d'archives...
-        ];
-
+        // Variables globales
         let currentTab = 'dashboard';
         let selectedMessage = null;
         let currentUser = null;
+        let allMessages = [];
+        let isLoading = false;
 
-        // Archive Management System
-        class ArchiveManager {
-            constructor() {
-                this.autoArchiveEnabled = true;
-                this.autoArchiveDelay = 48; // hours
-                this.maxActiveMessages = 100; // Limite de messages actifs avant archivage forcé
+        // Configuration API
+        const API_CONFIG = {
+            baseUrl: '', // Netlify functions are at the same domain
+            endpoints: {
+                getMessages: '/.netlify/functions/get_messages_datastore',
+                sendResponse: '/.netlify/functions/send_response_datastore',
+                updateMessage: '/.netlify/functions/update_datastore'
             }
-
-            // Archiver un message spécifique
-            archiveMessage(messageId, userId = null) {
-                const messageIndex = messages.findIndex(m => m.id === messageId);
-                if (messageIndex === -1) return false;
-
-                const message = messages[messageIndex];
-                message.archived = true;
-                message.archivedAt = new Date().getTime();
-                message.archivedBy = userId || currentUser?.email || 'system';
-
-                // Déplacer vers les archives
-                archivedMessages.unshift(message);
-                messages.splice(messageIndex, 1);
-
-                this.saveToLocalStorage();
-                return true;
-            }
-
-            // Restaurer un message des archives
-            unarchiveMessage(messageId) {
-                const archiveIndex = archivedMessages.findIndex(m => m.id === messageId);
-                if (archiveIndex === -1) return false;
-
-                const message = archivedMessages[archiveIndex];
-                message.archived = false;
-                delete message.archivedAt;
-                delete message.archivedBy;
-
-                // Remettre dans les messages actifs
-                messages.unshift(message);
-                archivedMessages.splice(archiveIndex, 1);
-
-                this.saveToLocalStorage();
-                return true;
-            }
-
-            // Archivage automatique basé sur l'âge et le statut
-            performAutoArchive() {
-                if (!this.autoArchiveEnabled) return;
-
-                const cutoffTime = new Date().getTime() - (this.autoArchiveDelay * 60 * 60 * 1000);
-                let archivedCount = 0;
-
-                // Archiver les messages anciens selon les critères
-                messages.forEach((message, index) => {
-                    const shouldArchive = 
-                        // Messages auto-envoyés anciens
-                        (message.status === 'auto-sent' && message.autoSentAt && message.autoSentAt < cutoffTime) ||
-                        // Messages envoyés manuellement anciens
-                        (message.status === 'sent' && message.timeReceived < cutoffTime) ||
-                        // Spams anciens
-                        (message.status === 'spam' && message.timeReceived < cutoffTime);
-
-                    if (shouldArchive) {
-                        this.archiveMessage(message.id, 'auto-system');
-                        archivedCount++;
-                    }
-                });
-
-                // Archivage forcé si trop de messages actifs
-                if (messages.length > this.maxActiveMessages) {
-                    const oldestMessages = messages
-                        .filter(m => ['sent', 'auto-sent'].includes(m.status))
-                        .sort((a, b) => (a.timeReceived || 0) - (b.timeReceived || 0))
-                        .slice(0, messages.length - this.maxActiveMessages);
-
-                    oldestMessages.forEach(message => {
-                        this.archiveMessage(message.id, 'auto-system');
-                        archivedCount++;
-                    });
-                }
-
-                if (archivedCount > 0) {
-                    showToast(`${archivedCount} messages archivés automatiquement`, 'info');
-                }
-
-                return archivedCount;
-            }
-
-            // Archivage en lot
-            bulkArchive(messageIds, userId = null) {
-                let archivedCount = 0;
-                messageIds.forEach(id => {
-                    if (this.archiveMessage(id, userId)) {
-                        archivedCount++;
-                    }
-                });
-                return archivedCount;
-            }
-
-            // Nettoyage des archives anciennes
-            cleanOldArchives(daysOld = 365) {
-                const cutoffTime = new Date().getTime() - (daysOld * 24 * 60 * 60 * 1000);
-                const originalLength = archivedMessages.length;
-                
-                archivedMessages = archivedMessages.filter(message => 
-                    !message.archivedAt || message.archivedAt > cutoffTime
-                );
-
-                const removedCount = originalLength - archivedMessages.length;
-                this.saveToLocalStorage();
-                return removedCount;
-            }
-
-            // Exporter les archives
-            exportArchives(format = 'json') {
-                const data = {
-                    exportDate: new Date().toISOString(),
-                    totalArchived: archivedMessages.length,
-                    messages: archivedMessages
-                };
-
-                const filename = `hormur_archives_${new Date().toISOString().split('T')[0]}.${format}`;
-                
-                if (format === 'json') {
-                    this.downloadFile(JSON.stringify(data, null, 2), filename, 'application/json');
-                } else if (format === 'csv') {
-                    this.downloadFile(this.convertToCSV(archivedMessages), filename, 'text/csv');
-                }
-            }
-
-            // Convertir en CSV
-            convertToCSV(messages) {
-                const headers = ['ID', 'De', 'Sujet', 'Catégorie', 'Statut', 'Priorité', 'Reçu le', 'Archivé le', 'Archivé par'];
-                const rows = messages.map(msg => [
-                    msg.id,
-                    msg.from,
-                    msg.subject,
-                    msg.category,
-                    msg.status,
-                    msg.priority,
-                    msg.receivedAt,
-                    msg.archivedAt ? new Date(msg.archivedAt).toISOString() : '',
-                    msg.archivedBy || ''
-                ]);
-
-                return [headers, ...rows].map(row => 
-                    row.map(field => `"${field}"`).join(',')
-                ).join('\n');
-            }
-
-            // Télécharger un fichier
-            downloadFile(content, filename, mimeType) {
-                const blob = new Blob([content], { type: mimeType });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }
-
-            // Sauvegarder en localStorage
-            saveToLocalStorage() {
-                localStorage.setItem('hormur_messages', JSON.stringify(messages));
-                localStorage.setItem('hormur_archived_messages', JSON.stringify(archivedMessages));
-                localStorage.setItem('hormur_archive_settings', JSON.stringify({
-                    autoArchiveEnabled: this.autoArchiveEnabled,
-                    autoArchiveDelay: this.autoArchiveDelay,
-                    maxActiveMessages: this.maxActiveMessages
-                }));
-            }
-
-            // Charger depuis localStorage
-            loadFromLocalStorage() {
-                try {
-                    const savedMessages = localStorage.getItem('hormur_messages');
-                    const savedArchived = localStorage.getItem('hormur_archived_messages');
-                    const savedSettings = localStorage.getItem('hormur_archive_settings');
-
-                    if (savedMessages) {
-                        messages = JSON.parse(savedMessages);
-                    }
-                    if (savedArchived) {
-                        archivedMessages = JSON.parse(savedArchived);
-                    }
-                    if (savedSettings) {
-                        const settings = JSON.parse(savedSettings);
-                        this.autoArchiveEnabled = settings.autoArchiveEnabled;
-                        this.autoArchiveDelay = settings.autoArchiveDelay;
-                        this.maxActiveMessages = settings.maxActiveMessages;
-                    }
-                } catch (error) {
-                    console.error('Erreur lors du chargement des archives:', error);
-                }
-            }
-
-            // Statistiques des archives
-            getArchiveStats() {
-                const stats = {
-                    total: archivedMessages.length,
-                    byCategory: {},
-                    byStatus: {},
-                    byUser: {},
-                    thisWeek: 0,
-                    thisMonth: 0
-                };
-
-                const oneWeekAgo = new Date().getTime() - (7 * 24 * 60 * 60 * 1000);
-                const oneMonthAgo = new Date().getTime() - (30 * 24 * 60 * 60 * 1000);
-
-                archivedMessages.forEach(msg => {
-                    // Par catégorie
-                    stats.byCategory[msg.category] = (stats.byCategory[msg.category] || 0) + 1;
-                    
-                    // Par statut
-                    stats.byStatus[msg.status] = (stats.byStatus[msg.status] || 0) + 1;
-                    
-                    // Par utilisateur qui a archivé
-                    if (msg.archivedBy) {
-                        stats.byUser[msg.archivedBy] = (stats.byUser[msg.archivedBy] || 0) + 1;
-                    }
-                    
-                    // Par période
-                    if (msg.archivedAt > oneWeekAgo) stats.thisWeek++;
-                    if (msg.archivedAt > oneMonthAgo) stats.thisMonth++;
-                });
-
-                return stats;
-            }
-        }
-
-        // Initialiser le gestionnaire d'archives
-        const archiveManager = new ArchiveManager();
+        };
 
         // Utility functions
         function timeAgo(timestamp) {
@@ -1010,6 +641,130 @@
             return icons[priority] || 'circle';
         }
 
+        // API Functions
+        async function apiCall(endpoint, method = 'GET', data = null) {
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                };
+
+                if (data) {
+                    options.body = JSON.stringify(data);
+                }
+
+                const response = await fetch(API_CONFIG.baseUrl + endpoint, options);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        async function loadMessages(filters = {}) {
+            if (isLoading) return;
+            
+            try {
+                isLoading = true;
+                showLoadingInContainers();
+                
+                const result = await apiCall(API_CONFIG.endpoints.getMessages, 'POST', { filters });
+                
+                if (result.success) {
+                    allMessages = result.messages || [];
+                    updateStats();
+                    renderCurrentTab();
+                    showToast(`${allMessages.length} messages chargés`, 'success');
+                } else {
+                    throw new Error(result.error || 'Erreur lors du chargement');
+                }
+            } catch (error) {
+                console.error('Erreur loadMessages:', error);
+                showToast('Erreur lors du chargement: ' + error.message, 'error');
+                showErrorInContainers(error.message);
+            } finally {
+                isLoading = false;
+            }
+        }
+
+        async function archiveMessage(messageId) {
+            if (!messageId) return;
+            
+            try {
+                showToast('Archivage en cours...', 'info');
+                
+                const result = await apiCall(API_CONFIG.endpoints.updateMessage, 'POST', {
+                    action: 'archive',
+                    message_id: messageId,
+                    user_email: currentUser?.email
+                });
+                
+                if (result.success) {
+                    // Mettre à jour localement
+                    const messageIndex = allMessages.findIndex(m => m.id == messageId);
+                    if (messageIndex !== -1) {
+                        allMessages[messageIndex].archived = true;
+                        allMessages[messageIndex].status = 'archived';
+                    }
+                    
+                    updateStats();
+                    renderCurrentTab();
+                    showToast('Message archivé avec succès', 'success');
+                    
+                    if (selectedMessage?.id == messageId) {
+                        closeMessageModal();
+                    }
+                } else {
+                    throw new Error(result.error || 'Erreur lors de l\'archivage');
+                }
+            } catch (error) {
+                console.error('Erreur archivage:', error);
+                showToast('Erreur lors de l\'archivage: ' + error.message, 'error');
+            }
+        }
+
+        async function sendResponse(messageId, responseText, sentBy) {
+            if (!messageId || !responseText || !sentBy) return;
+            
+            try {
+                showToast('Envoi en cours...', 'info');
+                
+                const result = await apiCall(API_CONFIG.endpoints.sendResponse, 'POST', {
+                    message_id: messageId,
+                    response_text: responseText,
+                    sent_by: sentBy,
+                    user_modifications: true
+                });
+                
+                if (result.success) {
+                    // Mettre à jour localement
+                    const messageIndex = allMessages.findIndex(m => m.id == messageId);
+                    if (messageIndex !== -1) {
+                        allMessages[messageIndex].status = 'sent';
+                        allMessages[messageIndex].finalResponse = responseText;
+                    }
+                    
+                    updateStats();
+                    renderCurrentTab();
+                    showToast('Réponse envoyée avec succès !', 'success');
+                    closeMessageModal();
+                } else {
+                    throw new Error(result.error || 'Erreur lors de l\'envoi');
+                }
+            } catch (error) {
+                console.error('Erreur envoi:', error);
+                showToast('Erreur lors de l\'envoi: ' + error.message, 'error');
+            }
+        }
+
         // Authentication
         function initAuth() {
             const loggedUser = localStorage.getItem('hormur_logged_user');
@@ -1021,12 +776,23 @@
             }
         }
 
-        function handleLogin(event) {
+        async function handleLogin(event) {
             event.preventDefault();
             
             const email = document.getElementById('login-email').value.toLowerCase().trim();
             const password = document.getElementById('login-password').value;
             const errorDiv = document.getElementById('login-error');
+            const loginButton = document.getElementById('login-button');
+            const loginText = document.getElementById('login-text');
+            const loginSpinner = document.getElementById('login-spinner');
+            
+            // Show loading
+            loginButton.disabled = true;
+            loginText.textContent = 'Connexion...';
+            loginSpinner.classList.remove('hidden');
+            
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
             
             if (AUTHORIZED_USERS[email] && AUTHORIZED_USERS[email].password === password) {
                 currentUser = { email, ...AUTHORIZED_USERS[email] };
@@ -1035,6 +801,9 @@
                 errorDiv.classList.add('hidden');
             } else {
                 errorDiv.classList.remove('hidden');
+                loginButton.disabled = false;
+                loginText.textContent = 'Se connecter';
+                loginSpinner.classList.add('hidden');
             }
         }
 
@@ -1058,6 +827,7 @@
         function logout() {
             localStorage.removeItem('hormur_logged_user');
             currentUser = null;
+            allMessages = [];
             showLoginOverlay();
             showToast('Déconnecté avec succès');
         }
@@ -1100,14 +870,13 @@
             }
         }
 
-        // Dashboard rendering
         function renderDashboard() {
             renderUrgentMessages();
             renderSurveillanceAutoSend();
         }
 
         function renderUrgentMessages() {
-            const urgentMessages = messages.filter(m => 
+            const urgentMessages = allMessages.filter(m => 
                 (m.status === 'manual-review' && m.priority === 'high') ||
                 (m.status === 'pending' && m.priority === 'high')
             );
@@ -1124,7 +893,7 @@
                 `;
             } else {
                 container.innerHTML = urgentMessages.map(msg => `
-                    <div class="message-card bg-white p-3 rounded-lg border border-red-200 ${msg.priority === 'high' ? 'pulse-urgent' : ''}" onclick="openMessageModal(${msg.id})">
+                    <div class="message-card bg-white p-3 rounded-lg border border-red-200 ${msg.priority === 'high' ? 'pulse-urgent' : ''}" onclick="openMessageModal('${msg.id}')">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <div class="flex items-center space-x-2 mb-1">
@@ -1140,7 +909,7 @@
                                 </div>
                             </div>
                             <div class="flex items-center space-x-1">
-                                <button onclick="event.stopPropagation(); archiveMessage(${msg.id})" class="text-blue-600 hover:text-blue-800" title="Archiver">
+                                <button onclick="event.stopPropagation(); archiveMessage('${msg.id}')" class="text-blue-600 hover:text-blue-800" title="Archiver">
                                     <i data-lucide="archive" class="w-4 h-4"></i>
                                 </button>
                                 <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
@@ -1153,7 +922,7 @@
         }
 
         function renderSurveillanceAutoSend() {
-            const surveillanceMessages = messages.filter(m => 
+            const surveillanceMessages = allMessages.filter(m => 
                 m.status === 'auto-sent' && 
                 (new Date().getTime() - (m.autoSentAt || m.timeReceived)) < 1800000 // Last 30min
             ).sort((a, b) => (b.autoSentAt || b.timeReceived) - (a.autoSentAt || a.timeReceived));
@@ -1170,7 +939,7 @@
                 `;
             } else {
                 container.innerHTML = surveillanceMessages.map(msg => `
-                    <div class="message-card bg-white p-3 rounded-lg border border-green-200" onclick="openMessageModal(${msg.id})">
+                    <div class="message-card bg-white p-3 rounded-lg border border-green-200" onclick="openMessageModal('${msg.id}')">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <div class="flex items-center space-x-2 mb-1">
@@ -1181,14 +950,6 @@
                                 <p class="text-sm text-gray-700 line-clamp-2">${msg.subject}</p>
                                 <div class="flex items-center justify-between mt-2">
                                     <span class="text-xs text-gray-500">Envoyé ${timeAgo(msg.autoSentAt || msg.timeReceived)}</span>
-                                    <div class="flex items-center space-x-2">
-                                        <button onclick="event.stopPropagation(); markForReview(${msg.id})" class="text-xs text-orange-600 hover:text-orange-800">
-                                            <i data-lucide="eye" class="w-3 h-3 inline mr-1"></i>Réviser
-                                        </button>
-                                        <button onclick="event.stopPropagation(); markAsCorrect(${msg.id})" class="text-xs text-green-600 hover:text-green-800">
-                                            <i data-lucide="check" class="w-3 h-3 inline mr-1"></i>OK
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                             <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-2"></i>
@@ -1199,62 +960,53 @@
             lucide.createIcons();
         }
 
-        // Auto-send messages rendering
         function renderAutoSendMessages() {
-            const autoSendMessages = messages.filter(m => m.status === 'auto-sent')
+            const autoSendMessages = allMessages.filter(m => m.status === 'auto-sent')
                 .sort((a, b) => (b.autoSentAt || b.timeReceived) - (a.autoSentAt || a.timeReceived));
 
             const container = document.getElementById('auto-send-messages');
             document.getElementById('auto-send-today').textContent = autoSendMessages.length;
 
-            container.innerHTML = autoSendMessages.map(msg => `
-                <div class="message-card bg-white p-4 rounded-lg shadow-sm border" onclick="openMessageModal(${msg.id})">
-                    <div class="flex items-start justify-between">
-                        <div class="flex-1">
-                            <div class="flex items-center space-x-2 mb-2">
-                                <div class="auto-send-badge px-2 py-1 text-xs rounded-full flex items-center space-x-1">
-                                    <i data-lucide="zap" class="w-3 h-3"></i>
-                                    <span>AUTO</span>
-                                </div>
-                                <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
-                                    ${msg.category}
-                                </span>
-                                <span class="text-xs font-medium ${getPriorityColor(msg.priority)}">${msg.confidence}%</span>
-                            </div>
-                            <div class="mb-2">
-                                <h4 class="font-medium text-gray-900">${msg.from}</h4>
-                                <p class="text-sm text-gray-700">${msg.subject}</p>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs text-gray-500">Envoyé ${timeAgo(msg.autoSentAt || msg.timeReceived)}</span>
-                                <div class="flex items-center space-x-2">
-                                    ${(new Date().getTime() - (msg.autoSentAt || msg.timeReceived)) < 1800000 ? `
-                                        <span class="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full">
-                                            <i data-lucide="clock" class="w-3 h-3 inline mr-1"></i>
-                                            Surveillance active
-                                        </span>
-                                    ` : `
-                                        <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
-                                            <i data-lucide="check" class="w-3 h-3 inline mr-1"></i>
-                                            Validé
-                                        </span>
-                                        <button onclick="event.stopPropagation(); archiveMessage(${msg.id})" class="text-blue-600 hover:text-blue-800" title="Archiver">
-                                            <i data-lucide="archive" class="w-4 h-4"></i>
-                                        </button>
-                                    `}
-                                </div>
-                            </div>
-                        </div>
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-2"></i>
+            if (autoSendMessages.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i data-lucide="zap" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
+                        <p>Aucun message auto-envoyé</p>
                     </div>
-                </div>
-            `).join('');
+                `;
+            } else {
+                container.innerHTML = autoSendMessages.map(msg => `
+                    <div class="message-card bg-white p-4 rounded-lg shadow-sm border" onclick="openMessageModal('${msg.id}')">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <div class="auto-send-badge px-2 py-1 text-xs rounded-full flex items-center space-x-1">
+                                        <i data-lucide="zap" class="w-3 h-3"></i>
+                                        <span>AUTO</span>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
+                                        ${msg.category}
+                                    </span>
+                                    <span class="text-xs font-medium ${getPriorityColor(msg.priority)}">${msg.confidence}%</span>
+                                </div>
+                                <div class="mb-2">
+                                    <h4 class="font-medium text-gray-900">${msg.from}</h4>
+                                    <p class="text-sm text-gray-700">${msg.subject}</p>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-gray-500">Envoyé ${timeAgo(msg.autoSentAt || msg.timeReceived)}</span>
+                                </div>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-2"></i>
+                        </div>
+                    </div>
+                `).join('');
+            }
             lucide.createIcons();
         }
 
-        // Validation messages rendering
         function renderValidationMessages() {
-            const validationMessages = messages.filter(m => m.status === 'manual-review')
+            const validationMessages = allMessages.filter(m => m.status === 'manual-review')
                 .sort((a, b) => {
                     if (a.priority !== b.priority) {
                         const priorityOrder = { high: 3, medium: 2, low: 1 };
@@ -1266,145 +1018,40 @@
             const container = document.getElementById('validation-messages');
             document.getElementById('validation-today').textContent = validationMessages.length;
 
-            container.innerHTML = validationMessages.map(msg => `
-                <div class="message-card bg-white p-4 rounded-lg shadow-sm border ${msg.priority === 'high' ? 'priority-high' : msg.priority === 'medium' ? 'priority-medium' : 'priority-low'}" onclick="openMessageModal(${msg.id})">
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="flex-1">
-                            <div class="flex items-center space-x-2 mb-2">
-                                <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
-                                    ${msg.category}
-                                </span>
-                                <span class="px-2 py-1 text-xs rounded-full ${
-                                    msg.priority === 'high' ? 'bg-red-100 text-red-700' :
-                                    msg.priority === 'medium' ? 'bg-orange-100 text-orange-700' :
-                                    'bg-green-100 text-green-700'
-                                }">
-                                    <i data-lucide="${getPriorityIcon(msg.priority)}" class="w-3 h-3 inline mr-1"></i>
-                                    ${msg.priority === 'high' ? 'Urgent' : msg.priority === 'medium' ? 'Moyen' : 'Faible'}
-                                </span>
-                                ${msg.assignedTo ? `
-                                    <span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">
-                                        ${msg.assignedTo === 'martin' ? '🏡' : '🎨'} ${msg.assignedTo}
-                                    </span>
-                                ` : ''}
-                            </div>
-                            <div class="mb-2">
-                                <h4 class="font-medium text-gray-900">${msg.from}</h4>
-                                <p class="text-sm text-gray-700">${msg.subject}</p>
-                            </div>
-                            <p class="text-sm text-gray-600 line-clamp-3 mb-3">${msg.content}</p>
-                            ${msg.escalationReason ? `
-                                <div class="bg-yellow-50 border border-yellow-200 rounded p-2 mb-3">
-                                    <p class="text-xs text-yellow-800">
-                                        <i data-lucide="alert-triangle" class="w-3 h-3 inline mr-1"></i>
-                                        ${msg.escalationReason}
-                                    </p>
-                                </div>
-                            ` : ''}
-                        </div>
-                        <div class="flex flex-col items-center space-y-2">
-                            <button onclick="event.stopPropagation(); archiveMessage(${msg.id})" class="text-blue-600 hover:text-blue-800" title="Archiver">
-                                <i data-lucide="archive" class="w-4 h-4"></i>
-                            </button>
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-                        </div>
-                    </div>
-                    <div class="flex space-x-2">
-                        <button
-                            onclick="event.stopPropagation(); quickApprove(${msg.id})"
-                            class="flex-1 bg-green-100 text-green-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors flex items-center justify-center space-x-1"
-                        >
-                            <i data-lucide="check" class="w-4 h-4"></i>
-                            <span>Approuver</span>
-                        </button>
-                        <button
-                            onclick="event.stopPropagation(); quickReject(${msg.id})"
-                            class="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors flex items-center justify-center space-x-1"
-                        >
-                            <i data-lucide="x" class="w-4 h-4"></i>
-                            <span>Rejeter</span>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-            lucide.createIcons();
-        }
-
-        // Archived messages rendering
-        function renderArchivedMessages() {
-            const periodFilter = document.getElementById('archive-period-filter')?.value || 'all';
-            const categoryFilter = document.getElementById('archive-category-filter')?.value || 'all';
-            
-            let filteredArchives = archivedMessages;
-
-            // Filtrer par période
-            if (periodFilter !== 'all') {
-                const now = new Date().getTime();
-                let cutoffTime;
-                
-                switch(periodFilter) {
-                    case 'today':
-                        cutoffTime = now - 24 * 60 * 60 * 1000;
-                        break;
-                    case 'week':
-                        cutoffTime = now - 7 * 24 * 60 * 60 * 1000;
-                        break;
-                    case 'month':
-                        cutoffTime = now - 30 * 24 * 60 * 60 * 1000;
-                        break;
-                    case 'quarter':
-                        cutoffTime = now - 90 * 24 * 60 * 60 * 1000;
-                        break;
-                }
-                
-                filteredArchives = filteredArchives.filter(msg => 
-                    msg.archivedAt && msg.archivedAt > cutoffTime
-                );
-            }
-
-            // Filtrer par catégorie
-            if (categoryFilter !== 'all') {
-                filteredArchives = filteredArchives.filter(msg => msg.category === categoryFilter);
-            }
-
-            const container = document.getElementById('archived-messages');
-            document.getElementById('total-archived').textContent = archivedMessages.length;
-
-            if (filteredArchives.length === 0) {
+            if (validationMessages.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-8 text-gray-500">
-                        <i data-lucide="archive" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
-                        <p>Aucune archive trouvée pour ces critères</p>
+                        <i data-lucide="eye" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
+                        <p>Aucun message à valider</p>
                     </div>
                 `;
             } else {
-                container.innerHTML = filteredArchives.map(msg => `
-                    <div class="message-card bg-gray-50 p-4 rounded-lg border" onclick="openMessageModal(${msg.id}, true)">
-                        <div class="flex items-start justify-between">
+                container.innerHTML = validationMessages.map(msg => `
+                    <div class="message-card bg-white p-4 rounded-lg shadow-sm border ${msg.priority === 'high' ? 'priority-high' : msg.priority === 'medium' ? 'priority-medium' : 'priority-low'}" onclick="openMessageModal('${msg.id}')">
+                        <div class="flex items-start justify-between mb-3">
                             <div class="flex-1">
                                 <div class="flex items-center space-x-2 mb-2">
-                                    <span class="archived-badge px-2 py-1 text-xs rounded-full">ARCHIVÉ</span>
                                     <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
                                         ${msg.category}
                                     </span>
-                                    <span class="text-xs text-gray-500">
-                                        ${msg.archivedAt ? timeAgo(msg.archivedAt) : ''}
+                                    <span class="px-2 py-1 text-xs rounded-full ${
+                                        msg.priority === 'high' ? 'bg-red-100 text-red-700' :
+                                        msg.priority === 'medium' ? 'bg-orange-100 text-orange-700' :
+                                        'bg-green-100 text-green-700'
+                                    }">
+                                        <i data-lucide="${getPriorityIcon(msg.priority)}" class="w-3 h-3 inline mr-1"></i>
+                                        ${msg.priority === 'high' ? 'Urgent' : msg.priority === 'medium' ? 'Moyen' : 'Faible'}
                                     </span>
                                 </div>
                                 <div class="mb-2">
-                                    <h4 class="font-medium text-gray-700">${msg.from}</h4>
-                                    <p class="text-sm text-gray-600">${msg.subject}</p>
+                                    <h4 class="font-medium text-gray-900">${msg.from}</h4>
+                                    <p class="text-sm text-gray-700">${msg.subject}</p>
                                 </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-gray-500">Reçu: ${msg.receivedAt}</span>
-                                    <span class="text-xs text-gray-500">
-                                        Archivé par: ${msg.archivedBy || 'Système'}
-                                    </span>
-                                </div>
+                                <p class="text-sm text-gray-600 line-clamp-3 mb-3">${msg.content}</p>
                             </div>
                             <div class="flex flex-col items-center space-y-2">
-                                <button onclick="event.stopPropagation(); unarchiveMessage(${msg.id})" class="text-green-600 hover:text-green-800" title="Désarchiver">
-                                    <i data-lucide="archive-restore" class="w-4 h-4"></i>
+                                <button onclick="event.stopPropagation(); archiveMessage('${msg.id}')" class="text-blue-600 hover:text-blue-800" title="Archiver">
+                                    <i data-lucide="archive" class="w-4 h-4"></i>
                                 </button>
                                 <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
                             </div>
@@ -1415,366 +1062,105 @@
             lucide.createIcons();
         }
 
-        // All messages rendering
+        function renderArchivedMessages() {
+            const archivedMessages = allMessages.filter(m => m.archived || m.status === 'archived');
+
+            const container = document.getElementById('archived-messages');
+            document.getElementById('total-archived').textContent = archivedMessages.length;
+
+            if (archivedMessages.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i data-lucide="archive" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
+                        <p>Aucune archive trouvée</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = archivedMessages.map(msg => `
+                    <div class="message-card bg-gray-50 p-4 rounded-lg border" onclick="openMessageModal('${msg.id}', true)">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <span class="archived-badge px-2 py-1 text-xs rounded-full">ARCHIVÉ</span>
+                                    <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
+                                        ${msg.category}
+                                    </span>
+                                </div>
+                                <div class="mb-2">
+                                    <h4 class="font-medium text-gray-700">${msg.from}</h4>
+                                    <p class="text-sm text-gray-600">${msg.subject}</p>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-gray-500">Reçu: ${msg.receivedAt}</span>
+                                </div>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-2"></i>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            lucide.createIcons();
+        }
+
         function renderAllMessages() {
-            const filteredMessages = getFilteredMessages();
             const container = document.getElementById('all-messages');
 
-            container.innerHTML = filteredMessages.map(msg => `
-                <div class="message-card bg-white p-4 rounded-lg shadow-sm border ${msg.archived ? 'archive-transition archived' : ''}" onclick="openMessageModal(${msg.id}, ${msg.archived})">
-                    <div class="flex items-start justify-between">
-                        <div class="flex-1">
-                            <div class="flex items-center space-x-2 mb-2">
-                                <i data-lucide="${getCategoryIcon(msg.category)}" class="w-4 h-4 text-gray-500"></i>
-                                <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
-                                    ${msg.category}
-                                </span>
-                                <span class="text-xs ${getPriorityColor(msg.priority)}">${msg.priority}</span>
-                                ${msg.status === 'auto-sent' ? '<div class="auto-send-badge px-2 py-1 text-xs rounded-full">AUTO</div>' : ''}
-                                ${msg.archived ? '<div class="archived-badge px-2 py-1 text-xs rounded-full">ARCHIVÉ</div>' : ''}
+            if (allMessages.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
+                        <p>Aucun message trouvé</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = allMessages.map(msg => `
+                    <div class="message-card bg-white p-4 rounded-lg shadow-sm border" onclick="openMessageModal('${msg.id}')">
+                        <div class="flex items-start justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <i data-lucide="${getCategoryIcon(msg.category)}" class="w-4 h-4 text-gray-500"></i>
+                                    <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
+                                        ${msg.category}
+                                    </span>
+                                    <span class="text-xs ${getPriorityColor(msg.priority)}">${msg.priority}</span>
+                                    ${msg.status === 'auto-sent' ? '<div class="auto-send-badge px-2 py-1 text-xs rounded-full">AUTO</div>' : ''}
+                                    ${msg.archived || msg.status === 'archived' ? '<div class="archived-badge px-2 py-1 text-xs rounded-full">ARCHIVÉ</div>' : ''}
+                                </div>
+                                <div class="mb-2">
+                                    <h4 class="font-medium text-gray-900">${msg.from}</h4>
+                                    <p class="text-sm text-gray-700">${msg.subject}</p>
+                                </div>
+                                <p class="text-sm text-gray-600 line-clamp-2 mb-2">${msg.content}</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-gray-500">${msg.receivedAt}</span>
+                                    <span class="text-xs ${
+                                        msg.status === 'auto-sent' ? 'text-green-600' :
+                                        msg.status === 'manual-review' ? 'text-orange-600' :
+                                        msg.status === 'spam' ? 'text-red-600' : 'text-gray-600'
+                                    }">
+                                        ${msg.status === 'auto-sent' ? 'Auto-envoyé' :
+                                          msg.status === 'manual-review' ? 'À valider' :
+                                          msg.status === 'spam' ? 'Spam' : 
+                                          msg.status === 'sent' ? 'Envoyé' : 'En attente'}
+                                    </span>
+                                </div>
                             </div>
-                            <div class="mb-2">
-                                <h4 class="font-medium text-gray-900">${msg.from}</h4>
-                                <p class="text-sm text-gray-700">${msg.subject}</p>
-                            </div>
-                            <p class="text-sm text-gray-600 line-clamp-2 mb-2">${msg.content}</p>
-                            <div class="flex items-center justify-between">
-                                <span class="text-xs text-gray-500">${msg.receivedAt}</span>
-                                <span class="text-xs ${
-                                    msg.status === 'auto-sent' ? 'text-green-600' :
-                                    msg.status === 'manual-review' ? 'text-orange-600' :
-                                    msg.status === 'spam' ? 'text-red-600' : 'text-gray-600'
-                                }">
-                                    ${msg.status === 'auto-sent' ? 'Auto-envoyé' :
-                                      msg.status === 'manual-review' ? 'À valider' :
-                                      msg.status === 'spam' ? 'Spam' : 
-                                      msg.status === 'sent' ? 'Envoyé' : 'En attente'}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col items-center space-y-2">
-                            ${!msg.archived ? `
-                                <button onclick="event.stopPropagation(); archiveMessage(${msg.id})" class="text-blue-600 hover:text-blue-800" title="Archiver">
+                            <div class="flex flex-col items-center space-y-2">
+                                <button onclick="event.stopPropagation(); archiveMessage('${msg.id}')" class="text-blue-600 hover:text-blue-800" title="Archiver">
                                     <i data-lucide="archive" class="w-4 h-4"></i>
                                 </button>
-                            ` : `
-                                <button onclick="event.stopPropagation(); unarchiveMessage(${msg.id})" class="text-green-600 hover:text-green-800" title="Désarchiver">
-                                    <i data-lucide="archive-restore" class="w-4 h-4"></i>
-                                </button>
-                            `}
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
             lucide.createIcons();
-        }
-
-        function getFilteredMessages() {
-            const statusFilter = document.getElementById('status-filter')?.value || 'all';
-            const categoryFilter = document.getElementById('category-filter')?.value || 'all';
-            const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || '';
-
-            // Combine active and archived messages for "all" view
-            const allMessages = statusFilter === 'archived' ? archivedMessages : 
-                               statusFilter === 'all' ? [...messages, ...archivedMessages] : messages;
-
-            return allMessages.filter(msg => {
-                const matchesStatus = statusFilter === 'all' || 
-                                    (statusFilter === 'archived' && msg.archived) ||
-                                    (statusFilter !== 'archived' && msg.status === statusFilter);
-                const matchesCategory = categoryFilter === 'all' || msg.category === categoryFilter;
-                const matchesSearch = !searchTerm || 
-                    msg.from.toLowerCase().includes(searchTerm) ||
-                    msg.subject.toLowerCase().includes(searchTerm) ||
-                    msg.content.toLowerCase().includes(searchTerm);
-                
-                return matchesStatus && matchesCategory && matchesSearch;
-            }).sort((a, b) => {
-                // Sort by priority first, then by time
-                const priorityOrder = { high: 3, medium: 2, low: 1 };
-                if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
-                    return priorityOrder[b.priority] - priorityOrder[a.priority];
-                }
-                const aTime = a.archivedAt || a.timeReceived || new Date(a.receivedAt).getTime();
-                const bTime = b.archivedAt || b.timeReceived || new Date(b.receivedAt).getTime();
-                return bTime - aTime;
-            });
-        }
-
-        // Archive functions avec datastore Netlify
-        async function archiveMessage(messageId) {
-            try {
-                showToast('Archivage en cours...', 'info');
-                
-                const response = await fetch('/.netlify/functions/update-datastore', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'archive',
-                        message_id: messageId,
-                        user_email: currentUser?.email
-                    })
-                });
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    
-                    // Mise à jour locale pour réactivité immédiate
-                    if (archiveManager.archiveMessage(messageId, currentUser?.email)) {
-                        updateStats();
-                        renderCurrentTab();
-                        showToast('Message archivé avec succès', 'success');
-                        if (selectedMessage?.id === messageId) {
-                            closeMessageModal();
-                        }
-                    }
-                } else {
-                    const error = await response.json();
-                    console.error('Erreur archivage datastore:', error);
-                    showToast('Erreur lors de l\'archivage: ' + error.error, 'error');
-                }
-            } catch (error) {
-                console.error('Erreur archivage:', error);
-                showToast('Erreur de connexion lors de l\'archivage', 'error');
-            }
-        }
-
-        async function unarchiveMessage(messageId) {
-            try {
-                showToast('Restauration en cours...', 'info');
-                
-                const response = await fetch('/.netlify/functions/update-datastore', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'unarchive',
-                        message_id: messageId,
-                        user_email: currentUser?.email
-                    })
-                });
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    
-                    // Mise à jour locale
-                    if (archiveManager.unarchiveMessage(messageId)) {
-                        updateStats();
-                        renderCurrentTab();
-                        showToast('Message restauré des archives', 'success');
-                        if (selectedMessage?.id === messageId) {
-                            closeMessageModal();
-                        }
-                    }
-                } else {
-                    const error = await response.json();
-                    console.error('Erreur désarchivage datastore:', error);
-                    showToast('Erreur lors de la restauration: ' + error.error, 'error');
-                }
-            } catch (error) {
-                console.error('Erreur désarchivage:', error);
-                showToast('Erreur de connexion lors de la restauration', 'error');
-            }
-        }
-
-        function bulkArchive() {
-            // Implémenter l'archivage en lot des messages sélectionnés
-            showToast('Archivage en lot en développement', 'info');
-        }
-
-        function exportArchives() {
-            archiveManager.exportArchives('json');
-            showToast('Export des archives démarré', 'info');
-        }
-
-        function exportData() {
-            // Exporter toutes les données
-            const allData = {
-                exportDate: new Date().toISOString(),
-                activeMessages: messages,
-                archivedMessages: archivedMessages,
-                stats: archiveManager.getArchiveStats()
-            };
-            
-            archiveManager.downloadFile(
-                JSON.stringify(allData, null, 2), 
-                `hormur_export_${new Date().toISOString().split('T')[0]}.json`, 
-                'application/json'
-            );
-            showToast('Export complet terminé', 'success');
-        }
-
-        // Archive Manager Modal
-        function showArchiveManager() {
-            const stats = archiveManager.getArchiveStats();
-            
-            document.getElementById('archive-manager-content').innerHTML = `
-                <div class="space-y-6">
-                    <!-- Statistiques des archives -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="bg-blue-50 p-4 rounded-lg text-center">
-                            <div class="text-2xl font-bold text-blue-700">${stats.total}</div>
-                            <div class="text-sm text-blue-600">Total archivées</div>
-                        </div>
-                        <div class="bg-green-50 p-4 rounded-lg text-center">
-                            <div class="text-2xl font-bold text-green-700">${stats.thisWeek}</div>
-                            <div class="text-sm text-green-600">Cette semaine</div>
-                        </div>
-                        <div class="bg-purple-50 p-4 rounded-lg text-center">
-                            <div class="text-2xl font-bold text-purple-700">${stats.thisMonth}</div>
-                            <div class="text-sm text-purple-600">Ce mois</div>
-                        </div>
-                        <div class="bg-orange-50 p-4 rounded-lg text-center">
-                            <div class="text-2xl font-bold text-orange-700">${messages.length}</div>
-                            <div class="text-sm text-orange-600">Messages actifs</div>
-                        </div>
-                    </div>
-
-                    <!-- Paramètres d'archivage -->
-                    <div class="bg-white border rounded-lg p-4">
-                        <h4 class="font-medium text-gray-900 mb-4">Paramètres d'archivage automatique</h4>
-                        <div class="space-y-4">
-                            <div class="flex items-center space-x-3">
-                                <input type="checkbox" id="auto-archive-setting" ${archiveManager.autoArchiveEnabled ? 'checked' : ''} class="rounded">
-                                <label for="auto-archive-setting" class="text-sm text-gray-700">Activer l'archivage automatique</label>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <label class="text-sm text-gray-700">Délai d'archivage :</label>
-                                <select id="archive-delay-setting" class="border rounded px-3 py-1 text-sm">
-                                    <option value="24" ${archiveManager.autoArchiveDelay === 24 ? 'selected' : ''}>24 heures</option>
-                                    <option value="48" ${archiveManager.autoArchiveDelay === 48 ? 'selected' : ''}>48 heures</option>
-                                    <option value="72" ${archiveManager.autoArchiveDelay === 72 ? 'selected' : ''}>72 heures</option>
-                                    <option value="168" ${archiveManager.autoArchiveDelay === 168 ? 'selected' : ''}>7 jours</option>
-                                </select>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <label class="text-sm text-gray-700">Limite messages actifs :</label>
-                                <input type="number" id="max-active-setting" value="${archiveManager.maxActiveMessages}" min="50" max="500" class="border rounded px-3 py-1 text-sm w-20">
-                            </div>
-                        </div>
-                        <div class="mt-4 flex space-x-2">
-                            <button onclick="saveArchiveSettings()" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-indigo-700">
-                                Sauvegarder
-                            </button>
-                            <button onclick="performManualArchive()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700">
-                                Archivage manuel
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Actions sur les archives -->
-                    <div class="bg-white border rounded-lg p-4">
-                        <h4 class="font-medium text-gray-900 mb-4">Actions sur les archives</h4>
-                        <div class="grid grid-cols-2 gap-3">
-                            <button onclick="exportArchives()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 flex items-center space-x-2">
-                                <i data-lucide="download" class="w-4 h-4"></i>
-                                <span>Exporter archives</span>
-                            </button>
-                            <button onclick="cleanOldArchives()" class="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-orange-700 flex items-center space-x-2">
-                                <i data-lucide="trash" class="w-4 h-4"></i>
-                                <span>Nettoyer anciennes</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Répartition par catégorie -->
-                    <div class="bg-white border rounded-lg p-4">
-                        <h4 class="font-medium text-gray-900 mb-4">Répartition par catégorie</h4>
-                        <div class="space-y-2">
-                            ${Object.entries(stats.byCategory).map(([category, count]) => `
-                                <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
-                                    <span class="text-sm text-gray-700 capitalize">${category}</span>
-                                    <span class="text-sm font-medium text-gray-900">${count}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('archive-manager-modal').classList.remove('hidden');
-            lucide.createIcons();
-        }
-
-        function closeArchiveManager() {
-            document.getElementById('archive-manager-modal').classList.add('hidden');
-        }
-
-        function saveArchiveSettings() {
-            const autoEnabled = document.getElementById('auto-archive-setting').checked;
-            const delay = parseInt(document.getElementById('archive-delay-setting').value);
-            const maxActive = parseInt(document.getElementById('max-active-setting').value);
-
-            archiveManager.autoArchiveEnabled = autoEnabled;
-            archiveManager.autoArchiveDelay = delay;
-            archiveManager.maxActiveMessages = maxActive;
-            archiveManager.saveToLocalStorage();
-
-            showToast('Paramètres d\'archivage sauvegardés', 'success');
-        }
-
-        function performManualArchive() {
-            const archivedCount = archiveManager.performAutoArchive();
-            updateStats();
-            renderCurrentTab();
-            showToast(`${archivedCount} messages archivés manuellement`, 'success');
-        }
-
-        function cleanOldArchives() {
-            const removedCount = archiveManager.cleanOldArchives(365); // Supprimer archives > 1 an
-            updateStats();
-            renderCurrentTab();
-            showToast(`${removedCount} anciennes archives supprimées`, 'success');
-        }
-
-        // Message actions
-        function markForReview(messageId) {
-            const message = messages.find(m => m.id === messageId);
-            if (message) {
-                message.status = 'manual-review';
-                message.priority = 'medium';
-                updateStats();
-                renderCurrentTab();
-                showToast('Message marqué pour révision', 'info');
-            }
-        }
-
-        function markAsCorrect(messageId) {
-            const message = messages.find(m => m.id === messageId);
-            if (message) {
-                // Marquer comme validé et programmer pour archivage
-                showToast('Message validé comme correct', 'success');
-            }
-        }
-
-        function quickApprove(messageId) {
-            const message = messages.find(m => m.id === messageId);
-            if (message) {
-                message.status = 'sent';
-                updateStats();
-                renderCurrentTab();
-                showToast('Message approuvé et envoyé !', 'success');
-            }
-        }
-
-        function quickReject(messageId) {
-            const message = messages.find(m => m.id === messageId);
-            if (message) {
-                message.status = 'pending';
-                updateStats();
-                renderCurrentTab();
-                showToast('Message rejeté', 'error');
-            }
         }
 
         // Message modal
         function openMessageModal(messageId, isArchived = false) {
-            const messageSource = isArchived ? archivedMessages : messages;
-            selectedMessage = messageSource.find(m => m.id === messageId);
+            selectedMessage = allMessages.find(m => m.id == messageId);
             if (!selectedMessage) return;
 
             document.getElementById('message-detail-content').innerHTML = `
@@ -1798,12 +1184,6 @@
                                 Auto-envoyé
                             </span>
                         ` : ''}
-                        ${selectedMessage.archived ? `
-                            <span class="archived-badge px-3 py-1 text-sm rounded-full">
-                                <i data-lucide="archive" class="w-4 h-4 inline mr-1"></i>
-                                Archivé
-                            </span>
-                        ` : ''}
                     </div>
 
                     <div class="bg-gray-50 p-4 rounded-lg">
@@ -1812,10 +1192,6 @@
                             <div><strong>De :</strong> ${selectedMessage.from}</div>
                             <div><strong>Sujet :</strong> ${selectedMessage.subject}</div>
                             <div><strong>Reçu :</strong> ${selectedMessage.receivedAt}</div>
-                            ${selectedMessage.archived ? `
-                                <div><strong>Archivé :</strong> ${selectedMessage.archivedAt ? new Date(selectedMessage.archivedAt).toLocaleString() : 'Date inconnue'}</div>
-                                <div><strong>Archivé par :</strong> ${selectedMessage.archivedBy || 'Système'}</div>
-                            ` : ''}
                         </div>
                         <div class="mt-3">
                             <p class="text-sm text-gray-700 bg-white p-3 rounded border">${selectedMessage.content}</p>
@@ -1834,44 +1210,21 @@
                                     id="ai-response-edit"
                                     class="w-full p-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
                                     rows="8"
-                                    ${selectedMessage.archived ? 'readonly' : ''}
                                 >${selectedMessage.aiResponse}</textarea>
                             </div>
                         </div>
                     ` : ''}
 
-                    ${selectedMessage.escalationReason ? `
-                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                            <h4 class="font-medium text-yellow-800 mb-1 flex items-center">
-                                <i data-lucide="alert-triangle" class="w-4 h-4 mr-1"></i>
-                                Raison de l'escalation
-                            </h4>
-                            <p class="text-sm text-yellow-700">${selectedMessage.escalationReason}</p>
-                        </div>
-                    ` : ''}
-
-                    ${selectedMessage.spamIndicators && selectedMessage.spamIndicators.length > 0 ? `
-                        <div class="bg-red-50 border border-red-200 rounded-lg p-3">
-                            <h4 class="font-medium text-red-800 mb-2 flex items-center">
-                                <i data-lucide="shield" class="w-4 h-4 mr-1"></i>
-                                Indicateurs de spam détectés
-                            </h4>
-                            <ul class="text-sm text-red-700 space-y-1">
-                                ${selectedMessage.spamIndicators.map(indicator => `<li>• ${indicator}</li>`).join('')}
-                            </ul>
-                        </div>
-                    ` : ''}
-
-                    ${!selectedMessage.archived && selectedMessage.status !== 'spam' ? `
+                    ${!selectedMessage.archived && selectedMessage.status !== 'spam' && selectedMessage.status !== 'sent' ? `
                         <div class="flex flex-col space-y-3">
                             <button
-                                onclick="sendResponse()"
+                                onclick="handleSendResponse()"
                                 class="w-full hormur-gradient text-white px-4 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center space-x-2"
                             >
                                 <i data-lucide="send" class="w-4 h-4"></i>
                                 <span>Envoyer la réponse</span>
                             </button>
-                            <div class="grid grid-cols-3 gap-2">
+                            <div class="grid grid-cols-2 gap-2">
                                 <button
                                     onclick="personalizeResponse()"
                                     class="px-3 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors flex items-center justify-center space-x-1 text-sm"
@@ -1880,14 +1233,7 @@
                                     <span>Personnaliser</span>
                                 </button>
                                 <button
-                                    onclick="regenerateResponse()"
-                                    class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center space-x-1 text-sm"
-                                >
-                                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                                    <span>Régénérer</span>
-                                </button>
-                                <button
-                                    onclick="archiveMessage(${selectedMessage.id})"
+                                    onclick="archiveMessage('${selectedMessage.id}')"
                                     class="px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors flex items-center justify-center space-x-1 text-sm"
                                 >
                                     <i data-lucide="archive" class="w-4 h-4"></i>
@@ -1895,38 +1241,10 @@
                                 </button>
                             </div>
                         </div>
-                    ` : selectedMessage.archived ? `
+                    ` : `
                         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
                             <i data-lucide="archive" class="w-8 h-8 text-blue-500 mx-auto mb-2"></i>
-                            <p class="text-blue-800 font-medium mb-3">Message archivé</p>
-                            <button
-                                onclick="unarchiveMessage(${selectedMessage.id})"
-                                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                            >
-                                <i data-lucide="archive-restore" class="w-4 h-4 inline mr-1"></i>
-                                Restaurer des archives
-                            </button>
-                        </div>
-                    ` : `
-                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-                            <i data-lucide="shield" class="w-8 h-8 text-red-500 mx-auto mb-2"></i>
-                            <p class="text-red-800 font-medium mb-3">Message marqué comme spam</p>
-                            <div class="flex space-x-2 justify-center">
-                                <button
-                                    onclick="unmarkSpam(${selectedMessage.id})"
-                                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-                                >
-                                    <i data-lucide="shield-off" class="w-4 h-4 inline mr-1"></i>
-                                    Marquer comme légitime
-                                </button>
-                                <button
-                                    onclick="archiveMessage(${selectedMessage.id})"
-                                    class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
-                                >
-                                    <i data-lucide="archive" class="w-4 h-4 inline mr-1"></i>
-                                    Archiver
-                                </button>
-                            </div>
+                            <p class="text-blue-800 font-medium">Message traité</p>
                         </div>
                     `}
                 </div>
@@ -1941,19 +1259,13 @@
             selectedMessage = null;
         }
 
-        function sendResponse() {
+        function handleSendResponse() {
             if (!selectedMessage) return;
             
             const editedResponse = document.getElementById('ai-response-edit')?.value;
-            if (editedResponse) {
-                selectedMessage.aiResponse = editedResponse;
+            if (editedResponse && currentUser?.email) {
+                sendResponse(selectedMessage.id, editedResponse, currentUser.email);
             }
-            
-            selectedMessage.status = 'sent';
-            updateStats();
-            closeMessageModal();
-            renderCurrentTab();
-            showToast('Réponse envoyée avec succès !', 'success');
         }
 
         function personalizeResponse() {
@@ -1966,35 +1278,6 @@
             showToast('Réponse personnalisée avec votre signature', 'info');
         }
 
-        function regenerateResponse() {
-            if (!selectedMessage) return;
-            
-            showToast('Régénération de la réponse IA...', 'info');
-            // Simulate AI regeneration
-            setTimeout(() => {
-                const responses = [
-                    'Nouvelle réponse générée par l\'IA Hormur avec amélioration de la personnalisation...',
-                    'Réponse améliorée basée sur l\'apprentissage continu de l\'IA...',
-                    'Version optimisée de la réponse avec meilleur ton Hormur...'
-                ];
-                const newResponse = responses[Math.floor(Math.random() * responses.length)];
-                document.getElementById('ai-response-edit').value = newResponse;
-                showToast('Nouvelle réponse générée !', 'success');
-            }, 2000);
-        }
-
-        function unmarkSpam(messageId) {
-            const message = messages.find(m => m.id === messageId);
-            if (message) {
-                message.status = 'pending';
-                message.spamScore = Math.max(message.spamScore - 30, 0);
-                updateStats();
-                closeMessageModal();
-                renderCurrentTab();
-                showToast('Message marqué comme légitime', 'success');
-            }
-        }
-
         // Quick actions
         function showQuickActions() {
             document.getElementById('quick-actions-modal').classList.remove('hidden');
@@ -2005,33 +1288,27 @@
         }
 
         function refreshMessages() {
+            if (isLoading) return;
             showToast('Actualisation des messages...', 'info');
-            // Simulate refresh
-            setTimeout(() => {
-                // Perform auto-archive
-                archiveManager.performAutoArchive();
-                updateStats();
-                renderCurrentTab();
-                showToast('Messages actualisés !', 'success');
-            }, 1500);
+            loadMessages();
         }
 
-        function showSettings() {
-            showToast('Paramètres en développement', 'info');
+        function showArchiveManager() {
+            showToast('Gestionnaire d\'archives en développement', 'info');
         }
 
         // Statistics update
         function updateStats() {
             const stats = {
-                total: messages.length,
-                auto: messages.filter(m => m.status === 'auto-sent').length,
-                review: messages.filter(m => m.status === 'manual-review').length,
-                urgent: messages.filter(m => 
+                total: allMessages.length,
+                auto: allMessages.filter(m => m.status === 'auto-sent').length,
+                review: allMessages.filter(m => m.status === 'manual-review').length,
+                urgent: allMessages.filter(m => 
                     m.priority === 'high' || 
                     (m.status === 'auto-sent' && (new Date().getTime() - (m.autoSentAt || m.timeReceived)) < 1800000)
                 ).length,
-                pending: messages.filter(m => m.status === 'pending').length,
-                archived: archivedMessages.length
+                pending: allMessages.filter(m => m.status === 'pending').length,
+                archived: allMessages.filter(m => m.archived || m.status === 'archived').length
             };
 
             // Update header stats
@@ -2051,6 +1328,61 @@
             // Update specific stats
             document.getElementById('today-auto').textContent = stats.auto;
             document.getElementById('ai-accuracy').textContent = '94%';
+        }
+
+        // Loading states
+        function showLoadingInContainers() {
+            const loadingHTML = `
+                <div class="text-center py-8 text-gray-500">
+                    <div class="loading-spinner mx-auto mb-4"></div>
+                    <p class="text-sm">Chargement...</p>
+                </div>
+            `;
+            
+            const containers = [
+                'urgent-messages',
+                'surveillance-auto-send', 
+                'auto-send-messages',
+                'validation-messages',
+                'archived-messages',
+                'all-messages'
+            ];
+            
+            containers.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.innerHTML = loadingHTML;
+                }
+            });
+        }
+
+        function showErrorInContainers(error) {
+            const errorHTML = `
+                <div class="text-center py-8 text-red-500">
+                    <i data-lucide="alert-circle" class="w-12 h-12 mx-auto mb-4"></i>
+                    <p class="text-sm">Erreur: ${error}</p>
+                    <button onclick="refreshMessages()" class="mt-2 px-4 py-2 bg-red-100 text-red-700 rounded-lg text-sm hover:bg-red-200">
+                        Réessayer
+                    </button>
+                </div>
+            `;
+            
+            const containers = [
+                'urgent-messages',
+                'surveillance-auto-send', 
+                'auto-send-messages',
+                'validation-messages',
+                'archived-messages',
+                'all-messages'
+            ];
+            
+            containers.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.innerHTML = errorHTML;
+                }
+            });
+            lucide.createIcons();
         }
 
         // Toast notifications
@@ -2076,158 +1408,23 @@
         // Event listeners
         document.getElementById('login-form').addEventListener('submit', handleLogin);
 
-        // Add search functionality
-        document.getElementById('search-input')?.addEventListener('input', () => {
-            if (currentTab === 'all') {
-                renderAllMessages();
-            }
-        });
-
-        // Add filter functionality
-        document.getElementById('status-filter')?.addEventListener('change', () => {
-            if (currentTab === 'all') {
-                renderAllMessages();
-            }
-        });
-
-        document.getElementById('category-filter')?.addEventListener('change', () => {
-            if (currentTab === 'all') {
-                renderAllMessages();
-            }
-        });
-
-        // Archive filters
-        document.getElementById('archive-period-filter')?.addEventListener('change', () => {
-            if (currentTab === 'archives') {
-                renderArchivedMessages();
-            }
-        });
-
-        document.getElementById('archive-category-filter')?.addEventListener('change', () => {
-            if (currentTab === 'archives') {
-                renderArchivedMessages();
-            }
-        });
-
-        // Auto-archive settings
-        document.getElementById('auto-archive-enabled')?.addEventListener('change', (e) => {
-            archiveManager.autoArchiveEnabled = e.target.checked;
-            archiveManager.saveToLocalStorage();
-        });
-
-        document.getElementById('auto-archive-delay')?.addEventListener('change', (e) => {
-            archiveManager.autoArchiveDelay = parseInt(e.target.value);
-            archiveManager.saveToLocalStorage();
-        });
-
-        // Simulate new messages with enhanced realism
-        function simulateNewMessage() {
-            if (!currentUser || Math.random() > 0.4) return;
-            
-            const templates = [
-                {
-                    from: `artiste.${Date.now()}@gmail.com`,
-                    subject: 'Question sur les tarifs Hormur',
-                    content: 'Bonjour, je suis musicien et j\'aimerais savoir comment fixer mes tarifs sur Hormur. Avez-vous des recommandations ?',
-                    category: 'artiste',
-                    priority: ['medium', 'low'][Math.floor(Math.random() * 2)],
-                    status: Math.random() > 0.3 ? 'auto-sent' : 'manual-review'
-                },
-                {
-                    from: `hote.curieux${Date.now()}@orange.fr`,
-                    subject: 'Assurance pour mon lieu',
-                    content: 'Bonjour, j\'ai un jardin de 100m² et j\'aimerais accueillir des concerts. L\'assurance Hormur couvre-t-elle les événements en extérieur ?',
-                    category: 'hote',
-                    priority: 'medium',
-                    status: Math.random() > 0.5 ? 'auto-sent' : 'manual-review'
-                },
-                {
-                    from: `spectateur${Date.now()}@yahoo.fr`,
-                    subject: 'Annulation de dernière minute',
-                    content: 'Bonjour, je ne peux malheureusement plus venir au concert de demain. Puis-je être remboursé ?',
-                    category: 'spectateur',
-                    priority: 'low',
-                    status: Math.random() > 0.2 ? 'auto-sent' : 'pending'
-                },
-                {
-                    from: `spam${Date.now()}@tempmail.co`,
-                    subject: 'FÉLICITATIONS ! Vous avez gagné !',
-                    content: 'Cliquez ici pour réclamer votre prix de 1000€ ! Offre limitée !',
-                    category: 'spam',
-                    priority: 'low',
-                    status: 'spam'
-                }
-            ];
-            
-            const template = templates[Math.floor(Math.random() * templates.length)];
-            const newMessage = {
-                id: Date.now(),
-                ...template,
-                receivedAt: new Date().toISOString().slice(0, 16).replace('T', ' '),
-                aiResponse: template.status === 'auto-sent' ? generateAIResponse(template.category, template.content) : null,
-                confidence: template.status === 'auto-sent' ? Math.floor(Math.random() * 20) + 80 : Math.floor(Math.random() * 30) + 60,
-                timeReceived: new Date().getTime(),
-                autoSentAt: template.status === 'auto-sent' ? new Date().getTime() : null,
-                spamScore: template.status === 'spam' ? Math.floor(Math.random() * 30) + 70 : Math.floor(Math.random() * 20) + 5,
-                spamIndicators: template.status === 'spam' ? ['Urgence artificielle', 'Promesse d\'argent', 'Domaine temporaire'] : [],
-                archived: false
-            };
-            
-            messages.unshift(newMessage);
-            updateStats();
-            renderCurrentTab();
-            showToast('Nouveau message reçu !', 'info');
-
-            // Auto-archive if needed
-            if (messages.length > archiveManager.maxActiveMessages) {
-                setTimeout(() => {
-                    archiveManager.performAutoArchive();
-                    updateStats();
-                    renderCurrentTab();
-                }, 2000);
-            }
-        }
-
-        function generateAIResponse(category, content) {
-            const responses = {
-                artiste: 'Bonjour !\n\nExcellente question ! Pour les tarifs, nous recommandons de commencer entre 15-25€ selon votre expérience. Vous pouvez aussi proposer prix libre pour débuter.\n\nCréez votre projet : https://hormur.com/projet/new\n\nÉléonore\nResponsable Relations Artistes\nHormur',
-                hote: 'Bonjour !\n\nParfait ! Les jardins sont très appréciés sur Hormur. Notre assurance Beloy x Hiscox couvre effectivement les événements extérieurs jusqu\'à 1M€.\n\nPlus d\'infos : https://webviews.beloy.com/hormur/hormur.html\n\nMartin\nResponsable Partenariats Lieux\nHormur',
-                spectateur: 'Bonjour,\n\nJe comprends votre situation. Selon nos CGU, les billets ne sont pas remboursables sauf annulation par l\'organisateur.\n\nVous pouvez cependant céder vos billets à un proche.\n\nCordialement,\nL\'équipe Hormur'
-            };
-            return responses[category] || 'Bonjour,\n\nMerci pour votre message. Notre équipe va traiter votre demande rapidement.\n\nCordialement,\nL\'équipe Hormur';
-        }
-
         // Initialize app
         function init() {
             if (!currentUser) return;
-            
-            // Load saved data
-            archiveManager.loadFromLocalStorage();
             
             updateStats();
             renderCurrentTab();
             lucide.createIcons();
             
-            // Perform initial auto-archive
-            setTimeout(() => {
-                archiveManager.performAutoArchive();
-                updateStats();
-                renderCurrentTab();
-            }, 1000);
+            // Charger les messages au démarrage
+            loadMessages();
             
-            // Simulate new messages
-            setInterval(simulateNewMessage, 45000); // Every 45 seconds
-
-            // Auto-archive check every hour
+            // Rafraîchir automatiquement toutes les 2 minutes
             setInterval(() => {
-                if (archiveManager.autoArchiveEnabled) {
-                    const archivedCount = archiveManager.performAutoArchive();
-                    if (archivedCount > 0) {
-                        updateStats();
-                        renderCurrentTab();
-                    }
+                if (!isLoading) {
+                    loadMessages();
                 }
-            }, 3600000); // Every hour
+            }, 120000);
         }
 
         // Start app
@@ -2244,28 +1441,10 @@
             if (!document.getElementById('quick-actions-modal').classList.contains('hidden')) {
                 closeQuickActions();
             }
-            if (!document.getElementById('archive-manager-modal').classList.contains('hidden')) {
-                closeArchiveManager();
-            }
-        });
-
-        // Handle page visibility for auto-archive
-        document.addEventListener('visibilitychange', () => {
-            if (!document.hidden && archiveManager.autoArchiveEnabled) {
-                // Check for auto-archive when page becomes visible
-                setTimeout(() => {
-                    const archivedCount = archiveManager.performAutoArchive();
-                    if (archivedCount > 0) {
-                        updateStats();
-                        renderCurrentTab();
-                    }
-                }, 1000);
-            }
         });
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
-            // Échap pour fermer les modals
             if (e.key === 'Escape') {
                 if (!document.getElementById('message-modal').classList.contains('hidden')) {
                     closeMessageModal();
@@ -2273,12 +1452,8 @@
                 if (!document.getElementById('quick-actions-modal').classList.contains('hidden')) {
                     closeQuickActions();
                 }
-                if (!document.getElementById('archive-manager-modal').classList.contains('hidden')) {
-                    closeArchiveManager();
-                }
             }
             
-            // Raccourcis pour navigation (Ctrl + nombre)
             if (e.ctrlKey && !e.shiftKey && !e.altKey) {
                 switch(e.key) {
                     case '1':
@@ -2307,14 +1482,6 @@
                         break;
                 }
             }
-        });
-
-        // Window resize handler for responsive adjustments
-        window.addEventListener('resize', () => {
-            // Force re-render of current tab to adjust layout
-            setTimeout(() => {
-                renderCurrentTab();
-            }, 100);
         });
 
     </script>
