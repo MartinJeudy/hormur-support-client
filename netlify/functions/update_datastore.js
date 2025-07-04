@@ -1,7 +1,7 @@
 exports.handler = async (event, context) => {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-API-Key',
     'Access-Control-Allow-Methods': 'POST, PUT, DELETE, OPTIONS'
   };
 
@@ -20,7 +20,7 @@ exports.handler = async (event, context) => {
   try {
     const data = JSON.parse(event.body);
     
-    console.log('=== UPDATE DATASTORE REQUEST ===');
+    console.log('=== UPDATE MESSAGE VIA GOOGLE SHEETS ===');
     console.log('Action:', data.action);
     console.log('Message ID:', data.message_id);
 
@@ -35,52 +35,54 @@ exports.handler = async (event, context) => {
       };
     }
 
-    const MAKE_DATASTORE_UPDATE_WEBHOOK = process.env.MAKE_DATASTORE_UPDATE_WEBHOOK;
+    // ✅ Configuration Google Apps Script
+    const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL || 
+      'https://script.google.com/macros/s/AKfycbw0PCN3NSWGP07EwCJiUHXWmBvEAVuS5I2RHfUKFG74B9ktk8fQEBn7Hk1kJ11SPsFnEw/exec';
+    const HORMUR_API_KEY = process.env.HORMUR_API_KEY;
     
-    if (!MAKE_DATASTORE_UPDATE_WEBHOOK) {
+    if (!HORMUR_API_KEY) {
       return {
         statusCode: 500,
         headers: corsHeaders,
-        body: JSON.stringify({ error: 'MAKE_DATASTORE_UPDATE_WEBHOOK non configuré' })
+        body: JSON.stringify({ 
+          error: 'Configuration manquante',
+          details: 'HORMUR_API_KEY requis'
+        })
       };
     }
 
-    // 📤 PAYLOAD POUR MAKE.COM
-    const makePayload = {
-      action: data.action,
+    // 📤 PAYLOAD POUR GOOGLE APPS SCRIPT
+    const updatePayload = {
+      action: 'update', // Action principale
       message_id: data.message_id,
       user_email: data.user_email || 'system',
+      action: data.action, // Sous-action (archive, mark_spam, etc.)
+      new_status: data.new_status,
+      assigned_to: data.assigned_to,
+      reason: data.reason,
+      escalation_reason: data.escalation_reason,
       timestamp: new Date().toISOString(),
-      
-      // Données spécifiques selon l'action
-      ...(data.action === 'archive' && {
-        archive_reason: data.reason || 'manual'
-      }),
-      ...(data.action === 'mark_spam' && {
-        spam_reason: data.reason || 'Marqué manuellement'
-      }),
-      ...(data.action === 'escalate' && {
-        escalation_reason: data.escalation_reason || 'Escalation manuelle'
-      })
+      api_key: HORMUR_API_KEY
     };
 
-    console.log('📤 Envoi vers Make.com (Update):', JSON.stringify(makePayload, null, 2));
+    console.log('📤 Mise à jour Google Sheets:', JSON.stringify(updatePayload, null, 2));
 
-    // 🚀 APPEL VERS MAKE.COM
-    const makeResponse = await fetch(MAKE_DATASTORE_UPDATE_WEBHOOK, {
+    // 🚀 APPEL VERS GOOGLE APPS SCRIPT
+    const sheetsResponse = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'Hormur-App/2.0'
+        'X-API-Key': HORMUR_API_KEY,
+        'User-Agent': 'Hormur-Support/2.0'
       },
-      body: JSON.stringify(makePayload),
-      timeout: 15000
+      body: JSON.stringify(updatePayload),
+      timeout: 10000
     });
 
-    if (!makeResponse.ok) {
-      const errorText = await makeResponse.text();
-      console.error('❌ Erreur Make.com (Update):', {
-        status: makeResponse.status,
+    if (!sheetsResponse.ok) {
+      const errorText = await sheetsResponse.text();
+      console.error('❌ Erreur Google Sheets:', {
+        status: sheetsResponse.status,
         body: errorText
       });
       
@@ -88,33 +90,34 @@ exports.handler = async (event, context) => {
         statusCode: 502,
         headers: corsHeaders,
         body: JSON.stringify({ 
-          error: 'Erreur mise à jour Make.com',
-          status: makeResponse.status,
+          error: 'Erreur mise à jour Google Sheets',
+          status: sheetsResponse.status,
           details: errorText
         })
       };
     }
 
-    const makeResult = await makeResponse.json();
+    const sheetsResult = await sheetsResponse.json();
+    
+    if (!sheetsResult.success) {
+      console.error('❌ Erreur métier Google Sheets:', sheetsResult);
+      return {
+        statusCode: 400,
+        headers: corsHeaders,
+        body: JSON.stringify(sheetsResult)
+      };
+    }
+
     console.log('✅ Mise à jour effectuée');
 
     return {
       statusCode: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        success: true,
-        message: `Action '${data.action}' effectuée avec succès`,
-        timestamp: new Date().toISOString(),
-        data: {
-          message_id: data.message_id,
-          action: data.action,
-          make_response: makeResult
-        }
-      })
+      body: JSON.stringify(sheetsResult)
     };
 
   } catch (error) {
-    console.error('💥 ERREUR CRITIQUE (Update):', error);
+    console.error('💥 ERREUR CRITIQUE update:', error);
     
     return {
       statusCode: 500,
