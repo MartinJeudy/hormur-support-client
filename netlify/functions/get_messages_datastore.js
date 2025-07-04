@@ -1,7 +1,7 @@
 exports.handler = async (event, context) => {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-API-Key',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
   };
 
@@ -19,60 +19,65 @@ exports.handler = async (event, context) => {
       filters = body.filters || {};
     }
 
-    console.log('=== GET MESSAGES REQUEST ===');
+    console.log('=== GET MESSAGES FROM GOOGLE SHEETS ===');
     console.log('Filters:', filters);
 
-    const MAKE_DATASTORE_GET_WEBHOOK = process.env.MAKE_DATASTORE_GET_WEBHOOK;
+    // ✅ Configuration Google Apps Script
+    const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL || 
+      'https://script.google.com/macros/s/AKfycbw0PCN3NSWGP07EwCJiUHXWmBvEAVuS5I2RHfUKFG74B9ktk8fQEBn7Hk1kJ11SPsFnEw/exec';
+    const HORMUR_API_KEY = process.env.HORMUR_API_KEY;
 
-    if (!MAKE_DATASTORE_GET_WEBHOOK) {
+    if (!HORMUR_API_KEY) {
       return {
         statusCode: 500,
         headers: corsHeaders,
-        body: JSON.stringify({ error: 'MAKE_DATASTORE_GET_WEBHOOK non configuré' })
+        body: JSON.stringify({ 
+          error: 'Configuration manquante',
+          details: 'HORMUR_API_KEY non configuré'
+        })
       };
     }
 
-    // 📤 PAYLOAD POUR MAKE.COM (Format attendu par votre flow)
-    const makePayload = {
+    // 📤 PAYLOAD POUR GOOGLE APPS SCRIPT
+    const requestPayload = {
+      action: 'get',
       filters: {
         status: filters.status && filters.status !== 'all' ? filters.status : undefined,
         category: filters.category && filters.category !== 'all' ? filters.category : undefined,
         priority: filters.priority && filters.priority !== 'all' ? filters.priority : undefined,
-        archived: filters.archived === 'true' ? true : filters.archived === 'false' ? false : undefined
+        archived: filters.archived
       },
       search: filters.search || undefined,
       limit: parseInt(filters.limit) || 100,
-      sort: {
-        field: filters.sortField || 'received_at',
-        direction: filters.sortDirection || 'desc'
-      },
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      api_key: HORMUR_API_KEY
     };
 
     // Nettoyer les undefined
-    Object.keys(makePayload.filters).forEach(key => {
-      if (makePayload.filters[key] === undefined) {
-        delete makePayload.filters[key];
+    Object.keys(requestPayload.filters).forEach(key => {
+      if (requestPayload.filters[key] === undefined) {
+        delete requestPayload.filters[key];
       }
     });
 
-    console.log('📤 Envoi vers Make.com:', JSON.stringify(makePayload, null, 2));
+    console.log('📤 Requête vers Google Sheets:', JSON.stringify(requestPayload, null, 2));
 
-    // 🚀 APPEL VERS MAKE.COM
-    const makeResponse = await fetch(MAKE_DATASTORE_GET_WEBHOOK, {
+    // 🚀 APPEL VERS GOOGLE APPS SCRIPT SÉCURISÉ
+    const sheetsResponse = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'User-Agent': 'Hormur-App/2.0'
+        'X-API-Key': HORMUR_API_KEY,
+        'User-Agent': 'Hormur-Support/2.0'
       },
-      body: JSON.stringify(makePayload),
+      body: JSON.stringify(requestPayload),
       timeout: 15000
     });
 
-    if (!makeResponse.ok) {
-      const errorText = await makeResponse.text();
-      console.error('❌ Erreur Make.com:', {
-        status: makeResponse.status,
+    if (!sheetsResponse.ok) {
+      const errorText = await sheetsResponse.text();
+      console.error('❌ Erreur Google Sheets:', {
+        status: sheetsResponse.status,
         body: errorText
       });
       
@@ -80,69 +85,42 @@ exports.handler = async (event, context) => {
         statusCode: 502,
         headers: corsHeaders,
         body: JSON.stringify({ 
-          error: 'Erreur Make.com',
-          status: makeResponse.status,
+          error: 'Erreur Google Sheets',
+          status: sheetsResponse.status,
           details: errorText
         })
       };
     }
 
-    const makeData = await makeResponse.json();
-    console.log('✅ Réponse Make.com reçue:', makeData?.length || 'objet');
+    const sheetsData = await sheetsResponse.json();
+    console.log('✅ Données reçues de Google Sheets:', sheetsData?.messages?.length || 0, 'messages');
 
-    // 📥 TRAITEMENT DE LA RÉPONSE MAKE.COM
-    let messages = [];
-    
-    // Gérer différents formats de réponse Make.com
-    if (Array.isArray(makeData)) {
-      messages = makeData;
-    } else if (makeData.messages) {
-      messages = makeData.messages;
-    } else if (makeData.result) {
-      messages = makeData.result;
-    } else {
-      console.warn('Format de réponse Make.com inattendu:', typeof makeData);
-      messages = [];
+    // 🔄 VÉRIFICATION ET TRANSFORMATION DES DONNÉES
+    if (!sheetsData.success) {
+      console.error('❌ Erreur métier Google Sheets:', sheetsData);
+      return {
+        statusCode: 400,
+        headers: corsHeaders,
+        body: JSON.stringify(sheetsData)
+      };
     }
 
-    // 🔄 TRANSFORMATION POUR L'APP
-    const transformedMessages = messages.map(item => {
-      const data = item.data || item;
-      return {
-        id: item.key || data.id || `msg_${Date.now()}`,
-        from: data.from_email || data.from || 'inconnu@example.com',
-        subject: data.subject || 'Sujet non défini',
-        content: data.content || '',
-        receivedAt: data.received_at || data.receivedAt || new Date().toISOString(),
-        status: data.status || 'pending',
-        category: data.category || 'general',
-        priority: data.priority || 'medium',
-        confidence: data.confidence || 0,
-        assignedTo: data.assigned_to || data.assignedTo,
-        aiResponse: data.ai_response || data.aiResponse,
-        archived: data.archived || false,
-        timeReceived: new Date(data.received_at || data.receivedAt || Date.now()).getTime()
-      };
-    });
-
-    console.log('🎯 Messages transformés:', transformedMessages.length);
-
-    // 📤 RÉPONSE POUR L'APP
+    // 📤 RÉPONSE POUR L'APP (format attendu par l'interface)
     return {
       statusCode: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         success: true,
-        source: 'make_datastore',
-        messages: transformedMessages,
-        total: transformedMessages.length,
+        source: 'google_sheets_secure',
+        messages: sheetsData.messages || [],
+        total: sheetsData.total || 0,
         timestamp: new Date().toISOString(),
         filters_applied: filters
       })
     };
 
   } catch (error) {
-    console.error('💥 ERREUR CRITIQUE:', error);
+    console.error('💥 ERREUR CRITIQUE get-messages:', error);
     
     return {
       statusCode: 500,
