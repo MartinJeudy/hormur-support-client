@@ -34,118 +34,62 @@ exports.handler = async (event, context) => {
       };
     }
 
-    console.log('=== SEND RESPONSE VIA GOOGLE SHEETS ===');
+    console.log('=== SEND RESPONSE VIA GOOGLE APPS SCRIPT ===');
     console.log('Message ID:', data.message_id);
-    console.log('Sent by:', data.sent_by);
 
-    // ✅ Configuration Google Apps Script
-    const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL || 
-      'https://script.google.com/macros/s/AKfycbw0PCN3NSWGP07EwCJiUHXWmBvEAVuS5I2RHfUKFG74B9ktk8fQEBn7Hk1kJ11SPsFnEw/exec';
+    const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL;
     const HORMUR_API_KEY = process.env.HORMUR_API_KEY;
-    const MAKE_SEND_RESPONSE_WEBHOOK = process.env.MAKE_SEND_RESPONSE_WEBHOOK; // Optionnel pour Brevo
     
-    if (!HORMUR_API_KEY) {
+    if (!GOOGLE_APPS_SCRIPT_URL || !HORMUR_API_KEY) {
       return {
         statusCode: 500,
         headers: corsHeaders,
         body: JSON.stringify({ 
-          error: 'Configuration manquante',
-          details: 'HORMUR_API_KEY requis'
+          error: 'Configuration manquante'
         })
       };
     }
 
-    // 📤 PAYLOAD POUR GOOGLE APPS SCRIPT
-    const sheetsPayload = {
+    const gasPayload = {
       action: 'send_response',
       message_id: data.message_id,
       response_text: data.response_text,
       sent_by: data.sent_by,
-      user_modifications: data.user_modifications || false,
-      original_ai_response: data.original_ai_response || null,
-      modification_reason: data.modification_reason || null,
       timestamp: new Date().toISOString(),
       api_key: HORMUR_API_KEY
     };
 
-    console.log('📤 Marquage comme envoyé:', JSON.stringify(sheetsPayload, null, 2));
-
-    // 🚀 1. MARQUER COMME ENVOYÉ DANS GOOGLE SHEETS
-    const sheetsResponse = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+    const gasResponse = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-API-Key': HORMUR_API_KEY,
         'User-Agent': 'Hormur-Support/2.0'
       },
-      body: JSON.stringify(sheetsPayload),
-      timeout: 10000
+      body: JSON.stringify(gasPayload)
     });
 
-    if (!sheetsResponse.ok) {
-      const errorText = await sheetsResponse.text();
-      console.error('❌ Erreur Google Sheets:', {
-        status: sheetsResponse.status,
-        body: errorText
-      });
-      
+    if (!gasResponse.ok) {
+      const errorText = await gasResponse.text();
       return {
         statusCode: 502,
         headers: corsHeaders,
         body: JSON.stringify({ 
-          error: 'Erreur mise à jour Google Sheets',
-          status: sheetsResponse.status,
-          details: errorText
+          error: 'Erreur Google Apps Script',
+          details: 'Erreur serveur'
         })
       };
     }
 
-    const sheetsResult = await sheetsResponse.json();
+    const gasResult = await gasResponse.json();
     
-    if (!sheetsResult.success) {
-      console.error('❌ Erreur métier Google Sheets:', sheetsResult);
+    if (!gasResult.success) {
       return {
         statusCode: 400,
         headers: corsHeaders,
-        body: JSON.stringify(sheetsResult)
+        body: JSON.stringify(gasResult)
       };
     }
-
-    // 🚀 2. ENVOYER VIA MAKE.COM → BREVO (OPTIONNEL)
-    let makeResult = null;
-    if (MAKE_SEND_RESPONSE_WEBHOOK) {
-      const makePayload = {
-        message_id: data.message_id,
-        response_text: data.response_text,
-        sent_by: data.sent_by,
-        sent_at: new Date().toISOString(),
-        platform: 'Hormur'
-      };
-
-      try {
-        console.log('📤 Envoi vers Make.com → Brevo...');
-        const makeResponse = await fetch(MAKE_SEND_RESPONSE_WEBHOOK, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'User-Agent': 'Hormur-Support/2.0'
-          },
-          body: JSON.stringify(makePayload),
-          timeout: 15000
-        });
-
-        if (makeResponse.ok) {
-          makeResult = await makeResponse.json();
-          console.log('✅ Envoi Brevo réussi');
-        } else {
-          console.warn('⚠️ Erreur Make.com (non-bloquant):', makeResponse.status);
-        }
-      } catch (makeError) {
-        console.warn('⚠️ Erreur Make.com (non-bloquant):', makeError.message);
-      }
-    }
-
-    console.log('✅ Réponse traitée avec succès');
 
     return {
       statusCode: 200,
@@ -156,15 +100,13 @@ exports.handler = async (event, context) => {
         timestamp: new Date().toISOString(),
         data: {
           message_id: data.message_id,
-          sent_by: data.sent_by,
-          sheets_result: sheetsResult,
-          brevo_sent: !!makeResult
+          sent_by: data.sent_by
         }
       })
     };
 
   } catch (error) {
-    console.error('💥 ERREUR CRITIQUE send-response:', error);
+    console.error('💥 ERREUR CRITIQUE:', error);
     
     return {
       statusCode: 500,
