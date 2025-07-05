@@ -1,6 +1,3 @@
-// Fonction de debug à ajouter temporairement dans get_messages_datastore.js
-// POUR DEBUG UNIQUEMENT - À SUPPRIMER APRÈS
-
 exports.handler = async (event, context) => {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -12,91 +9,118 @@ exports.handler = async (event, context) => {
     return { statusCode: 200, headers: corsHeaders };
   }
 
-  // 🔍 DEBUG: Vérifier les variables d'environnement
-  console.log('=== DEBUG VARIABLES D\'ENVIRONNEMENT ===');
-  console.log('GOOGLE_APPS_SCRIPT_URL:', process.env.GOOGLE_APPS_SCRIPT_URL);
-  console.log('HORMUR_API_KEY:', process.env.HORMUR_API_KEY ? 'CONFIGURÉ ✅' : 'MANQUANT ❌');
-  
-  // Si variables manquantes, arrêter ici
-  if (!process.env.GOOGLE_APPS_SCRIPT_URL) {
-    return {
-      statusCode: 500,
-      headers: corsHeaders,
-      body: JSON.stringify({ 
-        error: 'GOOGLE_APPS_SCRIPT_URL non configuré',
-        debug: {
-          allEnvVars: Object.keys(process.env).filter(key => key.includes('GOOGLE') || key.includes('HORMUR'))
-        }
-      })
-    };
-  }
-
-  if (!process.env.HORMUR_API_KEY) {
-    return {
-      statusCode: 500,
-      headers: corsHeaders,
-      body: JSON.stringify({ 
-        error: 'HORMUR_API_KEY non configuré',
-        debug: {
-          gasUrl: process.env.GOOGLE_APPS_SCRIPT_URL,
-          allEnvVars: Object.keys(process.env).filter(key => key.includes('GOOGLE') || key.includes('HORMUR'))
-        }
-      })
-    };
-  }
-
-  // Test simple de l'URL Google Apps Script
   try {
-    const testPayload = {
+    let filters = {};
+    if (event.httpMethod === 'GET') {
+      filters = event.queryStringParameters || {};
+    } else {
+      const body = event.body ? JSON.parse(event.body) : {};
+      filters = body.filters || {};
+    }
+
+    console.log('=== GET MESSAGES FROM GOOGLE APPS SCRIPT ===');
+    console.log('Filters:', filters);
+
+    const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL;
+    const HORMUR_API_KEY = process.env.HORMUR_API_KEY;
+
+    if (!GOOGLE_APPS_SCRIPT_URL || !HORMUR_API_KEY) {
+      return {
+        statusCode: 500,
+        headers: corsHeaders,
+        body: JSON.stringify({ 
+          error: 'Configuration manquante',
+          details: 'GOOGLE_APPS_SCRIPT_URL et HORMUR_API_KEY requis'
+        })
+      };
+    }
+
+    const requestPayload = {
       action: 'get',
-      api_key: process.env.HORMUR_API_KEY,
-      timestamp: new Date().toISOString()
+      filters: {
+        status: filters.status && filters.status !== 'all' ? filters.status : undefined,
+        category: filters.category && filters.category !== 'all' ? filters.category : undefined,
+        priority: filters.priority && filters.priority !== 'all' ? filters.priority : undefined,
+        archived: filters.archived
+      },
+      search: filters.search || undefined,
+      limit: parseInt(filters.limit) || 100,
+      timestamp: new Date().toISOString(),
+      api_key: HORMUR_API_KEY
     };
 
-    console.log('🧪 Test URL Google Apps Script...');
-    console.log('URL:', process.env.GOOGLE_APPS_SCRIPT_URL);
+    Object.keys(requestPayload.filters).forEach(key => {
+      if (requestPayload.filters[key] === undefined) {
+        delete requestPayload.filters[key];
+      }
+    });
 
-    const response = await fetch(process.env.GOOGLE_APPS_SCRIPT_URL, {
+    console.log('📤 Requête vers Google Apps Script:', JSON.stringify(requestPayload, null, 2));
+
+    const gasResponse = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-Key': process.env.HORMUR_API_KEY
+        'X-API-Key': HORMUR_API_KEY,
+        'User-Agent': 'Hormur-Support/2.0'
       },
-      body: JSON.stringify(testPayload)
+      body: JSON.stringify(requestPayload)
     });
 
-    console.log('Status:', response.status);
-    console.log('Headers:', response.headers);
+    console.log('📨 Réponse GAS Status:', gasResponse.status);
 
-    const responseText = await response.text();
-    console.log('Response preview:', responseText.substring(0, 200));
+    if (!gasResponse.ok) {
+      const errorText = await gasResponse.text();
+      console.error('❌ Erreur Google Apps Script:', {
+        status: gasResponse.status,
+        body: errorText.substring(0, 500)
+      });
+      
+      return {
+        statusCode: 502,
+        headers: corsHeaders,
+        body: JSON.stringify({ 
+          error: 'Erreur Google Apps Script',
+          status: gasResponse.status,
+          details: 'Erreur serveur'
+        })
+      };
+    }
+
+    const gasData = await gasResponse.json();
+    console.log('✅ Données reçues:', gasData?.messages?.length || 0, 'messages');
+
+    if (!gasData.success) {
+      return {
+        statusCode: 400,
+        headers: corsHeaders,
+        body: JSON.stringify(gasData)
+      };
+    }
 
     return {
       statusCode: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        debug: true,
-        gasUrl: process.env.GOOGLE_APPS_SCRIPT_URL,
-        apiKeyConfigured: !!process.env.HORMUR_API_KEY,
-        testResponse: {
-          status: response.status,
-          ok: response.ok,
-          responsePreview: responseText.substring(0, 200),
-          isHtml: responseText.includes('<!DOCTYPE html>')
-        }
+        success: true,
+        source: 'google_apps_script',
+        messages: gasData.messages || [],
+        total: gasData.total || 0,
+        timestamp: new Date().toISOString(),
+        filters_applied: filters
       })
     };
 
   } catch (error) {
-    console.error('💥 Erreur test:', error);
+    console.error('💥 ERREUR CRITIQUE:', error);
     
     return {
       statusCode: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
-        error: 'Erreur test Google Apps Script',
+        error: 'Erreur serveur interne',
         details: error.message,
-        gasUrl: process.env.GOOGLE_APPS_SCRIPT_URL
+        timestamp: new Date().toISOString()
       })
     };
   }
