@@ -9,21 +9,9 @@ exports.handler = async (event, context) => {
     return { statusCode: 200, headers: corsHeaders };
   }
 
-  if (!['POST', 'PUT', 'DELETE'].includes(event.httpMethod)) {
-    return {
-      statusCode: 405,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
-  }
-
   try {
     const data = JSON.parse(event.body);
     
-    console.log('=== UPDATE MESSAGE VIA GOOGLE APPS SCRIPT ===');
-    console.log('Action:', data.action);
-    console.log('Message ID:', data.message_id);
-
     if (!data.action || !data.message_id) {
       return {
         statusCode: 400,
@@ -35,7 +23,6 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // ✅ Configuration Google Apps Script
     const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL;
     const HORMUR_API_KEY = process.env.HORMUR_API_KEY;
     
@@ -44,29 +31,21 @@ exports.handler = async (event, context) => {
         statusCode: 500,
         headers: corsHeaders,
         body: JSON.stringify({ 
-          error: 'Configuration manquante',
-          details: 'GOOGLE_APPS_SCRIPT_URL et HORMUR_API_KEY requis'
+          error: 'Configuration manquante'
         })
       };
     }
 
-    // 📤 PAYLOAD POUR GOOGLE APPS SCRIPT
     const updatePayload = {
       action: 'update',
       message_id: data.message_id,
       user_email: data.user_email || 'system',
-      update_action: data.action, // Renommé pour éviter la confusion
+      update_action: data.action,
       new_status: data.new_status,
-      assigned_to: data.assigned_to,
-      reason: data.reason,
-      escalation_reason: data.escalation_reason,
       timestamp: new Date().toISOString(),
       api_key: HORMUR_API_KEY
     };
 
-    console.log('📤 Mise à jour Google Apps Script:', JSON.stringify(updatePayload, null, 2));
-
-    // 🚀 APPEL VERS GOOGLE APPS SCRIPT
     const gasResponse = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
       headers: {
@@ -78,36 +57,17 @@ exports.handler = async (event, context) => {
     });
 
     if (!gasResponse.ok) {
-      const errorText = await gasResponse.text();
-      console.error('❌ Erreur Google Apps Script:', {
-        status: gasResponse.status,
-        body: errorText.substring(0, 500)
-      });
-      
       return {
         statusCode: 502,
         headers: corsHeaders,
         body: JSON.stringify({ 
-          error: 'Erreur mise à jour Google Apps Script',
-          status: gasResponse.status,
-          details: gasResponse.status === 401 ? 'URL ou API Key incorrecte' : 'Erreur serveur GAS'
+          error: 'Erreur Google Apps Script'
         })
       };
     }
 
     const gasResult = await gasResponse.json();
     
-    if (!gasResult.success) {
-      console.error('❌ Erreur métier Google Apps Script:', gasResult);
-      return {
-        statusCode: 400,
-        headers: corsHeaders,
-        body: JSON.stringify(gasResult)
-      };
-    }
-
-    console.log('✅ Mise à jour effectuée');
-
     return {
       statusCode: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -115,15 +75,14 @@ exports.handler = async (event, context) => {
     };
 
   } catch (error) {
-    console.error('💥 ERREUR CRITIQUE update:', error);
+    console.error('💥 ERREUR CRITIQUE:', error);
     
     return {
       statusCode: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
         error: 'Erreur serveur interne',
-        details: error.message,
-        timestamp: new Date().toISOString()
+        details: error.message
       })
     };
   }
