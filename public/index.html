@@ -669,13 +669,12 @@
         let isLoading = false;
         let customSignature = null;
 
-        // Configuration API - CORRECTION du nom de fonction
+        // Configuration API - Make.com uniquement pour l'envoi
         const API_CONFIG = {
             baseUrl: '', // Netlify functions are at the same domain
             endpoints: {
                 getMessages: '/.netlify/functions/get_messages_datastore',
-                sendResponse: '/.netlify/functions/send_response_datastore',
-                sendBrevoResponse: '/.netlify/functions/secure_brevo_function', // CORRECTION: nom correct
+                sendResponse: 'https://hook.eu1.make.com/eq7ftu6vgz6p84n2qe72i5skba6u5kwm', // 🎯 DIRECT VERS MAKE.COM
                 updateMessage: '/.netlify/functions/update_datastore'
             }
         };
@@ -776,10 +775,18 @@
 
                 console.log(`🔗 Appel API: ${endpoint}`, data ? JSON.stringify(data, null, 2) : 'Pas de données');
 
-                const response = await fetch(API_CONFIG.baseUrl + endpoint, options);
+                // 🎯 SUPPORT DES URLS EXTERNES (Make.com)
+                const fullUrl = endpoint.startsWith('http') ? endpoint : API_CONFIG.baseUrl + endpoint;
+
+                const response = await fetch(fullUrl, options);
                 
                 if (!response.ok) {
-                    const errorData = await response.json();
+                    let errorData;
+                    try {
+                        errorData = await response.json();
+                    } catch {
+                        errorData = { error: `HTTP ${response.status} - ${response.statusText}` };
+                    }
                     throw new Error(errorData.error || `HTTP ${response.status}`);
                 }
 
@@ -863,7 +870,7 @@
             }
         }
 
-        // FONCTION SENDRESPONSE CORRIGÉE À REMPLACER DANS INDEX.HTML
+        // FONCTION SENDRESPONSE FINALE - VIA MAKE.COM UNIQUEMENT
         async function sendResponse(messageId, responseText, sentBy) {
             if (!messageId || !responseText || !sentBy) {
                 showToast('Données manquantes pour l\'envoi', 'error');
@@ -877,11 +884,10 @@
                 const message = allMessages.find(m => m.id === messageId);
                 console.log('📧 Message trouvé pour envoi:', message);
                 
-                // RECHERCHE VISITOR_ID - ORDRE DE PRIORITÉ BASÉ SUR VOS TESTS
+                // RECHERCHE VISITOR_ID - ORDRE DE PRIORITÉ
                 let visitorId = null;
                 if (message) {
-                    // 🎯 ORDRE DE PRIORITÉ CORRIGÉ basé sur votre structure réelle
-                    visitorId = message.id_visitor ||          // 🎯 VOTRE STRUCTURE RÉELLE (colonne V)
+                    visitorId = message.id_visitor ||          // Structure réelle (colonne V)
                                message.visitorId ||           // Version transformée
                                message.visitor_id ||          // Version standard  
                                message.brevoVisitorId ||      // Version Brevo
@@ -892,13 +898,12 @@
                     console.log('  - id_visitor (RÉEL):', message.id_visitor);
                     console.log('  - visitorId:', message.visitorId);
                     console.log('  - visitor_id:', message.visitor_id);
-                    console.log('  - conversationId:', message.conversationId);
                     console.log('🆔 Visitor ID final sélectionné:', visitorId);
                 } else {
                     console.error('❌ Message non trouvé dans allMessages pour ID:', messageId);
                 }
                 
-                // VALIDATION VISITOR_ID STRICTE
+                // VALIDATION VISITOR_ID
                 const isValidVisitorId = visitorId && 
                                         typeof visitorId === 'string' &&
                                         visitorId.length >= 20 &&
@@ -913,78 +918,30 @@
                 console.log('  - Longueur:', visitorId?.length || 0);
                 console.log('  - Valide:', isValidVisitorId);
                 
-                let result;
+                // PRÉPARATION PAYLOAD POUR MAKE.COM
+                const makePayload = {
+                    message_id: messageId,
+                    response_text: responseText,
+                    sent_by: sentBy,
+                    
+                    // 🎯 NOUVELLES DONNÉES POUR MAKE.COM
+                    visitor_id: visitorId || null,
+                    has_visitor_id: isValidVisitorId,
+                    use_brevo_direct: isValidVisitorId, // Flag pour que Make.com utilise Brevo si possible
+                    
+                    // Métadonnées
+                    routing_method: isValidVisitorId ? 'brevo_via_makecom' : 'standard_makecom',
+                    timestamp: new Date().toISOString(),
+                    source: 'hormur_frontend'
+                };
                 
-                // LOGIQUE D'ENVOI AMÉLIORÉE
-                if (isValidVisitorId) {
-                    console.log('🚀 ENVOI DIRECT VIA BREVO');
-                    console.log('📤 Données envoi Brevo:', {
-                        message_id: messageId,
-                        visitor_id: visitorId,
-                        sent_by: sentBy,
-                        response_length: responseText.length
-                    });
-                    
-                    try {
-                        result = await apiCall(API_CONFIG.endpoints.sendBrevoResponse, 'POST', {
-                            message_id: messageId,
-                            response_text: responseText,
-                            sent_by: sentBy,
-                            visitor_id: visitorId
-                        });
-                        
-                        console.log('✅ Envoi Brevo réussi:', result);
-                        
-                    } catch (brevoError) {
-                        console.warn('⚠️ Échec envoi Brevo, tentative fallback Make.com...', brevoError);
-                        console.error('🔍 Détails erreur Brevo:', {
-                            message: brevoError.message,
-                            stack: brevoError.stack
-                        });
-                        
-                        // Fallback vers Make.com
-                        result = await apiCall(API_CONFIG.endpoints.sendResponse, 'POST', {
-                            message_id: messageId,
-                            response_text: responseText,
-                            sent_by: sentBy,
-                            user_modifications: true,
-                            fallback_reason: 'brevo_failed',
-                            original_visitor_id: visitorId
-                        });
-                    }
-                } else {
-                    // Pas de visitor_id valide - utiliser Make.com directement
-                    console.log('⚠️ ENVOI VIA MAKE.COM - Visitor ID invalide');
-                    console.log('🔍 Raisons visitor_id invalide:', {
-                        missing: !visitorId,
-                        too_short: visitorId && visitorId.length < 20,
-                        contains_undefined: visitorId && visitorId.includes('undefined'),
-                        contains_email: visitorId && visitorId.includes('email'),
-                        value: visitorId
-                    });
-                    
-                    // Debug: afficher toutes les propriétés du message qui pourraient être des IDs
-                    if (message) {
-                        console.log('🔍 Toutes les propriétés du message pour debug:');
-                        Object.keys(message).forEach(key => {
-                            const value = message[key];
-                            if (typeof value === 'string' && value.length > 10) {
-                                console.log(`  - ${key}: "${value}" (longueur: ${value.length})`);
-                            }
-                        });
-                    }
-                    
-                    result = await apiCall(API_CONFIG.endpoints.sendResponse, 'POST', {
-                        message_id: messageId,
-                        response_text: responseText,
-                        sent_by: sentBy,
-                        user_modifications: true,
-                        fallback_reason: 'no_valid_visitor_id',
-                        debug_visitor_id: visitorId || 'not_found'
-                    });
-                }
+                console.log('🚀 ENVOI VIA MAKE.COM UNIQUEMENT');
+                console.log('📤 Payload Make.com:', makePayload);
                 
-                if (result && result.success) {
+                // APPEL DIRECT AU WEBHOOK MAKE.COM
+                const result = await apiCall(API_CONFIG.endpoints.sendResponse, 'POST', makePayload);
+                
+                if (result && (result.success || result.status === 'success')) {
                     // Mettre à jour localement
                     const messageIndex = allMessages.findIndex(m => m.id == messageId);
                     if (messageIndex !== -1) {
@@ -999,12 +956,13 @@
                     showToast('✅ Réponse envoyée avec succès !', 'success');
                     closeMessageModal();
                     
-                    // Log de succès avec méthode utilisée
-                    console.log('🎉 ENVOI RÉUSSI:', {
-                        method: isValidVisitorId ? 'brevo_direct' : 'make_com_fallback',
+                    // Log de succès
+                    console.log('🎉 ENVOI RÉUSSI VIA MAKE.COM:', {
+                        method: isValidVisitorId ? 'brevo_via_makecom' : 'standard_makecom',
                         message_id: messageId,
                         visitor_id: visitorId,
-                        sent_by: sentBy
+                        sent_by: sentBy,
+                        webhook_used: 'eq7ftu6vgz6p84n2qe72i5skba6u5kwm'
                     });
                     
                 } else {
@@ -1025,16 +983,7 @@
                         message: error.message,
                         stack: error.stack,
                         name: error.name
-                    },
-                    message_sample: allMessages.find(m => m.id === messageId) ? {
-                        id: allMessages.find(m => m.id === messageId).id,
-                        visitor_related_props: Object.keys(allMessages.find(m => m.id === messageId))
-                            .filter(k => k.toLowerCase().includes('visitor') || k.toLowerCase().includes('id'))
-                            .reduce((acc, k) => {
-                                acc[k] = allMessages.find(m => m.id === messageId)[k];
-                                return acc;
-                            }, {})
-                    } : null
+                    }
                 });
             }
         }
