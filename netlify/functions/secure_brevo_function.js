@@ -1,4 +1,4 @@
-// /.netlify/functions/send_brevo_direct.js
+// /.netlify/functions/secure_brevo_function.js
 exports.handler = async (event, context) => {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
@@ -21,16 +21,21 @@ exports.handler = async (event, context) => {
   try {
     const data = JSON.parse(event.body);
     
+    console.log('=== DONNÉES REÇUES ===');
+    console.log('Payload complet:', JSON.stringify(data, null, 2));
+    
     const requiredFields = ['message_id', 'response_text', 'sent_by', 'visitor_id'];
     const missingFields = requiredFields.filter(field => !data[field]);
     
     if (missingFields.length > 0) {
+      console.error('❌ Champs manquants:', missingFields);
       return {
         statusCode: 400,
         headers: corsHeaders,
         body: JSON.stringify({ 
           error: 'Champs manquants', 
-          missing: missingFields
+          missing: missingFields,
+          received_data: data
         })
       };
     }
@@ -38,6 +43,7 @@ exports.handler = async (event, context) => {
     console.log('=== ENVOI DIRECT BREVO ===');
     console.log('Message ID:', data.message_id);
     console.log('Sent by:', data.sent_by);
+    console.log('Visitor ID:', data.visitor_id);
 
     // Configuration Brevo - SÉCURISÉE avec variable d'environnement
     const BREVO_API_KEY = process.env.BREVO_API_KEY;
@@ -56,19 +62,21 @@ exports.handler = async (event, context) => {
       };
     }
     
-    // Déterminer l'agent ID selon l'utilisateur
+    // Déterminer l'agent ID selon l'utilisateur - CORRECTION des IDs
     const agentId = data.sent_by === 'eleonore@hormur.com' 
       ? '6223aae91d1bcc698a514cd6_67d814247e4a70279409c965'  // Éléonore
       : '6223aae91d1bcc698a514cd6_67a0bf5edbc8f653740f31c8'; // Martin
 
-    // Payload pour Brevo
+    console.log('🎯 Agent ID sélectionné:', agentId);
+
+    // Payload pour Brevo - FORMAT EXACT
     const brevoPayload = {
-      visitorId: data.visitor_id,
+      visitorId: data.visitor_id,  // Utiliser visitor_id comme fourni
       text: data.response_text,
       agentId: agentId
     };
 
-    console.log('📤 Envoi vers Brevo:', JSON.stringify(brevoPayload, null, 2));
+    console.log('📤 Payload Brevo final:', JSON.stringify(brevoPayload, null, 2));
 
     // Appel API Brevo
     const brevoResponse = await fetch(BREVO_API_URL, {
@@ -81,12 +89,15 @@ exports.handler = async (event, context) => {
     });
 
     console.log('📨 Réponse Brevo Status:', brevoResponse.status);
+    console.log('📨 Réponse Brevo Headers:', JSON.stringify([...brevoResponse.headers.entries()]));
 
     if (!brevoResponse.ok) {
       const errorText = await brevoResponse.text();
-      console.error('❌ Erreur Brevo:', {
+      console.error('❌ Erreur Brevo détaillée:', {
         status: brevoResponse.status,
-        body: errorText.substring(0, 500)
+        statusText: brevoResponse.statusText,
+        body: errorText,
+        headers: [...brevoResponse.headers.entries()]
       });
       
       return {
@@ -95,13 +106,15 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({ 
           error: 'Erreur envoi Brevo',
           status: brevoResponse.status,
-          details: 'Erreur serveur Brevo'
+          statusText: brevoResponse.statusText,
+          details: errorText.substring(0, 500),
+          brevo_payload: brevoPayload
         })
       };
     }
 
     const brevoResult = await brevoResponse.json();
-    console.log('✅ Message envoyé via Brevo:', brevoResult);
+    console.log('✅ Message envoyé via Brevo:', JSON.stringify(brevoResult, null, 2));
 
     // Maintenant mettre à jour le Google Apps Script
     const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL;
@@ -117,6 +130,7 @@ exports.handler = async (event, context) => {
           success: true,
           message: 'Message envoyé via Brevo (sheet non mis à jour)',
           brevo_response: brevoResult,
+          brevo_payload: brevoPayload,
           timestamp: new Date().toISOString()
         })
       };
@@ -154,6 +168,7 @@ exports.handler = async (event, context) => {
           success: true,
           message: 'Message envoyé via Brevo, erreur mise à jour sheet',
           brevo_response: brevoResult,
+          brevo_payload: brevoPayload,
           gas_error: 'Erreur mise à jour Google Apps Script',
           timestamp: new Date().toISOString()
         })
@@ -170,18 +185,21 @@ exports.handler = async (event, context) => {
         success: true,
         message: 'Message envoyé via Brevo et sheet mis à jour',
         brevo_response: brevoResult,
+        brevo_payload: brevoPayload,
         gas_response: gasResult,
         timestamp: new Date().toISOString(),
         data: {
           message_id: data.message_id,
           sent_by: data.sent_by,
-          agent_id: agentId
+          agent_id: agentId,
+          visitor_id: data.visitor_id
         }
       })
     };
 
   } catch (error) {
     console.error('💥 ERREUR CRITIQUE:', error);
+    console.error('Stack trace:', error.stack);
     
     return {
       statusCode: 500,
@@ -189,6 +207,7 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({ 
         error: 'Erreur serveur interne',
         details: error.message,
+        stack: error.stack,
         timestamp: new Date().toISOString()
       })
     };
