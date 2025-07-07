@@ -1,6 +1,3 @@
-// /.netlify/functions/secure_brevo_function.js
-// VERSION DEBUG AVEC LOGS DÉTAILLÉS
-
 exports.handler = async (event, context) => {
   console.log('🚀 FONCTION DÉMARRÉE - secure_brevo_function');
   console.log('📥 Event reçu:', JSON.stringify({
@@ -98,7 +95,7 @@ exports.handler = async (event, context) => {
       };
     }
     
-    // Détermination de l'agent ID
+    // Détermination de l'agent ID - AGENT IDS CORRECTS
     console.log('👤 Utilisateur envoyeur:', data.sent_by);
     const agentId = data.sent_by === 'eleonore@hormur.com' 
       ? '6223aae91d1bcc698a514cd6_67d814247e4a70279409c965'  // Éléonore
@@ -109,9 +106,9 @@ exports.handler = async (event, context) => {
     console.log('  - eleonore@hormur.com → 6223aae91d1bcc698a514cd6_67d814247e4a70279409c965');
     console.log('  - autre → 6223aae91d1bcc698a514cd6_67a0bf5edbc8f653740f31c8');
 
-    // Construction du payload Brevo
+    // Construction du payload Brevo - FORMAT EXACT
     const brevoPayload = {
-      visitorId: data.visitor_id,
+      visitorId: data.visitor_id,  // Utiliser visitor_id comme fourni
       text: data.response_text,
       agentId: agentId
     };
@@ -120,7 +117,7 @@ exports.handler = async (event, context) => {
     console.log('📤 Payload final:', JSON.stringify(brevoPayload, null, 2));
     console.log('📤 URL cible:', BREVO_API_URL);
 
-    // TEST: Vérification préalable des données
+    // VALIDATION PAYLOAD
     console.log('🔍 VALIDATION PAYLOAD:');
     console.log('  - visitorId longueur:', brevoPayload.visitorId?.length || 'undefined');
     console.log('  - text longueur:', brevoPayload.text?.length || 'undefined');
@@ -243,6 +240,8 @@ exports.handler = async (event, context) => {
 
     if (!gasResponse.ok) {
       console.error('❌ Erreur Google Apps Script (mais Brevo OK)');
+      const gasErrorText = await gasResponse.text();
+      console.error('📄 Erreur GAS:', gasErrorText);
       
       return {
         statusCode: 200,
@@ -252,7 +251,7 @@ exports.handler = async (event, context) => {
           message: 'Message envoyé via Brevo, erreur mise à jour sheet',
           brevo_response: brevoResult,
           brevo_payload: brevoPayload,
-          gas_error: 'Erreur mise à jour Google Apps Script',
+          gas_error: gasErrorText,
           timestamp: new Date().toISOString()
         })
       };
