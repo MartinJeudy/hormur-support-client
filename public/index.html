@@ -335,7 +335,7 @@
                 <div class="bg-green-50 border border-green-200 rounded-lg p-4">
                     <h3 class="font-medium text-green-800 mb-3 flex items-center">
                         <i data-lucide="bot" class="w-5 h-5 mr-2"></i>
-                        Surveillance Auto-Send (30min)
+                        Surveillance Auto-Send (aujourd'hui)
                         <span class="ml-2 bg-green-600 text-white text-xs px-2 py-1 rounded-full" id="surveillance-count">-</span>
                     </h3>
                     <div id="surveillance-auto-send" class="space-y-2">
@@ -383,7 +383,7 @@
                 </div>
             </div>
 
-            <!-- Other content tabs would be here, but I'll include the key message loading containers -->
+            <!-- Auto-Send Tab -->
             <div id="content-auto-send" class="hidden p-4">
                 <div class="mb-4 bg-green-50 border border-green-200 rounded-lg p-3">
                     <div class="flex items-center justify-between">
@@ -405,6 +405,7 @@
                 </div>
             </div>
 
+            <!-- Validation Tab -->
             <div id="content-validation" class="hidden p-4">
                 <div class="mb-4 bg-orange-50 border border-orange-200 rounded-lg p-3">
                     <div class="flex items-center justify-between">
@@ -426,6 +427,7 @@
                 </div>
             </div>
 
+            <!-- Archives Tab -->
             <div id="content-archives" class="hidden p-4">
                 <div class="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
                     <div class="flex items-center justify-between">
@@ -447,6 +449,7 @@
                 </div>
             </div>
 
+            <!-- All Messages Tab -->
             <div id="content-all" class="hidden p-4">
                 <!-- Search Bar -->
                 <div class="mb-4">
@@ -491,9 +494,9 @@
 
         <!-- Message Detail Modal -->
         <div id="message-modal" class="fixed inset-0 modal-overlay z-50 hidden">
-            <div class="min-h-screen px-4 flex items-end sm:items-center justify-center">
-                <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-hidden slide-in-right">
-                    <div class="sticky top-0 bg-white border-b px-4 py-3 flex items-center justify-between">
+            <div class="min-h-screen px-2 sm:px-4 flex items-end sm:items-center justify-center">
+                <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full max-w-2xl h-[95vh] sm:max-h-[90vh] overflow-hidden slide-in-right flex flex-col">
+                    <div class="sticky top-0 bg-white border-b px-4 py-3 flex items-center justify-between flex-shrink-0">
                         <h3 class="font-semibold text-gray-900 flex items-center">
                             <i data-lucide="message-circle" class="w-5 h-5 mr-2"></i>
                             Détails du message
@@ -507,7 +510,7 @@
                             </button>
                         </div>
                     </div>
-                    <div id="message-detail-content" class="p-4 overflow-y-auto custom-scrollbar" style="max-height: calc(90vh - 60px);">
+                    <div id="message-detail-content" class="p-4 overflow-y-auto custom-scrollbar flex-1">
                         <!-- Message details will be loaded here -->
                     </div>
                 </div>
@@ -580,6 +583,7 @@
             endpoints: {
                 getMessages: '/.netlify/functions/get_messages_datastore',
                 sendResponse: '/.netlify/functions/send_response_datastore',
+                sendBrevoResponse: '/.netlify/functions/send_brevo_direct', // Nouvelle fonction
                 updateMessage: '/.netlify/functions/update_datastore'
             }
         };
@@ -699,32 +703,41 @@
             if (!messageId) return;
             
             try {
-                showToast('Archivage en cours...', 'info');
+                // Optimisation: mise à jour locale immédiate pour l'UX
+                const messageIndex = allMessages.findIndex(m => m.id == messageId);
+                if (messageIndex !== -1) {
+                    allMessages[messageIndex].archived = true;
+                    allMessages[messageIndex].status = 'archived';
+                    
+                    // Mise à jour immédiate de l'interface
+                    updateStats();
+                    renderCurrentTab();
+                    
+                    if (selectedMessage?.id == messageId) {
+                        closeMessageModal();
+                    }
+                }
                 
+                showToast('Message archivé !', 'success');
+                
+                // Appel API en arrière-plan
                 const result = await apiCall(API_CONFIG.endpoints.updateMessage, 'POST', {
                     action: 'archive',
                     message_id: messageId,
                     user_email: currentUser?.email
                 });
                 
-                if (result.success) {
-                    // Mettre à jour localement
-                    const messageIndex = allMessages.findIndex(m => m.id == messageId);
+                if (!result.success) {
+                    // En cas d'erreur, restaurer l'état
                     if (messageIndex !== -1) {
-                        allMessages[messageIndex].archived = true;
-                        allMessages[messageIndex].status = 'archived';
+                        allMessages[messageIndex].archived = false;
+                        allMessages[messageIndex].status = 'manual-review';
+                        updateStats();
+                        renderCurrentTab();
                     }
-                    
-                    updateStats();
-                    renderCurrentTab();
-                    showToast('Message archivé avec succès', 'success');
-                    
-                    if (selectedMessage?.id == messageId) {
-                        closeMessageModal();
-                    }
-                } else {
                     throw new Error(result.error || 'Erreur lors de l\'archivage');
                 }
+                
             } catch (error) {
                 console.error('Erreur archivage:', error);
                 showToast('Erreur lors de l\'archivage: ' + error.message, 'error');
@@ -737,12 +750,31 @@
             try {
                 showToast('Envoi en cours...', 'info');
                 
-                const result = await apiCall(API_CONFIG.endpoints.sendResponse, 'POST', {
-                    message_id: messageId,
-                    response_text: responseText,
-                    sent_by: sentBy,
-                    user_modifications: true
-                });
+                // Vérifier si on a un visitor_id pour l'envoi direct Brevo
+                const message = allMessages.find(m => m.id === messageId);
+                const hasVisitorId = message && message.visitorId;
+                
+                let result;
+                
+                if (hasVisitorId) {
+                    // Utiliser l'envoi direct Brevo
+                    console.log('📧 Envoi direct via Brevo');
+                    result = await apiCall(API_CONFIG.endpoints.sendBrevoResponse, 'POST', {
+                        message_id: messageId,
+                        response_text: responseText,
+                        sent_by: sentBy,
+                        visitor_id: message.visitorId
+                    });
+                } else {
+                    // Utiliser l'ancienne méthode via Make.com
+                    console.log('🔄 Envoi via Make.com (pas de visitor_id)');
+                    result = await apiCall(API_CONFIG.endpoints.sendResponse, 'POST', {
+                        message_id: messageId,
+                        response_text: responseText,
+                        sent_by: sentBy,
+                        user_modifications: true
+                    });
+                }
                 
                 if (result.success) {
                     // Mettre à jour localement
@@ -877,9 +909,12 @@
 
         function renderUrgentMessages() {
             const urgentMessages = allMessages.filter(m => 
-                (m.status === 'manual-review' && m.priority === 'high') ||
-                (m.status === 'pending' && m.priority === 'high')
-            );
+                m.priority === 'high' && 
+                !m.archived && 
+                m.status.toLowerCase() !== 'archived' &&
+                m.status.toLowerCase() !== 'spam' &&
+                m.status.toLowerCase() !== 'sent'
+            ).sort((a, b) => b.timeReceived - a.timeReceived);
 
             const container = document.getElementById('urgent-messages');
             document.getElementById('urgent-actions-count').textContent = urgentMessages.length;
@@ -922,10 +957,15 @@
         }
 
         function renderSurveillanceAutoSend() {
-            const surveillanceMessages = allMessages.filter(m => 
-                m.status === 'auto-sent' && 
-                (new Date().getTime() - (m.autoSentAt || m.timeReceived)) < 1800000 // Last 30min
-            ).sort((a, b) => (b.autoSentAt || b.timeReceived) - (a.autoSentAt || a.timeReceived));
+            const surveillanceMessages = allMessages.filter(m => {
+                if (m.status.toLowerCase() !== 'auto-sent') return false;
+                
+                const messageDate = new Date(m.autoSentAt || m.timeReceived);
+                const today = new Date();
+                
+                // Vérifier si le message a été envoyé aujourd'hui
+                return messageDate.toDateString() === today.toDateString();
+            }).sort((a, b) => (b.autoSentAt || b.timeReceived) - (a.autoSentAt || a.timeReceived));
 
             const container = document.getElementById('surveillance-auto-send');
             document.getElementById('surveillance-count').textContent = surveillanceMessages.length;
@@ -961,8 +1001,9 @@
         }
 
         function renderAutoSendMessages() {
-            const autoSendMessages = allMessages.filter(m => m.status === 'auto-sent')
-                .sort((a, b) => (b.autoSentAt || b.timeReceived) - (a.autoSentAt || a.timeReceived));
+            const autoSendMessages = allMessages.filter(m => 
+                m.status.toLowerCase() === 'auto-sent'
+            ).sort((a, b) => (b.autoSentAt || b.timeReceived) - (a.autoSentAt || a.timeReceived));
 
             const container = document.getElementById('auto-send-messages');
             document.getElementById('auto-send-today').textContent = autoSendMessages.length;
@@ -1006,14 +1047,25 @@
         }
 
         function renderValidationMessages() {
-            const validationMessages = allMessages.filter(m => m.status === 'manual-review')
-                .sort((a, b) => {
-                    if (a.priority !== b.priority) {
-                        const priorityOrder = { high: 3, medium: 2, low: 1 };
-                        return priorityOrder[b.priority] - priorityOrder[a.priority];
-                    }
-                    return b.timeReceived - a.timeReceived;
-                });
+            // Hiérarchisation claire des messages à valider
+            const validationMessages = allMessages.filter(m => 
+                m.status.toLowerCase() === 'manual-review' || m.status.toLowerCase() === 'pending'
+            ).sort((a, b) => {
+                // Priorité 1: Urgents (high priority)
+                if (a.priority === 'high' && b.priority !== 'high') return -1;
+                if (b.priority === 'high' && a.priority !== 'high') return 1;
+                
+                // Priorité 2: Business opportunities
+                if (a.category === 'partenariat' && b.category !== 'partenariat') return -1;
+                if (b.category === 'partenariat' && a.category !== 'partenariat') return 1;
+                
+                // Priorité 3: Manual review avant pending
+                if (a.status.toLowerCase() === 'manual-review' && b.status.toLowerCase() === 'pending') return -1;
+                if (b.status.toLowerCase() === 'manual-review' && a.status.toLowerCase() === 'pending') return 1;
+                
+                // Priorité 4: Par ordre chronologique (plus récent d'abord)
+                return b.timeReceived - a.timeReceived;
+            });
 
             const container = document.getElementById('validation-messages');
             document.getElementById('validation-today').textContent = validationMessages.length;
@@ -1063,7 +1115,9 @@
         }
 
         function renderArchivedMessages() {
-            const archivedMessages = allMessages.filter(m => m.archived || m.status === 'archived');
+            const archivedMessages = allMessages.filter(m => 
+                m.archived || m.status.toLowerCase() === 'archived'
+            );
 
             const container = document.getElementById('archived-messages');
             document.getElementById('total-archived').textContent = archivedMessages.length;
@@ -1104,8 +1158,38 @@
 
         function renderAllMessages() {
             const container = document.getElementById('all-messages');
+            
+            // Appliquer les filtres et recherche
+            let filteredMessages = [...allMessages];
+            
+            // Filtre par statut
+            const statusFilter = document.getElementById('status-filter')?.value;
+            if (statusFilter && statusFilter !== 'all') {
+                filteredMessages = filteredMessages.filter(m => 
+                    m.status.toLowerCase() === statusFilter.toLowerCase()
+                );
+            }
+            
+            // Filtre par catégorie
+            const categoryFilter = document.getElementById('category-filter')?.value;
+            if (categoryFilter && categoryFilter !== 'all') {
+                filteredMessages = filteredMessages.filter(m => 
+                    m.category.toLowerCase() === categoryFilter.toLowerCase()
+                );
+            }
+            
+            // Recherche textuelle
+            const searchInput = document.getElementById('search-input')?.value;
+            if (searchInput && searchInput.trim()) {
+                const searchTerm = searchInput.toLowerCase();
+                filteredMessages = filteredMessages.filter(m => 
+                    m.from.toLowerCase().includes(searchTerm) ||
+                    m.subject.toLowerCase().includes(searchTerm) ||
+                    m.content.toLowerCase().includes(searchTerm)
+                );
+            }
 
-            if (allMessages.length === 0) {
+            if (filteredMessages.length === 0) {
                 container.innerHTML = `
                     <div class="text-center py-8 text-gray-500">
                         <i data-lucide="inbox" class="w-12 h-12 mx-auto mb-4 text-gray-300"></i>
@@ -1113,7 +1197,7 @@
                     </div>
                 `;
             } else {
-                container.innerHTML = allMessages.map(msg => `
+                container.innerHTML = filteredMessages.map(msg => `
                     <div class="message-card bg-white p-4 rounded-lg shadow-sm border" onclick="openMessageModal('${msg.id}')">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
@@ -1123,8 +1207,8 @@
                                         ${msg.category}
                                     </span>
                                     <span class="text-xs ${getPriorityColor(msg.priority)}">${msg.priority}</span>
-                                    ${msg.status === 'auto-sent' ? '<div class="auto-send-badge px-2 py-1 text-xs rounded-full">AUTO</div>' : ''}
-                                    ${msg.archived || msg.status === 'archived' ? '<div class="archived-badge px-2 py-1 text-xs rounded-full">ARCHIVÉ</div>' : ''}
+                                    ${msg.status.toLowerCase() === 'auto-sent' ? '<div class="auto-send-badge px-2 py-1 text-xs rounded-full">AUTO</div>' : ''}
+                                    ${msg.archived || msg.status.toLowerCase() === 'archived' ? '<div class="archived-badge px-2 py-1 text-xs rounded-full">ARCHIVÉ</div>' : ''}
                                 </div>
                                 <div class="mb-2">
                                     <h4 class="font-medium text-gray-900">${msg.from}</h4>
@@ -1134,14 +1218,16 @@
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs text-gray-500">${msg.receivedAt}</span>
                                     <span class="text-xs ${
-                                        msg.status === 'auto-sent' ? 'text-green-600' :
-                                        msg.status === 'manual-review' ? 'text-orange-600' :
-                                        msg.status === 'spam' ? 'text-red-600' : 'text-gray-600'
+                                        msg.status.toLowerCase() === 'auto-sent' ? 'text-green-600' :
+                                        msg.status.toLowerCase() === 'manual-review' ? 'text-orange-600' :
+                                        msg.status.toLowerCase() === 'spam' ? 'text-red-600' : 
+                                        msg.status.toLowerCase() === 'pending' ? 'text-gray-600' : 'text-gray-600'
                                     }">
-                                        ${msg.status === 'auto-sent' ? 'Auto-envoyé' :
-                                          msg.status === 'manual-review' ? 'À valider' :
-                                          msg.status === 'spam' ? 'Spam' : 
-                                          msg.status === 'sent' ? 'Envoyé' : 'En attente'}
+                                        ${msg.status.toLowerCase() === 'auto-sent' ? 'Auto-envoyé' :
+                                          msg.status.toLowerCase() === 'manual-review' ? 'À valider' :
+                                          msg.status.toLowerCase() === 'spam' ? 'Spam' : 
+                                          msg.status.toLowerCase() === 'sent' ? 'Envoyé' :
+                                          msg.status.toLowerCase() === 'pending' ? 'En attente' : 'En attente'}
                                     </span>
                                 </div>
                             </div>
@@ -1178,7 +1264,7 @@
                             <i data-lucide="${getPriorityIcon(selectedMessage.priority)}" class="w-4 h-4 inline mr-1"></i>
                             Priorité ${selectedMessage.priority === 'high' ? 'haute' : selectedMessage.priority === 'medium' ? 'moyenne' : 'basse'}
                         </span>
-                        ${selectedMessage.status === 'auto-sent' ? `
+                        ${selectedMessage.status.toLowerCase() === 'auto-sent' ? `
                             <span class="auto-send-badge px-3 py-1 text-sm rounded-full">
                                 <i data-lucide="zap" class="w-4 h-4 inline mr-1"></i>
                                 Auto-envoyé
@@ -1215,7 +1301,10 @@
                         </div>
                     ` : ''}
 
-                    ${!selectedMessage.archived && selectedMessage.status !== 'spam' && selectedMessage.status !== 'sent' ? `
+                    ${!selectedMessage.archived && 
+                      selectedMessage.status.toLowerCase() !== 'spam' && 
+                      selectedMessage.status.toLowerCase() !== 'sent' &&
+                      selectedMessage.status.toLowerCase() !== 'archived' ? `
                         <div class="flex flex-col space-y-3">
                             <button
                                 onclick="handleSendResponse()"
@@ -1272,10 +1361,18 @@
             if (!selectedMessage || !currentUser) return;
             
             const currentResponse = document.getElementById('ai-response-edit')?.value || selectedMessage.aiResponse;
-            const personalizedResponse = currentResponse + '\n\n' + currentUser.signature;
             
-            document.getElementById('ai-response-edit').value = personalizedResponse;
-            showToast('Réponse personnalisée avec votre signature', 'info');
+            // Permettre à l'utilisateur de personnaliser sa signature
+            const customSignature = prompt(
+                'Voulez-vous utiliser votre signature par défaut ou la personnaliser ?\n\nSignature actuelle :', 
+                currentUser.signature
+            );
+            
+            if (customSignature !== null) {
+                const personalizedResponse = currentResponse + '\n\n' + customSignature;
+                document.getElementById('ai-response-edit').value = personalizedResponse;
+                showToast('Réponse personnalisée avec votre signature', 'info');
+            }
         }
 
         // Quick actions
@@ -1299,16 +1396,20 @@
 
         // Statistics update
         function updateStats() {
+            const nonArchivedMessages = allMessages.filter(m => 
+                !m.archived && m.status.toLowerCase() !== 'archived'
+            );
             const stats = {
-                total: allMessages.length,
-                auto: allMessages.filter(m => m.status === 'auto-sent').length,
-                review: allMessages.filter(m => m.status === 'manual-review').length,
-                urgent: allMessages.filter(m => 
-                    m.priority === 'high' || 
-                    (m.status === 'auto-sent' && (new Date().getTime() - (m.autoSentAt || m.timeReceived)) < 1800000)
+                total: nonArchivedMessages.length, // Exclure les archivés du total
+                auto: allMessages.filter(m => m.status.toLowerCase() === 'auto-sent').length,
+                review: allMessages.filter(m => 
+                    m.status.toLowerCase() === 'manual-review' || m.status.toLowerCase() === 'pending'
                 ).length,
-                pending: allMessages.filter(m => m.status === 'pending').length,
-                archived: allMessages.filter(m => m.archived || m.status === 'archived').length
+                urgent: allMessages.filter(m => 
+                    m.priority === 'high' && !m.archived && m.status.toLowerCase() !== 'archived'
+                ).length,
+                pending: allMessages.filter(m => m.status.toLowerCase() === 'pending').length,
+                archived: allMessages.filter(m => m.archived || m.status.toLowerCase() === 'archived').length
             };
 
             // Update header stats
@@ -1327,7 +1428,12 @@
 
             // Update specific stats
             document.getElementById('today-auto').textContent = stats.auto;
-            document.getElementById('ai-accuracy').textContent = '94%';
+            
+            // Calculer la précision IA basée sur les messages avec confiance > 85%
+            const highConfidenceMessages = allMessages.filter(m => m.confidence >= 85);
+            const accuracy = allMessages.length > 0 ? 
+                Math.round((highConfidenceMessages.length / allMessages.length) * 100) : 0;
+            document.getElementById('ai-accuracy').textContent = `${accuracy}%`;
         }
 
         // Loading states
@@ -1408,6 +1514,31 @@
         // Event listeners
         document.getElementById('login-form').addEventListener('submit', handleLogin);
 
+        // Filtres et recherche pour l'onglet "Tous"
+        function setupFilters() {
+            const statusFilter = document.getElementById('status-filter');
+            const categoryFilter = document.getElementById('category-filter');
+            const searchInput = document.getElementById('search-input');
+            
+            if (statusFilter) {
+                statusFilter.addEventListener('change', () => {
+                    if (currentTab === 'all') renderCurrentTab();
+                });
+            }
+            
+            if (categoryFilter) {
+                categoryFilter.addEventListener('change', () => {
+                    if (currentTab === 'all') renderCurrentTab();
+                });
+            }
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', () => {
+                    if (currentTab === 'all') renderCurrentTab();
+                });
+            }
+        }
+
         // Initialize app
         function init() {
             if (!currentUser) return;
@@ -1415,6 +1546,9 @@
             updateStats();
             renderCurrentTab();
             lucide.createIcons();
+            
+            // Configurer les filtres pour l'onglet "Tous"
+            setupFilters();
             
             // Charger les messages au démarrage
             loadMessages();
@@ -1487,4 +1621,3 @@
     </script>
 </body>
 </html>
-
