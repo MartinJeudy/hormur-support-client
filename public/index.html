@@ -863,88 +863,179 @@
             }
         }
 
-        // FONCTION CORRIGÉE : Envoi réponse avec visitor_id
+        // FONCTION SENDRESPONSE CORRIGÉE À REMPLACER DANS INDEX.HTML
         async function sendResponse(messageId, responseText, sentBy) {
-            if (!messageId || !responseText || !sentBy) return;
+            if (!messageId || !responseText || !sentBy) {
+                showToast('Données manquantes pour l\'envoi', 'error');
+                return;
+            }
             
             try {
                 showToast('Envoi en cours...', 'info');
                 
-                // Vérifier si on a un visitor_id pour l'envoi direct Brevo
+                // Trouver le message dans allMessages
                 const message = allMessages.find(m => m.id === messageId);
-                console.log('📧 Message trouvé:', message);
+                console.log('📧 Message trouvé pour envoi:', message);
                 
-                // RECHERCHE visitor_id dans le message - TOUTES LES VARIATIONS POSSIBLES
+                // RECHERCHE VISITOR_ID - ORDRE DE PRIORITÉ BASÉ SUR VOS TESTS
                 let visitorId = null;
                 if (message) {
-                    // Chercher dans toutes les propriétés possibles
-                    visitorId = message.visitorId || 
-                               message.visitor_id || 
-                               message.id_visitor ||
-                               message.visitor_id_brevo ||
-                               message.brevoVisitorId ||
-                               message.conversationId ||
-                               message.conversation_id;
+                    // 🎯 ORDRE DE PRIORITÉ CORRIGÉ basé sur votre structure réelle
+                    visitorId = message.id_visitor ||          // 🎯 VOTRE STRUCTURE RÉELLE (colonne V)
+                               message.visitorId ||           // Version transformée
+                               message.visitor_id ||          // Version standard  
+                               message.brevoVisitorId ||      // Version Brevo
+                               message.conversationId ||      // Conversation ID
+                               message.conversation_id;       // Variation
                     
-                    console.log('🔍 Recherche visitor_id dans toutes les propriétés...');
-                    console.log('🔍 Message properties:', Object.keys(message));
-                    console.log('🔍 visitorId found:', visitorId);
-                    
-                    // DEBUG: Afficher toutes les propriétés du message qui contiennent 'visitor' ou 'id'
-                    Object.keys(message).forEach(key => {
-                        if (key.toLowerCase().includes('visitor') || 
-                            key.toLowerCase().includes('conversation') ||
-                            (key.toLowerCase().includes('id') && message[key] && message[key].length > 10)) {
-                            console.log(`🔍 ${key}: ${message[key]}`);
-                        }
-                    });
+                    console.log('🔍 Recherche visitor_id dans message:');
+                    console.log('  - id_visitor (RÉEL):', message.id_visitor);
+                    console.log('  - visitorId:', message.visitorId);
+                    console.log('  - visitor_id:', message.visitor_id);
+                    console.log('  - conversationId:', message.conversationId);
+                    console.log('🆔 Visitor ID final sélectionné:', visitorId);
+                } else {
+                    console.error('❌ Message non trouvé dans allMessages pour ID:', messageId);
                 }
                 
-                console.log('🆔 VisitorId final:', visitorId);
+                // VALIDATION VISITOR_ID STRICTE
+                const isValidVisitorId = visitorId && 
+                                        typeof visitorId === 'string' &&
+                                        visitorId.length >= 20 &&
+                                        !visitorId.includes('undefined') &&
+                                        !visitorId.includes('email') &&
+                                        !visitorId.includes('null') &&
+                                        visitorId.trim() !== '';
+                
+                console.log('✅ Validation visitor ID:');
+                console.log('  - Présent:', !!visitorId);
+                console.log('  - Type:', typeof visitorId);
+                console.log('  - Longueur:', visitorId?.length || 0);
+                console.log('  - Valide:', isValidVisitorId);
                 
                 let result;
                 
-                // UTILISER BREVO SI VISITOR_ID DISPONIBLE
-                if (visitorId && visitorId.length > 10) {
-                    // Utiliser l'envoi direct Brevo - DONNÉES CORRIGÉES
-                    console.log('🚀 ENVOI DIRECT VIA BREVO avec visitorId:', visitorId);
-                    result = await apiCall(API_CONFIG.endpoints.sendBrevoResponse, 'POST', {
+                // LOGIQUE D'ENVOI AMÉLIORÉE
+                if (isValidVisitorId) {
+                    console.log('🚀 ENVOI DIRECT VIA BREVO');
+                    console.log('📤 Données envoi Brevo:', {
                         message_id: messageId,
-                        response_text: responseText,
+                        visitor_id: visitorId,
                         sent_by: sentBy,
-                        visitor_id: visitorId
+                        response_length: responseText.length
                     });
+                    
+                    try {
+                        result = await apiCall(API_CONFIG.endpoints.sendBrevoResponse, 'POST', {
+                            message_id: messageId,
+                            response_text: responseText,
+                            sent_by: sentBy,
+                            visitor_id: visitorId
+                        });
+                        
+                        console.log('✅ Envoi Brevo réussi:', result);
+                        
+                    } catch (brevoError) {
+                        console.warn('⚠️ Échec envoi Brevo, tentative fallback Make.com...', brevoError);
+                        console.error('🔍 Détails erreur Brevo:', {
+                            message: brevoError.message,
+                            stack: brevoError.stack
+                        });
+                        
+                        // Fallback vers Make.com
+                        result = await apiCall(API_CONFIG.endpoints.sendResponse, 'POST', {
+                            message_id: messageId,
+                            response_text: responseText,
+                            sent_by: sentBy,
+                            user_modifications: true,
+                            fallback_reason: 'brevo_failed',
+                            original_visitor_id: visitorId
+                        });
+                    }
                 } else {
-                    // Pas de visitor_id valide - utiliser Make.com
-                    console.log('⚠️ Pas de visitor_id valide - utilisation Make.com');
-                    console.log('🔄 Envoi via Make.com...');
+                    // Pas de visitor_id valide - utiliser Make.com directement
+                    console.log('⚠️ ENVOI VIA MAKE.COM - Visitor ID invalide');
+                    console.log('🔍 Raisons visitor_id invalide:', {
+                        missing: !visitorId,
+                        too_short: visitorId && visitorId.length < 20,
+                        contains_undefined: visitorId && visitorId.includes('undefined'),
+                        contains_email: visitorId && visitorId.includes('email'),
+                        value: visitorId
+                    });
+                    
+                    // Debug: afficher toutes les propriétés du message qui pourraient être des IDs
+                    if (message) {
+                        console.log('🔍 Toutes les propriétés du message pour debug:');
+                        Object.keys(message).forEach(key => {
+                            const value = message[key];
+                            if (typeof value === 'string' && value.length > 10) {
+                                console.log(`  - ${key}: "${value}" (longueur: ${value.length})`);
+                            }
+                        });
+                    }
                     
                     result = await apiCall(API_CONFIG.endpoints.sendResponse, 'POST', {
                         message_id: messageId,
                         response_text: responseText,
                         sent_by: sentBy,
-                        user_modifications: true
+                        user_modifications: true,
+                        fallback_reason: 'no_valid_visitor_id',
+                        debug_visitor_id: visitorId || 'not_found'
                     });
                 }
                 
-                if (result.success) {
+                if (result && result.success) {
                     // Mettre à jour localement
                     const messageIndex = allMessages.findIndex(m => m.id == messageId);
                     if (messageIndex !== -1) {
                         allMessages[messageIndex].status = 'sent';
                         allMessages[messageIndex].finalResponse = responseText;
+                        allMessages[messageIndex].sentBy = sentBy;
+                        allMessages[messageIndex].sentAt = new Date().toISOString();
                     }
                     
                     updateStats();
                     renderCurrentTab();
-                    showToast('Réponse envoyée avec succès !', 'success');
+                    showToast('✅ Réponse envoyée avec succès !', 'success');
                     closeMessageModal();
+                    
+                    // Log de succès avec méthode utilisée
+                    console.log('🎉 ENVOI RÉUSSI:', {
+                        method: isValidVisitorId ? 'brevo_direct' : 'make_com_fallback',
+                        message_id: messageId,
+                        visitor_id: visitorId,
+                        sent_by: sentBy
+                    });
+                    
                 } else {
-                    throw new Error(result.error || 'Erreur lors de l\'envoi');
+                    throw new Error(result?.error || 'Erreur inconnue lors de l\'envoi');
                 }
+                
             } catch (error) {
-                console.error('Erreur envoi:', error);
-                showToast('Erreur lors de l\'envoi: ' + error.message, 'error');
+                console.error('❌ ERREUR ENVOI COMPLÈTE:', error);
+                showToast('❌ Erreur lors de l\'envoi: ' + error.message, 'error');
+                
+                // DEBUG COMPLET pour troubleshooting
+                console.error('🔍 DEBUG ERREUR ENVOI COMPLET:', {
+                    messageId,
+                    messageFound: !!allMessages.find(m => m.id === messageId),
+                    responseLength: responseText?.length,
+                    sentBy,
+                    error: {
+                        message: error.message,
+                        stack: error.stack,
+                        name: error.name
+                    },
+                    message_sample: allMessages.find(m => m.id === messageId) ? {
+                        id: allMessages.find(m => m.id === messageId).id,
+                        visitor_related_props: Object.keys(allMessages.find(m => m.id === messageId))
+                            .filter(k => k.toLowerCase().includes('visitor') || k.toLowerCase().includes('id'))
+                            .reduce((acc, k) => {
+                                acc[k] = allMessages.find(m => m.id === messageId)[k];
+                                return acc;
+                            }, {})
+                    } : null
+                });
             }
         }
 
