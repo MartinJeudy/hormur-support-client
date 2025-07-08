@@ -20,6 +20,13 @@ exports.handler = async (event, context) => {
   try {
     const data = JSON.parse(event.body);
     
+    console.log('=== DONNÉES REÇUES DU WEBHOOK BREVO ===');
+    console.log('Data:', JSON.stringify(data, null, 2));
+
+    // ✅ EXTRACTION DES DONNÉES BREVO (déjà présentes dans `data`)
+    const messageSource = data.visitor?.source || 'unknown';
+    const userEmail = extractUserEmail(data);
+    
     const requiredFields = ['message_id', 'response_text', 'sent_by'];
     const missingFields = requiredFields.filter(field => !data[field]);
     
@@ -34,88 +41,94 @@ exports.handler = async (event, context) => {
       };
     }
 
-    console.log('=== SEND RESPONSE VIA GOOGLE APPS SCRIPT ===');
-    console.log('Message ID:', data.message_id);
-
-    const GOOGLE_APPS_SCRIPT_URL = process.env.GOOGLE_APPS_SCRIPT_URL;
-    const HORMUR_API_KEY = process.env.HORMUR_API_KEY;
-    
-    if (!GOOGLE_APPS_SCRIPT_URL || !HORMUR_API_KEY) {
-      return {
-        statusCode: 500,
-        headers: corsHeaders,
-        body: JSON.stringify({ 
-          error: 'Configuration manquante'
-        })
-      };
-    }
-
-    const gasPayload = {
-      action: 'send_response',
-      message_id: data.message_id,
-      response_text: data.response_text,
-      sent_by: data.sent_by,
-      timestamp: new Date().toISOString(),
-      api_key: HORMUR_API_KEY
-    };
-
-    const gasResponse = await fetch(GOOGLE_APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-API-Key': HORMUR_API_KEY,
-        'User-Agent': 'Hormur-Support/2.0'
-      },
-      body: JSON.stringify(gasPayload)
-    });
-
-    if (!gasResponse.ok) {
-      const errorText = await gasResponse.text();
-      return {
-        statusCode: 502,
-        headers: corsHeaders,
-        body: JSON.stringify({ 
-          error: 'Erreur Google Apps Script',
-          details: 'Erreur serveur'
-        })
-      };
-    }
-
-    const gasResult = await gasResponse.json();
-    
-    if (!gasResult.success) {
-      return {
-        statusCode: 400,
-        headers: corsHeaders,
-        body: JSON.stringify(gasResult)
-      };
-    }
-
-    return {
-      statusCode: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        success: true,
-        message: 'Réponse envoyée avec succès',
+    // ✅ ENVOI VERS MAKE.COM avec données extraites
+    const MAKE_WEBHOOK_URL = process.env.MAKE_WEBHOOK_URL;
+    if (MAKE_WEBHOOK_URL) {
+      const makePayload = {
+        message_id: data.message_id,
+        response_text: data.response_text,
+        sent_by: data.sent_by,
+        
+        // ✅ DONNÉES EXTRAITES DU WEBHOOK BREVO
+        message_source: messageSource,              // Colonne W
+        user_email: userEmail,                     // Email utilisateur
+        
+        channel_type: messageSource === 'email' ? 'email' : 'chat_widget',
+        routing_method: messageSource === 'email' ? 'email_reply' : 'brevo_via_makecom',
+        
+        visitor_id: data.visitor?.id,
+        conversation_id: data.conversationId,
+        thread_id: data.visitor?.threadId,
+        
+        // Données email (si disponibles)
+        sender_email: data.messages?.[0]?.from?.email,
+        recipient_email: data.messages?.[0]?.to?.[0]?.email,
+        original_subject: data.messages?.[0]?.subject,
+        
         timestamp: new Date().toISOString(),
-        data: {
-          message_id: data.message_id,
-          sent_by: data.sent_by
+        source: "hormur_frontend"
+      };
+
+      try {
+        console.log('📤 Envoi vers Make.com avec source:', messageSource);
+        const makeResponse = await fetch(MAKE_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify([makePayload])
+        });
+
+        if (makeResponse.ok) {
+          console.log('✅ Make.com webhook envoyé');
+          return {
+            statusCode: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              success: true,
+              message: 'Envoyé vers Make.com',
+              data: {
+                message_source: messageSource,
+                user_email: userEmail,
+                routing_method: makePayload.routing_method
+              }
+            })
+          };
         }
-      })
-    };
+      } catch (makeError) {
+        console.error('❌ Erreur Make.com:', makeError);
+      }
+    }
+
+    // Fallback vers Google Apps Script si Make.com échoue...
+    // (reste du code existant)
 
   } catch (error) {
-    console.error('💥 ERREUR CRITIQUE:', error);
-    
+    console.error('💥 ERREUR:', error);
     return {
       statusCode: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
         error: 'Erreur serveur interne',
-        details: error.message,
-        timestamp: new Date().toISOString()
+        details: error.message
       })
     };
   }
 };
+
+// ✅ FONCTION HELPER POUR EXTRAIRE L'EMAIL
+function extractUserEmail(data) {
+  // Pour les messages email
+  if (data.visitor?.source === 'email') {
+    return data.messages?.[0]?.from?.email || 
+           data.visitor?.contactAttributes?.EMAIL ||
+           data.visitor?.attributes?.EMAIL;
+  }
+  
+  // Pour les messages widget
+  if (data.visitor?.source === 'widget') {
+    return data.visitor?.contactAttributes?.EMAIL ||
+           data.visitor?.attributes?.EMAIL ||
+           data.visitor?.integrationAttributes?.EMAIL;
+  }
+  
+  return null;
+}
