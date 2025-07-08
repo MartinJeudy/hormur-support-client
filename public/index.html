@@ -58,6 +58,11 @@
             animation: bounce 1s infinite;
         }
         
+        .critical-indicator {
+            background: linear-gradient(45deg, #7c2d12, #991b1b);
+            animation: pulse 1s infinite;
+        }
+        
         .hormur-gradient {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
@@ -91,7 +96,7 @@
             background: rgba(0, 0, 0, 0.5);
         }
         
-        .priority-high {
+        .priority-high, .priority-critical {
             border-left: 4px solid #ef4444;
             background: linear-gradient(90deg, #fef2f2 0%, #ffffff 30%);
         }
@@ -120,6 +125,16 @@
             background: linear-gradient(45deg, #3b82f6, #1d4ed8);
             color: white;
         }
+
+        .martin-response {
+            background: linear-gradient(45deg, #059669, #047857);
+            border-left: 4px solid #047857;
+        }
+        
+        .eleonore-response {
+            background: linear-gradient(45deg, #e11d48, #be185d);
+            border-left: 4px solid #be185d;
+        }
         
         .custom-scrollbar {
             scrollbar-width: thin;
@@ -139,16 +154,81 @@
             border-radius: 2px;
         }
         
+        /* Amélioration responsive et mobile */
+        .text-responsive {
+            word-break: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+        
+        /* Modal amélioré pour mobile */
+        .modal-mobile {
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .signature-preview {
+            white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        
+        .image-preview {
+            max-width: 120px;
+            max-height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
         @media (max-width: 768px) {
             .mobile-only { display: block; }
             .desktop-only { display: none; }
             
-            /* Correction pour le modal Actions rapides sur mobile */
+            /* Modal mobile optimisé */
             .quick-actions-modal {
                 bottom: 0 !important;
                 padding-bottom: env(safe-area-inset-bottom, 20px);
-                max-height: 70vh;
+                max-height: 80vh;
                 overflow-y: auto;
+                border-radius: 16px 16px 0 0;
+            }
+            
+            /* Prévention débordement horizontal */
+            body {
+                overflow-x: hidden;
+            }
+            
+            /* Responsive stats */
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.25rem;
+            }
+            
+            .stats-item {
+                padding: 0.5rem 0.25rem;
+                font-size: 0.75rem;
+            }
+            
+            /* Message modal mobile */
+            .message-modal-mobile {
+                height: 95vh;
+                max-height: none;
+                border-radius: 16px 16px 0 0;
+            }
+            
+            /* Texte responsive */
+            .text-sm {
+                font-size: 0.8rem;
+            }
+            
+            /* Amélioration CTA mobile */
+            .mobile-cta-container {
+                position: sticky;
+                bottom: 0;
+                background: white;
+                padding: 1rem;
+                border-top: 1px solid #e5e7eb;
+                margin: -1rem;
+                margin-top: 1rem;
             }
         }
         
@@ -178,6 +258,22 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        /* Amélioration éditeur de texte */
+        .response-editor {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        
+        .response-preview {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px;
+            background: #f9fafb;
         }
     </style>
 </head>
@@ -269,29 +365,29 @@
                     </div>
                 </div>
                 
-                <!-- Quick Stats Bar -->
-                <div class="mt-3 grid grid-cols-6 gap-2 text-center">
-                    <div class="bg-green-50 p-2 rounded-lg">
+                <!-- Quick Stats Bar - Amélioré pour mobile -->
+                <div class="mt-3 stats-grid grid grid-cols-6 gap-2 text-center">
+                    <div class="stats-item bg-green-50 p-2 rounded-lg">
                         <div class="text-sm font-bold text-green-700" id="auto-count">-</div>
                         <div class="text-xs text-green-600">Auto</div>
                     </div>
-                    <div class="bg-orange-50 p-2 rounded-lg">
+                    <div class="stats-item bg-orange-50 p-2 rounded-lg">
                         <div class="text-sm font-bold text-orange-700" id="review-count">-</div>
                         <div class="text-xs text-orange-600">À valider</div>
                     </div>
-                    <div class="bg-red-50 p-2 rounded-lg">
+                    <div class="stats-item bg-red-50 p-2 rounded-lg">
                         <div class="text-sm font-bold text-red-700" id="urgent-count">-</div>
                         <div class="text-xs text-red-600">Urgent</div>
                     </div>
-                    <div class="bg-blue-50 p-2 rounded-lg">
+                    <div class="stats-item bg-blue-50 p-2 rounded-lg">
                         <div class="text-sm font-bold text-blue-700" id="sent-count">-</div>
                         <div class="text-xs text-blue-600">Répondus</div>
                     </div>
-                    <div class="bg-gray-50 p-2 rounded-lg">
+                    <div class="stats-item bg-gray-50 p-2 rounded-lg">
                         <div class="text-sm font-bold text-gray-700" id="pending-count">-</div>
                         <div class="text-xs text-gray-600">En attente</div>
                     </div>
-                    <div class="bg-indigo-50 p-2 rounded-lg">
+                    <div class="stats-item bg-indigo-50 p-2 rounded-lg">
                         <div class="text-sm font-bold text-indigo-700" id="archived-count">-</div>
                         <div class="text-xs text-indigo-600">Archivées</div>
                     </div>
@@ -299,7 +395,7 @@
             </div>
         </header>
 
-        <!-- Tab Navigation -->
+        <!-- Tab Navigation - Réorganisé selon vos demandes -->
         <div class="bg-white border-b sticky top-[140px] z-30">
             <div class="flex overflow-x-auto custom-scrollbar">
                 <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-active px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
@@ -307,15 +403,14 @@
                     <span>Dashboard</span>
                     <span id="dashboard-badge" class="bg-white bg-opacity-20 text-xs px-2 py-1 rounded-full">-</span>
                 </button>
-                <button onclick="switchTab('auto-send')" id="tab-auto-send" class="tab-inactive px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
-                    <i data-lucide="zap" class="w-4 h-4"></i>
-                    <span>Auto-Send</span>
-                    <span id="auto-badge" class="bg-green-600 text-white text-xs px-2 py-1 rounded-full">-</span>
-                </button>
                 <button onclick="switchTab('validation')" id="tab-validation" class="tab-inactive px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
                     <i data-lucide="eye" class="w-4 h-4"></i>
                     <span>À Valider</span>
                     <span id="validation-badge" class="bg-orange-600 text-white text-xs px-2 py-1 rounded-full">-</span>
+                </button>
+                <button onclick="switchTab('all')" id="tab-all" class="tab-inactive px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
+                    <i data-lucide="list" class="w-4 h-4"></i>
+                    <span>Tous</span>
                 </button>
                 <button onclick="switchTab('sent')" id="tab-sent" class="tab-inactive px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
                     <i data-lucide="send" class="w-4 h-4"></i>
@@ -327,9 +422,10 @@
                     <span>Archives</span>
                     <span id="archive-badge" class="bg-indigo-600 text-white text-xs px-2 py-1 rounded-full">-</span>
                 </button>
-                <button onclick="switchTab('all')" id="tab-all" class="tab-inactive px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
-                    <i data-lucide="list" class="w-4 h-4"></i>
-                    <span>Tous</span>
+                <button onclick="switchTab('auto-send')" id="tab-auto-send" class="tab-inactive px-4 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 flex items-center space-x-2">
+                    <i data-lucide="zap" class="w-4 h-4"></i>
+                    <span>Auto-Send</span>
+                    <span id="auto-badge" class="bg-green-600 text-white text-xs px-2 py-1 rounded-full">-</span>
                 </button>
             </div>
         </div>
@@ -405,35 +501,13 @@
                 </div>
             </div>
 
-            <!-- Auto-Send Tab -->
-            <div id="content-auto-send" class="hidden p-4">
-                <div class="mb-4 bg-green-50 border border-green-200 rounded-lg p-3">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="font-medium text-green-800">Surveillance Auto-Send Active</h3>
-                            <p class="text-sm text-green-600">Messages envoyés automatiquement par l'IA</p>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-lg font-bold text-green-700" id="auto-send-today">-</div>
-                            <div class="text-xs text-green-600">Aujourd'hui</div>
-                        </div>
-                    </div>
-                </div>
-                <div id="auto-send-messages" class="space-y-3">
-                    <div class="text-center py-8 text-gray-500">
-                        <div class="loading-spinner mx-auto mb-4"></div>
-                        <p class="text-sm">Chargement des messages auto-envoyés...</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Validation Tab -->
+            <!-- Validation Tab - Inclut maintenant les messages "en attente" -->
             <div id="content-validation" class="hidden p-4">
                 <div class="mb-4 bg-orange-50 border border-orange-200 rounded-lg p-3">
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="font-medium text-orange-800">Messages à Valider</h3>
-                            <p class="text-sm text-orange-600">Nécessitent une intervention humaine</p>
+                            <p class="text-sm text-orange-600">Nécessitent une intervention humaine (en attente + à réviser)</p>
                         </div>
                         <div class="text-right">
                             <div class="text-lg font-bold text-orange-700" id="validation-today">-</div>
@@ -445,50 +519,6 @@
                     <div class="text-center py-8 text-gray-500">
                         <div class="loading-spinner mx-auto mb-4"></div>
                         <p class="text-sm">Chargement des messages à valider...</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sent Tab (nouvelle section) -->
-            <div id="content-sent" class="hidden p-4">
-                <div class="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="font-medium text-blue-800">Messages Répondus</h3>
-                            <p class="text-sm text-blue-600">Réponses envoyées avec succès</p>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-lg font-bold text-blue-700" id="sent-today">-</div>
-                            <div class="text-xs text-blue-600">Total envoyés</div>
-                        </div>
-                    </div>
-                </div>
-                <div id="sent-messages" class="space-y-3">
-                    <div class="text-center py-8 text-gray-500">
-                        <div class="loading-spinner mx-auto mb-4"></div>
-                        <p class="text-sm">Chargement des messages répondus...</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Archives Tab -->
-            <div id="content-archives" class="hidden p-4">
-                <div class="mb-4 bg-indigo-50 border border-indigo-200 rounded-lg p-3">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="font-medium text-indigo-800">Archives</h3>
-                            <p class="text-sm text-indigo-600">Conversations terminées et archivées</p>
-                        </div>
-                        <div class="text-right">
-                            <div class="text-lg font-bold text-indigo-700" id="total-archived">-</div>
-                            <div class="text-xs text-indigo-600">Total archivées</div>
-                        </div>
-                    </div>
-                </div>
-                <div id="archived-messages" class="space-y-3">
-                    <div class="text-center py-8 text-gray-500">
-                        <div class="loading-spinner mx-auto mb-4"></div>
-                        <p class="text-sm">Chargement des archives...</p>
                     </div>
                 </div>
             </div>
@@ -535,12 +565,91 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Sent Tab - Amélioré avec code couleur -->
+            <div id="content-sent" class="hidden p-4">
+                <div class="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-medium text-blue-800">Messages Répondus</h3>
+                            <p class="text-sm text-blue-600">Réponses envoyées avec succès</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-blue-700" id="sent-today">-</div>
+                            <div class="text-xs text-blue-600">Total envoyés</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Légende couleurs -->
+                <div class="mb-4 flex space-x-4 text-sm">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-4 h-4 bg-green-600 rounded"></div>
+                        <span>Martin</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-4 h-4 bg-pink-600 rounded"></div>
+                        <span>Eléonore</span>
+                    </div>
+                </div>
+                
+                <div id="sent-messages" class="space-y-3">
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="loading-spinner mx-auto mb-4"></div>
+                        <p class="text-sm">Chargement des messages répondus...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Archives Tab -->
+            <div id="content-archives" class="hidden p-4">
+                <div class="mb-4 bg-indigo-50 border border-indigo-200 rounded-lg p-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-medium text-indigo-800">Archives</h3>
+                            <p class="text-sm text-indigo-600">Conversations terminées et archivées</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-indigo-700" id="total-archived">-</div>
+                            <div class="text-xs text-indigo-600">Total archivées</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="archived-messages" class="space-y-3">
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="loading-spinner mx-auto mb-4"></div>
+                        <p class="text-sm">Chargement des archives...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auto-Send Tab -->
+            <div id="content-auto-send" class="hidden p-4">
+                <div class="mb-4 bg-green-50 border border-green-200 rounded-lg p-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-medium text-green-800">Surveillance Auto-Send Active</h3>
+                            <p class="text-sm text-green-600">Messages envoyés automatiquement par l'IA</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-bold text-green-700" id="auto-send-today">-</div>
+                            <div class="text-xs text-green-600">Aujourd'hui</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="auto-send-messages" class="space-y-3">
+                    <div class="text-center py-8 text-gray-500">
+                        <div class="loading-spinner mx-auto mb-4"></div>
+                        <p class="text-sm">Chargement des messages auto-envoyés...</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Message Detail Modal -->
+        <!-- Message Detail Modal - Amélioré pour mobile -->
         <div id="message-modal" class="fixed inset-0 modal-overlay z-50 hidden">
             <div class="min-h-screen px-2 sm:px-4 flex items-end sm:items-center justify-center">
-                <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full max-w-2xl h-[95vh] sm:max-h-[90vh] overflow-hidden slide-in-right flex flex-col">
+                <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full max-w-2xl message-modal-mobile h-[95vh] sm:max-h-[90vh] overflow-hidden slide-in-right flex flex-col">
                     <div class="sticky top-0 bg-white border-b px-4 py-3 flex items-center justify-between flex-shrink-0">
                         <h3 class="font-semibold text-gray-900 flex items-center">
                             <i data-lucide="message-circle" class="w-5 h-5 mr-2"></i>
@@ -562,10 +671,10 @@
             </div>
         </div>
 
-        <!-- Signature Customization Modal -->
+        <!-- Signature Customization Modal - Amélioré avec photo -->
         <div id="signature-modal" class="fixed inset-0 modal-overlay z-50 hidden">
             <div class="min-h-screen px-2 sm:px-4 flex items-end sm:items-center justify-center">
-                <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full max-w-lg overflow-hidden slide-in-right">
+                <div class="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full max-w-2xl modal-mobile overflow-hidden slide-in-right">
                     <div class="sticky top-0 bg-white border-b px-4 py-3 flex items-center justify-between">
                         <h3 class="font-semibold text-gray-900 flex items-center">
                             <i data-lucide="edit-3" class="w-5 h-5 mr-2"></i>
@@ -575,16 +684,39 @@
                             <i data-lucide="x" class="w-6 h-6"></i>
                         </button>
                     </div>
-                    <div class="p-4">
+                    <div class="p-4 max-h-96 overflow-y-auto">
+                        <!-- Upload photo -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Photo de profil (optionnel)</label>
+                            <div class="flex items-center space-x-4">
+                                <input type="file" id="signature-photo" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
+                                <button onclick="document.getElementById('signature-photo').click()" class="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center space-x-2">
+                                    <i data-lucide="camera" class="w-4 h-4"></i>
+                                    <span>Choisir photo</span>
+                                </button>
+                                <div id="photo-preview" class="hidden">
+                                    <img id="preview-image" class="image-preview" src="" alt="Aperçu">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Signature text -->
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Votre signature personnalisée :</label>
                             <textarea
                                 id="custom-signature"
                                 rows="8"
-                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm response-editor"
                                 placeholder="Tapez votre signature personnalisée ici..."
                             ></textarea>
                         </div>
+                        
+                        <!-- Aperçu -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Aperçu :</label>
+                            <div id="signature-preview" class="response-preview"></div>
+                        </div>
+                        
                         <div class="flex space-x-3">
                             <button
                                 onclick="resetSignature()"
@@ -604,7 +736,7 @@
             </div>
         </div>
 
-        <!-- Quick Actions Modal - Version mobile améliorée -->
+        <!-- Quick Actions Modal - Optimisé pour mobile -->
         <div id="quick-actions-modal" class="fixed inset-0 modal-overlay z-50 hidden">
             <div class="min-h-screen px-4 flex items-end justify-center">
                 <div class="bg-white rounded-t-2xl shadow-xl w-full max-w-sm slide-in-right quick-actions-modal">
@@ -615,7 +747,7 @@
                                 <i data-lucide="x" class="w-5 h-5"></i>
                             </button>
                         </div>
-                        <div class="space-y-3">
+                        <div class="space-y-3 max-h-60 overflow-y-auto">
                             <button onclick="refreshMessages(); closeQuickActions();" class="w-full p-3 bg-blue-50 text-blue-700 rounded-lg flex items-center space-x-3 text-left">
                                 <i data-lucide="refresh-cw" class="w-5 h-5 flex-shrink-0"></i>
                                 <span>Actualiser les messages</span>
@@ -668,13 +800,14 @@
         let allMessages = [];
         let isLoading = false;
         let customSignature = null;
+        let customPhoto = null;
 
-        // Configuration API - Make.com uniquement pour l'envoi
+        // Configuration API
         const API_CONFIG = {
-            baseUrl: '', // Netlify functions are at the same domain
+            baseUrl: '',
             endpoints: {
                 getMessages: '/.netlify/functions/get_messages_datastore',
-                sendResponse: 'https://hook.eu1.make.com/eq7ftu6vgz6p84n2qe72i5skba6u5kwm', // 🎯 DIRECT VERS MAKE.COM
+                sendResponse: 'https://hook.eu1.make.com/eq7ftu6vgz6p84n2qe72i5skba6u5kwm',
                 updateMessage: '/.netlify/functions/update_datastore'
             }
         };
@@ -721,6 +854,7 @@
         function getPriorityColor(priority) {
             const colors = {
                 high: 'text-red-600',
+                critical: 'text-red-800',
                 medium: 'text-orange-600',
                 low: 'text-green-600'
             };
@@ -730,23 +864,23 @@
         function getPriorityIcon(priority) {
             const icons = {
                 high: 'alert-triangle',
+                critical: 'alert-octagon',
                 medium: 'minus-circle',
                 low: 'check-circle'
             };
             return icons[priority] || 'circle';
         }
 
-        // FONCTION AMÉLIORER : Traduction des priorités en français
         function getPriorityLabel(priority) {
             const labels = {
                 high: 'Élevée',
+                critical: 'Critique',
                 medium: 'Moyenne',
                 low: 'Faible'
             };
             return labels[priority] || priority;
         }
 
-        // FONCTION AMÉLIORER : Traduction des statuts en français
         function getStatusLabel(status) {
             const labels = {
                 'auto-sent': 'Auto-envoyé',
@@ -775,7 +909,6 @@
 
                 console.log(`🔗 Appel API: ${endpoint}`, data ? JSON.stringify(data, null, 2) : 'Pas de données');
 
-                // 🎯 SUPPORT DES URLS EXTERNES (Make.com)
                 const fullUrl = endpoint.startsWith('http') ? endpoint : API_CONFIG.baseUrl + endpoint;
 
                 const response = await fetch(fullUrl, options);
@@ -829,13 +962,11 @@
             if (!messageId) return;
             
             try {
-                // Optimisation: mise à jour locale immédiate pour l'UX
                 const messageIndex = allMessages.findIndex(m => m.id == messageId);
                 if (messageIndex !== -1) {
                     allMessages[messageIndex].archived = true;
                     allMessages[messageIndex].status = 'archived';
                     
-                    // Mise à jour immédiate de l'interface
                     updateStats();
                     renderCurrentTab();
                     
@@ -846,7 +977,6 @@
                 
                 showToast('Message archivé !', 'success');
                 
-                // Appel API en arrière-plan
                 const result = await apiCall(API_CONFIG.endpoints.updateMessage, 'POST', {
                     action: 'archive',
                     message_id: messageId,
@@ -854,7 +984,6 @@
                 });
                 
                 if (!result.success) {
-                    // En cas d'erreur, restaurer l'état
                     if (messageIndex !== -1) {
                         allMessages[messageIndex].archived = false;
                         allMessages[messageIndex].status = 'manual-review';
@@ -870,7 +999,6 @@
             }
         }
 
-        // FONCTION SENDRESPONSE FINALE - VIA MAKE.COM UNIQUEMENT
         async function sendResponse(messageId, responseText, sentBy) {
             if (!messageId || !responseText || !sentBy) {
                 showToast('Données manquantes pour l\'envoi', 'error');
@@ -880,19 +1008,17 @@
             try {
                 showToast('Envoi en cours...', 'info');
                 
-                // Trouver le message dans allMessages
                 const message = allMessages.find(m => m.id === messageId);
                 console.log('📧 Message trouvé pour envoi:', message);
                 
-                // RECHERCHE VISITOR_ID - ORDRE DE PRIORITÉ
                 let visitorId = null;
                 if (message) {
-                    visitorId = message.id_visitor ||          // Structure réelle (colonne V)
-                               message.visitorId ||           // Version transformée
-                               message.visitor_id ||          // Version standard  
-                               message.brevoVisitorId ||      // Version Brevo
-                               message.conversationId ||      // Conversation ID
-                               message.conversation_id;       // Variation
+                    visitorId = message.id_visitor ||
+                               message.visitorId ||
+                               message.visitor_id ||
+                               message.brevoVisitorId ||
+                               message.conversationId ||
+                               message.conversation_id;
                     
                     console.log('🔍 Recherche visitor_id dans message:');
                     console.log('  - id_visitor (RÉEL):', message.id_visitor);
@@ -903,7 +1029,6 @@
                     console.error('❌ Message non trouvé dans allMessages pour ID:', messageId);
                 }
                 
-                // VALIDATION VISITOR_ID
                 const isValidVisitorId = visitorId && 
                                         typeof visitorId === 'string' &&
                                         visitorId.length >= 20 &&
@@ -918,18 +1043,13 @@
                 console.log('  - Longueur:', visitorId?.length || 0);
                 console.log('  - Valide:', isValidVisitorId);
                 
-                // PRÉPARATION PAYLOAD POUR MAKE.COM
                 const makePayload = {
                     message_id: messageId,
                     response_text: responseText,
                     sent_by: sentBy,
-                    
-                    // 🎯 NOUVELLES DONNÉES POUR MAKE.COM
                     visitor_id: visitorId || null,
                     has_visitor_id: isValidVisitorId,
-                    use_brevo_direct: isValidVisitorId, // Flag pour que Make.com utilise Brevo si possible
-                    
-                    // Métadonnées
+                    use_brevo_direct: isValidVisitorId,
                     routing_method: isValidVisitorId ? 'brevo_via_makecom' : 'standard_makecom',
                     timestamp: new Date().toISOString(),
                     source: 'hormur_frontend'
@@ -938,11 +1058,9 @@
                 console.log('🚀 ENVOI VIA MAKE.COM UNIQUEMENT');
                 console.log('📤 Payload Make.com:', makePayload);
                 
-                // APPEL DIRECT AU WEBHOOK MAKE.COM
                 const result = await apiCall(API_CONFIG.endpoints.sendResponse, 'POST', makePayload);
                 
                 if (result && (result.success || result.status === 'success')) {
-                    // Mettre à jour localement
                     const messageIndex = allMessages.findIndex(m => m.id == messageId);
                     if (messageIndex !== -1) {
                         allMessages[messageIndex].status = 'sent';
@@ -956,7 +1074,6 @@
                     showToast('✅ Réponse envoyée avec succès !', 'success');
                     closeMessageModal();
                     
-                    // Log de succès
                     console.log('🎉 ENVOI RÉUSSI VIA MAKE.COM:', {
                         method: isValidVisitorId ? 'brevo_via_makecom' : 'standard_makecom',
                         message_id: messageId,
@@ -973,7 +1090,6 @@
                 console.error('❌ ERREUR ENVOI COMPLÈTE:', error);
                 showToast('❌ Erreur lors de l\'envoi: ' + error.message, 'error');
                 
-                // DEBUG COMPLET pour troubleshooting
                 console.error('🔍 DEBUG ERREUR ENVOI COMPLET:', {
                     messageId,
                     messageFound: !!allMessages.find(m => m.id === messageId),
@@ -1009,12 +1125,10 @@
             const loginText = document.getElementById('login-text');
             const loginSpinner = document.getElementById('login-spinner');
             
-            // Show loading
             loginButton.disabled = true;
             loginText.textContent = 'Connexion...';
             loginSpinner.classList.remove('hidden');
             
-            // Simulate API delay
             await new Promise(resolve => setTimeout(resolve, 1000));
             
             if (AUTHORIZED_USERS[email] && AUTHORIZED_USERS[email].password === password) {
@@ -1052,6 +1166,7 @@
             currentUser = null;
             allMessages = [];
             customSignature = null;
+            customPhoto = null;
             showLoginOverlay();
             showToast('Déconnecté avec succès');
         }
@@ -1060,14 +1175,12 @@
         function switchTab(tab) {
             currentTab = tab;
             
-            // Update tab styling
             document.querySelectorAll('[id^="tab-"]').forEach(t => {
                 t.className = t.className.replace('tab-active', 'tab-inactive');
             });
             document.getElementById(`tab-${tab}`).className = 
                 document.getElementById(`tab-${tab}`).className.replace('tab-inactive', 'tab-active');
             
-            // Update content
             document.querySelectorAll('[id^="content-"]').forEach(c => c.classList.add('hidden'));
             document.getElementById(`content-${tab}`).classList.remove('hidden');
             
@@ -1102,14 +1215,20 @@
             renderSurveillanceAutoSend();
         }
 
+        // Messages urgents - inclut maintenant "critical"
         function renderUrgentMessages() {
             const urgentMessages = allMessages.filter(m => 
-                m.priority === 'high' && 
+                (m.priority === 'high' || m.priority === 'critical') && 
                 !m.archived && 
                 m.status.toLowerCase() !== 'archived' &&
                 m.status.toLowerCase() !== 'spam' &&
                 m.status.toLowerCase() !== 'sent'
-            ).sort((a, b) => b.timeReceived - a.timeReceived);
+            ).sort((a, b) => {
+                // Critical en premier
+                if (a.priority === 'critical' && b.priority !== 'critical') return -1;
+                if (b.priority === 'critical' && a.priority !== 'critical') return 1;
+                return b.timeReceived - a.timeReceived;
+            });
 
             const container = document.getElementById('urgent-messages');
             document.getElementById('urgent-actions-count').textContent = urgentMessages.length;
@@ -1123,22 +1242,24 @@
                 `;
             } else {
                 container.innerHTML = urgentMessages.map(msg => `
-                    <div class="message-card bg-white p-3 rounded-lg border border-red-200 ${msg.priority === 'high' ? 'pulse-urgent' : ''}" onclick="openMessageModal('${msg.id}')">
+                    <div class="message-card bg-white p-3 rounded-lg border border-red-200 ${msg.priority === 'critical' ? 'pulse-urgent' : msg.priority === 'high' ? 'pulse-urgent' : ''}" onclick="openMessageModal('${msg.id}')">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
-                                <div class="flex items-center space-x-2 mb-1">
-                                    <span class="text-sm font-medium text-gray-900">${msg.from}</span>
+                                <div class="flex items-center space-x-2 mb-1 flex-wrap">
+                                    <span class="text-sm font-medium text-gray-900 text-responsive">${msg.from}</span>
                                     <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
                                         ${msg.category}
                                     </span>
-                                    <span class="urgent-indicator px-2 py-1 text-xs text-white rounded-full">URGENT</span>
+                                    <span class="${msg.priority === 'critical' ? 'critical-indicator' : 'urgent-indicator'} px-2 py-1 text-xs text-white rounded-full">
+                                        ${msg.priority === 'critical' ? 'CRITIQUE' : 'URGENT'}
+                                    </span>
                                 </div>
-                                <p class="text-sm text-gray-700 line-clamp-2">${msg.subject}</p>
+                                <p class="text-sm text-gray-700 line-clamp-2 text-responsive">${msg.subject}</p>
                                 <div class="flex items-center justify-between mt-2">
                                     <span class="text-xs text-gray-500">${msg.receivedAt}</span>
                                 </div>
                             </div>
-                            <div class="flex items-center space-x-1">
+                            <div class="flex items-center space-x-1 flex-shrink-0">
                                 <button onclick="event.stopPropagation(); archiveMessage('${msg.id}')" class="text-blue-600 hover:text-blue-800" title="Archiver">
                                     <i data-lucide="archive" class="w-4 h-4"></i>
                                 </button>
@@ -1158,7 +1279,6 @@
                 const messageDate = new Date(m.autoSentAt || m.timeReceived);
                 const today = new Date();
                 
-                // Vérifier si le message a été envoyé aujourd'hui
                 return messageDate.toDateString() === today.toDateString();
             }).sort((a, b) => (b.autoSentAt || b.timeReceived) - (a.autoSentAt || a.timeReceived));
 
@@ -1177,17 +1297,17 @@
                     <div class="message-card bg-white p-3 rounded-lg border border-green-200" onclick="openMessageModal('${msg.id}')">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
-                                <div class="flex items-center space-x-2 mb-1">
+                                <div class="flex items-center space-x-2 mb-1 flex-wrap">
                                     <div class="auto-send-badge px-2 py-1 text-xs rounded-full">AUTO</div>
-                                    <span class="text-sm font-medium text-gray-900">${msg.from}</span>
+                                    <span class="text-sm font-medium text-gray-900 text-responsive">${msg.from}</span>
                                     <span class="text-xs text-green-600">${msg.confidence}%</span>
                                 </div>
-                                <p class="text-sm text-gray-700 line-clamp-2">${msg.subject}</p>
+                                <p class="text-sm text-gray-700 line-clamp-2 text-responsive">${msg.subject}</p>
                                 <div class="flex items-center justify-between mt-2">
                                     <span class="text-xs text-gray-500">Envoyé ${timeAgo(msg.autoSentAt || msg.timeReceived)}</span>
                                 </div>
                             </div>
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-2"></i>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-2 flex-shrink-0"></i>
                         </div>
                     </div>
                 `).join('');
@@ -1215,7 +1335,7 @@
                     <div class="message-card bg-white p-4 rounded-lg shadow-sm border" onclick="openMessageModal('${msg.id}')">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
-                                <div class="flex items-center space-x-2 mb-2">
+                                <div class="flex items-center space-x-2 mb-2 flex-wrap">
                                     <div class="auto-send-badge px-2 py-1 text-xs rounded-full flex items-center space-x-1">
                                         <i data-lucide="zap" class="w-3 h-3"></i>
                                         <span>AUTO</span>
@@ -1226,14 +1346,14 @@
                                     <span class="text-xs font-medium ${getPriorityColor(msg.priority)}">${msg.confidence}%</span>
                                 </div>
                                 <div class="mb-2">
-                                    <h4 class="font-medium text-gray-900">${msg.from}</h4>
-                                    <p class="text-sm text-gray-700">${msg.subject}</p>
+                                    <h4 class="font-medium text-gray-900 text-responsive">${msg.from}</h4>
+                                    <p class="text-sm text-gray-700 text-responsive">${msg.subject}</p>
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs text-gray-500">Envoyé ${timeAgo(msg.autoSentAt || msg.timeReceived)}</span>
                                 </div>
                             </div>
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-2"></i>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-2 flex-shrink-0"></i>
                         </div>
                     </div>
                 `).join('');
@@ -1241,24 +1361,27 @@
             lucide.createIcons();
         }
 
+        // Messages à valider - inclut maintenant "pending"
         function renderValidationMessages() {
-            // Hiérarchisation claire des messages à valider
             const validationMessages = allMessages.filter(m => 
                 m.status.toLowerCase() === 'manual-review' || m.status.toLowerCase() === 'pending'
             ).sort((a, b) => {
-                // Priorité 1: Urgents (high priority)
+                // Critical en premier
+                if (a.priority === 'critical' && b.priority !== 'critical') return -1;
+                if (b.priority === 'critical' && a.priority !== 'critical') return 1;
+                
+                // High priority ensuite
                 if (a.priority === 'high' && b.priority !== 'high') return -1;
                 if (b.priority === 'high' && a.priority !== 'high') return 1;
                 
-                // Priorité 2: Business opportunities
+                // Business opportunities
                 if (a.category === 'partenariat' && b.category !== 'partenariat') return -1;
                 if (b.category === 'partenariat' && a.category !== 'partenariat') return 1;
                 
-                // Priorité 3: Manual review avant pending
+                // Manual review avant pending
                 if (a.status.toLowerCase() === 'manual-review' && b.status.toLowerCase() === 'pending') return -1;
                 if (b.status.toLowerCase() === 'manual-review' && a.status.toLowerCase() === 'pending') return 1;
                 
-                // Priorité 4: Par ordre chronologique (plus récent d'abord)
                 return b.timeReceived - a.timeReceived;
             });
 
@@ -1274,14 +1397,20 @@
                 `;
             } else {
                 container.innerHTML = validationMessages.map(msg => `
-                    <div class="message-card bg-white p-4 rounded-lg shadow-sm border ${msg.priority === 'high' ? 'priority-high' : msg.priority === 'medium' ? 'priority-medium' : 'priority-low'}" onclick="openMessageModal('${msg.id}')">
+                    <div class="message-card bg-white p-4 rounded-lg shadow-sm border ${
+                        msg.priority === 'critical' ? 'priority-critical' :
+                        msg.priority === 'high' ? 'priority-high' : 
+                        msg.priority === 'medium' ? 'priority-medium' : 
+                        'priority-low'
+                    }" onclick="openMessageModal('${msg.id}')">
                         <div class="flex items-start justify-between mb-3">
                             <div class="flex-1">
-                                <div class="flex items-center space-x-2 mb-2">
+                                <div class="flex items-center space-x-2 mb-2 flex-wrap">
                                     <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
                                         ${msg.category}
                                     </span>
                                     <span class="px-2 py-1 text-xs rounded-full ${
+                                        msg.priority === 'critical' ? 'bg-red-200 text-red-900' :
                                         msg.priority === 'high' ? 'bg-red-100 text-red-700' :
                                         msg.priority === 'medium' ? 'bg-orange-100 text-orange-700' :
                                         'bg-green-100 text-green-700'
@@ -1289,14 +1418,19 @@
                                         <i data-lucide="${getPriorityIcon(msg.priority)}" class="w-3 h-3 inline mr-1"></i>
                                         ${getPriorityLabel(msg.priority)}
                                     </span>
+                                    <span class="px-2 py-1 text-xs rounded-full ${
+                                        msg.status.toLowerCase() === 'manual-review' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'
+                                    }">
+                                        ${msg.status.toLowerCase() === 'manual-review' ? 'À réviser' : 'En attente'}
+                                    </span>
                                 </div>
                                 <div class="mb-2">
-                                    <h4 class="font-medium text-gray-900">${msg.from}</h4>
-                                    <p class="text-sm text-gray-700">${msg.subject}</p>
+                                    <h4 class="font-medium text-gray-900 text-responsive">${msg.from}</h4>
+                                    <p class="text-sm text-gray-700 text-responsive">${msg.subject}</p>
                                 </div>
-                                <p class="text-sm text-gray-600 line-clamp-3 mb-3">${msg.content}</p>
+                                <p class="text-sm text-gray-600 line-clamp-3 mb-3 text-responsive">${msg.content}</p>
                             </div>
-                            <div class="flex flex-col items-center space-y-2">
+                            <div class="flex flex-col items-center space-y-2 flex-shrink-0">
                                 <button onclick="event.stopPropagation(); archiveMessage('${msg.id}')" class="text-blue-600 hover:text-blue-800" title="Archiver">
                                     <i data-lucide="archive" class="w-4 h-4"></i>
                                 </button>
@@ -1309,11 +1443,16 @@
             lucide.createIcons();
         }
 
-        // NOUVELLE FONCTION : Messages répondus
+        // Messages répondus - avec code couleur et tri chronologique
         function renderSentMessages() {
             const sentMessages = allMessages.filter(m => 
                 m.status.toLowerCase() === 'sent'
-            ).sort((a, b) => (b.autoSentAt || b.timeReceived) - (a.autoSentAt || a.timeReceived));
+            ).sort((a, b) => {
+                // Tri par date d'envoi, plus récent en premier
+                const aDate = new Date(a.sentAt || a.autoSentAt || a.timeReceived).getTime();
+                const bDate = new Date(b.sentAt || b.autoSentAt || b.timeReceived).getTime();
+                return bDate - aDate;
+            });
 
             const container = document.getElementById('sent-messages');
             document.getElementById('sent-today').textContent = sentMessages.length;
@@ -1326,31 +1465,50 @@
                     </div>
                 `;
             } else {
-                container.innerHTML = sentMessages.map(msg => `
-                    <div class="message-card bg-white p-4 rounded-lg shadow-sm border" onclick="openMessageModal('${msg.id}')">
-                        <div class="flex items-start justify-between">
-                            <div class="flex-1">
-                                <div class="flex items-center space-x-2 mb-2">
-                                    <div class="sent-badge px-2 py-1 text-xs rounded-full flex items-center space-x-1">
-                                        <i data-lucide="send" class="w-3 h-3"></i>
-                                        <span>RÉPONDU</span>
+                container.innerHTML = sentMessages.map(msg => {
+                    const sentBy = msg.sentBy || 'System';
+                    const isMartin = sentBy.includes('martin') || sentBy.toLowerCase().includes('martin');
+                    const isEleonore = sentBy.includes('eleonore') || sentBy.toLowerCase().includes('eléonore');
+                    
+                    return `
+                        <div class="message-card bg-white p-4 rounded-lg shadow-sm border ${
+                            isMartin ? 'martin-response' : 
+                            isEleonore ? 'eleonore-response' : 
+                            ''
+                        }" onclick="openMessageModal('${msg.id}')">
+                            <div class="flex items-start justify-between">
+                                <div class="flex-1">
+                                    <div class="flex items-center space-x-2 mb-2 flex-wrap">
+                                        <div class="sent-badge px-2 py-1 text-xs rounded-full flex items-center space-x-1">
+                                            <i data-lucide="send" class="w-3 h-3"></i>
+                                            <span>RÉPONDU</span>
+                                        </div>
+                                        <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
+                                            ${msg.category}
+                                        </span>
+                                        <span class="px-2 py-1 text-xs text-white rounded-full ${
+                                            isMartin ? 'bg-green-600' : 
+                                            isEleonore ? 'bg-pink-600' : 
+                                            'bg-gray-600'
+                                        }">
+                                            ${isMartin ? '🏡 Martin' : isEleonore ? '🎨 Eléonore' : sentBy}
+                                        </span>
                                     </div>
-                                    <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
-                                        ${msg.category}
-                                    </span>
+                                    <div class="mb-2">
+                                        <h4 class="font-medium text-gray-900 text-responsive">${msg.from}</h4>
+                                        <p class="text-sm text-gray-700 text-responsive">${msg.subject}</p>
+                                    </div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs text-gray-500">
+                                            Répondu ${timeAgo(new Date(msg.sentAt || msg.autoSentAt || msg.timeReceived).getTime())}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div class="mb-2">
-                                    <h4 class="font-medium text-gray-900">${msg.from}</h4>
-                                    <p class="text-sm text-gray-700">${msg.subject}</p>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs text-gray-500">Répondu ${timeAgo(msg.autoSentAt || msg.timeReceived)}</span>
-                                </div>
+                                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-2 flex-shrink-0"></i>
                             </div>
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-2"></i>
                         </div>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
             lucide.createIcons();
         }
@@ -1375,21 +1533,21 @@
                     <div class="message-card bg-gray-50 p-4 rounded-lg border" onclick="openMessageModal('${msg.id}', true)">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
-                                <div class="flex items-center space-x-2 mb-2">
+                                <div class="flex items-center space-x-2 mb-2 flex-wrap">
                                     <span class="archived-badge px-2 py-1 text-xs rounded-full">ARCHIVÉ</span>
                                     <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
                                         ${msg.category}
                                     </span>
                                 </div>
                                 <div class="mb-2">
-                                    <h4 class="font-medium text-gray-700">${msg.from}</h4>
-                                    <p class="text-sm text-gray-600">${msg.subject}</p>
+                                    <h4 class="font-medium text-gray-700 text-responsive">${msg.from}</h4>
+                                    <p class="text-sm text-gray-600 text-responsive">${msg.subject}</p>
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs text-gray-500">Reçu: ${msg.receivedAt}</span>
                                 </div>
                             </div>
-                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-2"></i>
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400 ml-2 flex-shrink-0"></i>
                         </div>
                     </div>
                 `).join('');
@@ -1400,10 +1558,8 @@
         function renderAllMessages() {
             const container = document.getElementById('all-messages');
             
-            // Appliquer les filtres et recherche
             let filteredMessages = [...allMessages];
             
-            // Filtre par statut
             const statusFilter = document.getElementById('status-filter')?.value;
             if (statusFilter && statusFilter !== 'all') {
                 filteredMessages = filteredMessages.filter(m => 
@@ -1411,7 +1567,6 @@
                 );
             }
             
-            // Filtre par catégorie
             const categoryFilter = document.getElementById('category-filter')?.value;
             if (categoryFilter && categoryFilter !== 'all') {
                 filteredMessages = filteredMessages.filter(m => 
@@ -1419,7 +1574,6 @@
                 );
             }
             
-            // Recherche textuelle
             const searchInput = document.getElementById('search-input')?.value;
             if (searchInput && searchInput.trim()) {
                 const searchTerm = searchInput.toLowerCase();
@@ -1442,8 +1596,8 @@
                     <div class="message-card bg-white p-4 rounded-lg shadow-sm border" onclick="openMessageModal('${msg.id}')">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
-                                <div class="flex items-center space-x-2 mb-2">
-                                    <i data-lucide="${getCategoryIcon(msg.category)}" class="w-4 h-4 text-gray-500"></i>
+                                <div class="flex items-center space-x-2 mb-2 flex-wrap">
+                                    <i data-lucide="${getCategoryIcon(msg.category)}" class="w-4 h-4 text-gray-500 flex-shrink-0"></i>
                                     <span class="px-2 py-1 text-xs rounded-full ${getCategoryColor(msg.category)}">
                                         ${msg.category}
                                     </span>
@@ -1453,10 +1607,10 @@
                                     ${msg.archived || msg.status.toLowerCase() === 'archived' ? '<div class="archived-badge px-2 py-1 text-xs rounded-full">ARCHIVÉ</div>' : ''}
                                 </div>
                                 <div class="mb-2">
-                                    <h4 class="font-medium text-gray-900">${msg.from}</h4>
-                                    <p class="text-sm text-gray-700">${msg.subject}</p>
+                                    <h4 class="font-medium text-gray-900 text-responsive">${msg.from}</h4>
+                                    <p class="text-sm text-gray-700 text-responsive">${msg.subject}</p>
                                 </div>
-                                <p class="text-sm text-gray-600 line-clamp-2 mb-2">${msg.content}</p>
+                                <p class="text-sm text-gray-600 line-clamp-2 mb-2 text-responsive">${msg.content}</p>
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs text-gray-500">${msg.receivedAt}</span>
                                     <span class="text-xs ${
@@ -1470,7 +1624,7 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="flex flex-col items-center space-y-2">
+                            <div class="flex flex-col items-center space-y-2 flex-shrink-0">
                                 <button onclick="event.stopPropagation(); archiveMessage('${msg.id}')" class="text-blue-600 hover:text-blue-800" title="Archiver">
                                     <i data-lucide="archive" class="w-4 h-4"></i>
                                 </button>
@@ -1496,6 +1650,7 @@
                             ${selectedMessage.category}
                         </span>
                         <span class="px-3 py-1 text-sm rounded-full ${
+                            selectedMessage.priority === 'critical' ? 'bg-red-200 text-red-900' :
                             selectedMessage.priority === 'high' ? 'bg-red-100 text-red-700' :
                             selectedMessage.priority === 'medium' ? 'bg-orange-100 text-orange-700' :
                             'bg-green-100 text-green-700'
@@ -1520,12 +1675,12 @@
                     <div class="bg-gray-50 p-4 rounded-lg">
                         <h4 class="font-medium text-gray-900 mb-2">Message original</h4>
                         <div class="space-y-2 text-sm">
-                            <div><strong>De :</strong> ${selectedMessage.from}</div>
-                            <div><strong>Sujet :</strong> ${selectedMessage.subject}</div>
+                            <div><strong>De :</strong> <span class="text-responsive">${selectedMessage.from}</span></div>
+                            <div><strong>Sujet :</strong> <span class="text-responsive">${selectedMessage.subject}</span></div>
                             <div><strong>Reçu :</strong> ${selectedMessage.receivedAt}</div>
                             <div><strong>🆔 Visitor ID :</strong> 
                                 ${selectedMessage.visitorId || selectedMessage.visitor_id || selectedMessage.id_visitor ? 
-                                    `<span class="text-green-600 font-mono">${selectedMessage.visitorId || selectedMessage.visitor_id || selectedMessage.id_visitor}</span>` : 
+                                    `<span class="text-green-600 font-mono text-responsive">${selectedMessage.visitorId || selectedMessage.visitor_id || selectedMessage.id_visitor}</span>` : 
                                     '<span class="text-red-600">❌ Pas de Visitor ID - envoi via Make.com</span>'
                                 }
                             </div>
@@ -1535,7 +1690,7 @@
                             }
                         </div>
                         <div class="mt-3">
-                            <p class="text-sm text-gray-700 bg-white p-3 rounded border">${selectedMessage.content}</p>
+                            <p class="text-sm text-gray-700 bg-white p-3 rounded border response-preview text-responsive">${selectedMessage.content}</p>
                         </div>
                     </div>
 
@@ -1549,9 +1704,14 @@
                             <div>
                                 <textarea
                                     id="ai-response-edit"
-                                    class="w-full p-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                                    class="w-full p-3 border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm response-editor"
                                     rows="8"
+                                    oninput="updateResponsePreview()"
                                 >${selectedMessage.aiResponse}</textarea>
+                            </div>
+                            <div class="mt-3">
+                                <label class="block text-sm font-medium text-blue-900 mb-2">Aperçu de la réponse :</label>
+                                <div id="response-preview" class="response-preview"></div>
                             </div>
                         </div>
                     ` : ''}
@@ -1560,29 +1720,31 @@
                       selectedMessage.status.toLowerCase() !== 'spam' && 
                       selectedMessage.status.toLowerCase() !== 'sent' &&
                       selectedMessage.status.toLowerCase() !== 'archived' ? `
-                        <div class="flex flex-col space-y-3">
-                            <button
-                                onclick="handleSendResponse()"
-                                class="w-full hormur-gradient text-white px-4 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center space-x-2"
-                            >
-                                <i data-lucide="send" class="w-4 h-4"></i>
-                                <span>Envoyer la réponse</span>
-                            </button>
-                            <div class="grid grid-cols-2 gap-2">
+                        <div class="mobile-cta-container">
+                            <div class="flex flex-col space-y-3">
                                 <button
-                                    onclick="showSignatureCustomization()"
-                                    class="px-3 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors flex items-center justify-center space-x-1 text-sm"
+                                    onclick="handleSendResponse()"
+                                    class="w-full hormur-gradient text-white px-4 py-3 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center justify-center space-x-2"
                                 >
-                                    <i data-lucide="edit-3" class="w-4 h-4"></i>
-                                    <span>Personnaliser</span>
+                                    <i data-lucide="send" class="w-4 h-4"></i>
+                                    <span>Envoyer la réponse</span>
                                 </button>
-                                <button
-                                    onclick="archiveMessage('${selectedMessage.id}')"
-                                    class="px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors flex items-center justify-center space-x-1 text-sm"
-                                >
-                                    <i data-lucide="archive" class="w-4 h-4"></i>
-                                    <span>Archiver</span>
-                                </button>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button
+                                        onclick="showSignatureCustomization()"
+                                        class="px-3 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors flex items-center justify-center space-x-1 text-sm"
+                                    >
+                                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                        <span>Personnaliser</span>
+                                    </button>
+                                    <button
+                                        onclick="archiveMessage('${selectedMessage.id}')"
+                                        class="px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors flex items-center justify-center space-x-1 text-sm"
+                                    >
+                                        <i data-lucide="archive" class="w-4 h-4"></i>
+                                        <span>Archiver</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     ` : `
@@ -1596,6 +1758,9 @@
                 </div>
             `;
 
+            // Initialiser l'aperçu de la réponse
+            updateResponsePreview();
+            
             document.getElementById('message-modal').classList.remove('hidden');
             lucide.createIcons();
         }
@@ -1614,6 +1779,15 @@
             }
         }
 
+        // Fonction pour mettre à jour l'aperçu de la réponse
+        function updateResponsePreview() {
+            const responseText = document.getElementById('ai-response-edit')?.value || '';
+            const previewElement = document.getElementById('response-preview');
+            if (previewElement) {
+                previewElement.textContent = responseText;
+            }
+        }
+
         // NOUVELLE FONCTION : Personnalisation de signature dans le modal
         function showSignatureCustomization() {
             if (!selectedMessage || !currentUser) return;
@@ -1624,15 +1798,53 @@
             // Ajouter la signature à la réponse
             const responseWithSignature = currentResponse + '\n\n' + signature;
             document.getElementById('ai-response-edit').value = responseWithSignature;
+            updateResponsePreview();
             
             // Afficher le modal de personnalisation
             showSignatureModal();
+        }
+
+        // Gestion de l'upload de photo
+        function handlePhotoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    customPhoto = e.target.result;
+                    const preview = document.getElementById('photo-preview');
+                    const previewImage = document.getElementById('preview-image');
+                    previewImage.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    updateSignaturePreview();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Mettre à jour l'aperçu de la signature
+        function updateSignaturePreview() {
+            const signatureText = document.getElementById('custom-signature')?.value || '';
+            const previewElement = document.getElementById('signature-preview');
+            
+            if (previewElement) {
+                let html = '';
+                if (customPhoto) {
+                    html += `<img src="${customPhoto}" class="image-preview mb-3" alt="Photo de profil">`;
+                }
+                html += `<div class="signature-preview">${signatureText}</div>`;
+                previewElement.innerHTML = html;
+            }
         }
 
         // NOUVELLES FONCTIONS : Gestion de la signature
         function showSignatureModal() {
             const signature = customSignature || currentUser?.signature || '';
             document.getElementById('custom-signature').value = signature;
+            
+            // Événement pour mettre à jour l'aperçu en temps réel
+            document.getElementById('custom-signature').addEventListener('input', updateSignaturePreview);
+            
+            updateSignaturePreview();
             document.getElementById('signature-modal').classList.remove('hidden');
         }
 
@@ -1642,7 +1854,10 @@
 
         function resetSignature() {
             customSignature = null;
+            customPhoto = null;
             document.getElementById('custom-signature').value = currentUser?.signature || '';
+            document.getElementById('photo-preview').classList.add('hidden');
+            updateSignaturePreview();
             showToast('Signature réinitialisée', 'info');
         }
 
@@ -1666,6 +1881,7 @@
                 
                 // Ajouter la nouvelle signature
                 document.getElementById('ai-response-edit').value = cleanResponse + '\n\n' + newSignature;
+                updateResponsePreview();
             }
             
             closeSignatureModal();
@@ -1691,19 +1907,22 @@
             showToast('Gestionnaire d\'archives en développement', 'info');
         }
 
-        // Statistics update
+        // Statistics update - Mise à jour pour inclure "critical" et "pending"
         function updateStats() {
             const nonArchivedMessages = allMessages.filter(m => 
                 !m.archived && m.status.toLowerCase() !== 'archived'
             );
             const stats = {
-                total: nonArchivedMessages.length, // Exclure les archivés du total
+                total: nonArchivedMessages.length,
                 auto: allMessages.filter(m => m.status.toLowerCase() === 'auto-sent').length,
                 review: allMessages.filter(m => 
                     m.status.toLowerCase() === 'manual-review' || m.status.toLowerCase() === 'pending'
                 ).length,
                 urgent: allMessages.filter(m => 
-                    m.priority === 'high' && !m.archived && m.status.toLowerCase() !== 'archived'
+                    (m.priority === 'high' || m.priority === 'critical') && 
+                    !m.archived && 
+                    m.status.toLowerCase() !== 'archived' &&
+                    m.status.toLowerCase() !== 'sent'
                 ).length,
                 sent: allMessages.filter(m => m.status.toLowerCase() === 'sent').length,
                 pending: allMessages.filter(m => m.status.toLowerCase() === 'pending').length,
@@ -1904,11 +2123,11 @@
                         break;
                     case '2':
                         e.preventDefault();
-                        switchTab('auto-send');
+                        switchTab('validation');
                         break;
                     case '3':
                         e.preventDefault();
-                        switchTab('validation');
+                        switchTab('all');
                         break;
                     case '4':
                         e.preventDefault();
@@ -1920,7 +2139,7 @@
                         break;
                     case '6':
                         e.preventDefault();
-                        switchTab('all');
+                        switchTab('auto-send');
                         break;
                     case 'r':
                         e.preventDefault();
@@ -1929,6 +2148,38 @@
                 }
             }
         });
+
+        // Prévention du scroll horizontal sur mobile
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        });
+
+        document.addEventListener('touchmove', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Amélioration de la gestion des modaux sur mobile
+        function adjustModalForMobile() {
+            const isMobile = window.innerWidth <= 768;
+            const modals = document.querySelectorAll('.modal-overlay > div > div');
+            
+            modals.forEach(modal => {
+                if (isMobile) {
+                    modal.style.maxHeight = '90vh';
+                    modal.style.overflowY = 'auto';
+                } else {
+                    modal.style.maxHeight = 'none';
+                    modal.style.overflowY = 'visible';
+                }
+            });
+        }
+
+        window.addEventListener('resize', adjustModalForMobile);
+        document.addEventListener('DOMContentLoaded', adjustModalForMobile);
 
     </script>
 </body>
